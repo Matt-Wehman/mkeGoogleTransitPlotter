@@ -21,12 +21,105 @@ public class Route {
     private HashMap<Integer, Trip> trips;
     public Controller m_Controller;
 
-    public Route() {
-
+    public Route(String agencyID, int longName, int routeColor, String routeDesc, int routeID, String routeLongName, int routeShortName, int routeTextColor, int routeType, int routeURL) {
+        this.agencyID = agencyID;
+        this.longName = longName;
+        this.routeColor = routeColor;
+        this.routeDesc = routeDesc;
+        this.routeID = routeID;
+        this.routeLongName = routeLongName;
+        this.routeShortName = routeShortName;
+        this.routeTextColor = routeTextColor;
+        this.routeType = routeType;
+        this.routeURL = routeURL;
     }
 
-    public void finalize() throws Throwable {
+    public void setAgencyID(String agencyID) {
+        this.agencyID = agencyID;
+    }
 
+    public void setLongName(int longName) {
+        this.longName = longName;
+    }
+
+    public void setRouteColor(int routeColor) {
+        this.routeColor = routeColor;
+    }
+
+    public void setRouteDesc(String routeDesc) {
+        this.routeDesc = routeDesc;
+    }
+
+    public void setRouteID(int routeID) {
+        this.routeID = routeID;
+    }
+
+    public void setRouteLongName(String routeLongName) {
+        this.routeLongName = routeLongName;
+    }
+
+    public void setRouteShortName(int routeShortName) {
+        this.routeShortName = routeShortName;
+    }
+
+    public void setRouteTextColor(int routeTextColor) {
+        this.routeTextColor = routeTextColor;
+    }
+
+    public void setRouteType(int routeType) {
+        this.routeType = routeType;
+    }
+
+    public void setRouteURL(int routeURL) {
+        this.routeURL = routeURL;
+    }
+
+    public String getAgencyID() {
+        return agencyID;
+    }
+
+    public int getLongName() {
+        return longName;
+    }
+
+    public int getRouteColor() {
+        return routeColor;
+    }
+
+    public String getRouteDesc() {
+        return routeDesc;
+    }
+
+    public int getRouteID() {
+        return routeID;
+    }
+
+    public String getRouteLongName() {
+        return routeLongName;
+    }
+
+    public int getRouteShortName() {
+        return routeShortName;
+    }
+
+    public int getRouteTextColor() {
+        return routeTextColor;
+    }
+
+    public int getRouteType() {
+        return routeType;
+    }
+
+    public int getRouteURL() {
+        return routeURL;
+    }
+
+    public HashMap<Integer, Stop> getStops() {
+        return stops;
+    }
+
+    public HashMap<Integer, Trip> getTrips() {
+        return trips;
     }
 
     private int displayDist() {

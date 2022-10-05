@@ -12,15 +12,53 @@ public class Stop {
 	private int stopLat;
 	private int stopLong;
 	private String stopName;
-	public Route m_Route;
-	public Controller m_Controller;
 
-	public Stop(){
-
+	public String getStopDesc() {
+		return stopDesc;
 	}
 
-	public void finalize() throws Throwable {
+	public void setStopDesc(String stopDesc) {
+		this.stopDesc = stopDesc;
+	}
 
+	public int getStopID() {
+		return stopID;
+	}
+
+	public void setStopID(int stopID) {
+		this.stopID = stopID;
+	}
+
+	public int getStopLat() {
+		return stopLat;
+	}
+
+	public void setStopLat(int stopLat) {
+		this.stopLat = stopLat;
+	}
+
+	public int getStopLong() {
+		return stopLong;
+	}
+
+	public void setStopLong(int stopLong) {
+		this.stopLong = stopLong;
+	}
+
+	public String getStopName() {
+		return stopName;
+	}
+
+	public void setStopName(String stopName) {
+		this.stopName = stopName;
+	}
+
+	public Stop(String stopDesc, int stopID, int stopLat, int stopLong, String stopName, Route m_Route, Controller m_Controller) {
+		this.stopDesc = stopDesc;
+		this.stopID = stopID;
+		this.stopLat = stopLat;
+		this.stopLong = stopLong;
+		this.stopName = stopName;
 	}
 
 	/**
