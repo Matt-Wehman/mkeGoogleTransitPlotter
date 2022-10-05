@@ -7,24 +7,23 @@ import javafx.stage.Stage;
  */
 public class GTFSDisplay {
 
-	private static final int sceneHeight = 0;
-	private static final int sceneWidth = 0;
-	public Controller m_Controller;
+    private static final int sceneHeight = 0;
+    private static final int sceneWidth = 0;
+    public Controller m_Controller;
 
-	public GTFSDisplay(){
+    public GTFSDisplay() {
 
-	}
+    }
 
-	public void finalize() throws Throwable {
+    public void finalize() throws Throwable {
 
-	}
+    }
 
-	/**
-	 * 
-	 * @param stage
-	 */
-	public void start(Stage stage){
+    /**
+     * @param stage
+     */
+    public void start(Stage stage) {
 
-	}
+    }
 
 }

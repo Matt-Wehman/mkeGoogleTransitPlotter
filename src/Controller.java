@@ -1,7 +1,9 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 /**
  * @author czerkisi
@@ -63,6 +65,18 @@ public class Controller {
      * @param listOfFiles
      */
     public boolean import_files(ArrayList<File> listOfFiles) {
+        Scanner scanner = null;
+        for (int i = 0; i < listOfFiles.size(); i++){
+            ArrayList<String> lines = new ArrayList<>();
+            try {
+                scanner = new Scanner(listOfFiles.get(i));
+                while (scanner.hasNextLine()){
+
+                }
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return false;
     }
 
