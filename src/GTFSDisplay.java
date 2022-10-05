@@ -1,4 +1,4 @@
-
+import javafx.stage.Stage;
 
 /**
  * @author bassoc
