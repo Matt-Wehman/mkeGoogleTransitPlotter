@@ -25,10 +25,10 @@ public class Stop {
 
 	/**
 	 * 
-	 * @param long
-	 * @param lat
+	 * @param longitude
+	 * @param latitude
 	 */
-	public boolean changeLocation(int long, int lat){
+	public boolean changeLocation(int longitude, int latitude){
 		return false;
 	}
 

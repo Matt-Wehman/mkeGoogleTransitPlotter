@@ -7,8 +7,8 @@
  */
 public class GTFSDisplay {
 
-	private static final int sceneHeight;
-	private static final int sceneWidth;
+	private static final int sceneHeight = 0;
+	private static final int sceneWidth = 0;
 	public Controller m_Controller;
 
 	public GTFSDisplay(){
