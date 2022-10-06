@@ -8,7 +8,6 @@ import java.util.HashMap;
 public class Route {
 
     private String agencyID;
-    private int longName;
     private int routeColor;
     private String routeDesc;
     private int routeID;
@@ -21,25 +20,24 @@ public class Route {
     private HashMap<Integer, Trip> trips;
     public Controller m_Controller;
 
-    public Route(String agencyID, int longName, int routeColor, String routeDesc, int routeID, String routeLongName, int routeShortName, int routeTextColor, int routeType, int routeURL) {
-        this.agencyID = agencyID;
-        this.longName = longName;
-        this.routeColor = routeColor;
-        this.routeDesc = routeDesc;
-        this.routeID = routeID;
-        this.routeLongName = routeLongName;
-        this.routeShortName = routeShortName;
-        this.routeTextColor = routeTextColor;
-        this.routeType = routeType;
-        this.routeURL = routeURL;
+    public Route(int routeID, String agencyID, int routeShortName, String routeLongName, String routeDesc, int routeType, int routeURL, int routeColor, int routeTextColor) {
+        try {
+            this.agencyID = agencyID;
+            this.routeColor = routeColor;
+            this.routeDesc = routeDesc;
+            this.routeID = routeID;
+            this.routeLongName = routeLongName;
+            this.routeShortName = routeShortName;
+            this.routeTextColor = routeTextColor;
+            this.routeType = routeType;
+            this.routeURL = routeURL;
+        } catch (NumberFormatException e){
+            throw new RuntimeException("File is not formatted correctly");
+        }
     }
 
     public void setAgencyID(String agencyID) {
         this.agencyID = agencyID;
-    }
-
-    public void setLongName(int longName) {
-        this.longName = longName;
     }
 
     public void setRouteColor(int routeColor) {
@@ -76,10 +74,6 @@ public class Route {
 
     public String getAgencyID() {
         return agencyID;
-    }
-
-    public int getLongName() {
-        return longName;
     }
 
     public int getRouteColor() {

@@ -1,9 +1,10 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author czerkisi
@@ -65,9 +66,33 @@ public class Controller {
      * @param listOfFiles
      */
     public boolean import_files(ArrayList<File> listOfFiles) {
-        Scanner scanner = null;
+        List<File> routeFile = listOfFiles.stream()
+                                          .filter(file -> file.getName().equals("route.txt"))
+                                          .toList();
+        if (routeFile.size() > 0){
+            importRoutes(routeFile.get(0));
+        } else {
+            System.out.println("No route file");
+        }
+
+        List<File> stopFile = listOfFiles.stream()
+                .filter(file -> file.getName().equals("stops.txt"))
+                .toList();
+        if (stopFile.size() > 0){
+            importStops(stopFile.get(0));
+        } else {
+            System.out.println("No stop file");
+        }
+
+
+        /*for (File file: listOfFiles){
+            if (file.getName().equals())
+        }
         for (int i = 0; i < listOfFiles.size(); i++){
+
             ArrayList<String> lines = new ArrayList<>();
+
+
             try {
                 scanner = new Scanner(listOfFiles.get(i));
                 while (scanner.hasNextLine()){
@@ -76,8 +101,62 @@ public class Controller {
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        }
+        }*/
         return false;
+    }
+
+    private void importStops(File stopFile) {
+        try (Stream<String> lines = Files.lines(stopFile.toPath())){
+            Iterator<String> it = lines.iterator();
+            String firstLine = it.next();
+            if (!firstLine.equals("stop_id,stop_name,stop_desc,stop_lat,stop_lon")){
+                System.out.println("Unknown formatting encountered");
+            }
+            while (it.hasNext()){
+                CSVReader reader = new CSVReader(it.next());
+                try {
+                    Stop stop = new Stop(
+                            reader.nextInt(), reader.next(), reader.next(),
+                            reader.nextInt(), reader.nextInt());
+                    allStops.put(stop.getStopID(), stop);
+                } catch (CSVReader.EndOfStringException | NumberFormatException e){
+                    System.out.println("Line is not formatted correctly, skipping");
+                }
+
+            }
+        } catch (IOException e){
+            System.out.println("Error finding file, no Stops were imported");
+        }
+
+    }
+
+    private void importRoutes(File routeFile) {
+        try (Stream<String> lines = Files.lines(routeFile.toPath())){
+            Iterator<String> it = lines.iterator();
+            String firstLine = it.next();
+            if (!firstLine.equals("route_id,agency_id,route_short_name,route_long_name," +
+                    "route_desc,route_type,route_url,route_color,route_text_colorroute_id," +
+                    "agency_id,route_short_name,route_long_name,route_desc,route_type," +
+                    "route_url,route_color,route_text_color")){
+                System.out.println("Unknown formatting encountered");
+            }
+            while (it.hasNext()){
+                CSVReader reader = new CSVReader(it.next());
+                try {
+                    Route route = new Route(
+                            reader.nextInt(), reader.next(), reader.nextInt(),
+                            reader.next(), reader.next(), reader.nextInt(),
+                            reader.nextInt(), reader.nextInt(), reader.nextInt());
+                    routes.put(route.getRouteID(), route);
+                } catch (CSVReader.EndOfStringException | NumberFormatException e){
+                    System.out.println("Line is not formatted correctly, skipping");
+                }
+
+            }
+        } catch (IOException e){
+            System.out.println("Error finding file, no Routes were imported");
+        }
+
     }
 
     /**

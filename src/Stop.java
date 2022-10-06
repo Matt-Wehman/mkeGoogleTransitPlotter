@@ -53,12 +53,16 @@ public class Stop {
 		this.stopName = stopName;
 	}
 
-	public Stop(String stopDesc, int stopID, int stopLat, int stopLong, String stopName, Route m_Route, Controller m_Controller) {
-		this.stopDesc = stopDesc;
-		this.stopID = stopID;
-		this.stopLat = stopLat;
-		this.stopLong = stopLong;
-		this.stopName = stopName;
+	public Stop(int stopID, String stopName, String stopDesc, int stopLat, int stopLong) {
+		try {
+			this.stopDesc = stopDesc;
+			this.stopID = stopID;
+			this.stopLat = stopLat;
+			this.stopLong = stopLong;
+			this.stopName = stopName;
+		} catch (NumberFormatException e){
+			throw new RuntimeException("File is not formatted correctly");
+		}
 	}
 
 	/**
