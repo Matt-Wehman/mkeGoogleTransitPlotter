@@ -143,7 +143,7 @@ public class Controller {
                     trip.getStopTimes().put(stopTime.getStopID(), stopTime);
 
                 } catch (CSVReader.EndOfStringException | NumberFormatException | ParseException e){
-                    System.out.println("Line " + index + " (StopTimes) is not formatted correctly, skipping\n"+e.getLocalizedMessage());
+                    System.out.println("Line " + index + " (StopTimes) is not formatted correctly, skipping");
                 }
             }
         } catch (IOException e){
@@ -166,11 +166,15 @@ public class Controller {
                 try {
                     index++;
                     Trip trip = new Trip(
-                            reader.nextInt(), reader.next(), reader.next(),
+                            reader.next(), reader.next(), reader.next(),
                             reader.next(), reader.nextInt(), reader.nextInt(),
                             reader.next());
                     // Add trip to corresponding route
-                    routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
+                    if(!routes.containsKey(trip.getRouteID())){
+                        System.out.println("Route " + trip.getRouteID()+ " was mentioned on line: "+index + " but not found");
+                    } else {
+                        routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
+                    }
                     // Add trip to HashMap of all trips
                     trips.put(trip.getTripID(), trip);
                 } catch (CSVReader.EndOfStringException | NumberFormatException e){
@@ -196,10 +200,12 @@ public class Controller {
                     index++;
                     Stop stop = new Stop(
                             reader.nextInt(), reader.next(), reader.next(),
-                            reader.nextInt(), reader.nextInt());
+                            reader.nextDouble(), reader.nextDouble());
                     allStops.put(stop.getStopID(), stop);
                 } catch (CSVReader.EndOfStringException | NumberFormatException e){
                     System.out.println("Line " + index + " (Stops) is not formatted correctly, skipping");
+                    System.out.println(e.getLocalizedMessage());
+                    System.out.println(e.getMessage());
                 }
             }
         } catch (IOException e){

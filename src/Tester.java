@@ -13,5 +13,6 @@ public class Tester {
         files.add(new File("./GTFSFiles/trips.txt"));
         files.add(new File("./GTFSFiles/stop_times.txt"));
         c.import_files(files);
+        System.out.println("done");
     }
 }

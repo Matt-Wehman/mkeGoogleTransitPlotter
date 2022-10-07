@@ -36,6 +36,16 @@ public class CSVReader {
         return new Time(formatter.parse(next()).getTime());
     }
 
+    public long nextLong() throws EndOfStringException {
+        String ret = next();
+        return ret.length() > 0 ? Long.parseLong(ret): -1;
+    }
+
+    public double nextDouble() throws EndOfStringException {
+        String ret = next();
+        return ret.length() > 0 ? Double.parseDouble(ret): -1;
+    }
+
     public class EndOfStringException extends Exception{
         public EndOfStringException(String errorMessage){
             super(errorMessage);
