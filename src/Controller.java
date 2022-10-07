@@ -1,9 +1,8 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.ParseException;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -13,14 +12,11 @@ import java.util.stream.Stream;
  */
 public class Controller {
 
-    private HashMap<Integer, Stop> allStops;
-    private HashMap<Integer, Route> routes;
+    private HashMap<Integer, Stop> allStops = new HashMap<>();
+    private HashMap<String, Route> routes = new HashMap<>();
+    private HashMap<String, Trip> trips = new HashMap<>();
 
     public Controller() {
-
-    }
-
-    public void finalize() throws Throwable {
 
     }
 
@@ -67,7 +63,7 @@ public class Controller {
      */
     public boolean import_files(ArrayList<File> listOfFiles) {
         List<File> routeFile = listOfFiles.stream()
-                                          .filter(file -> file.getName().equals("route.txt"))
+                                          .filter(file -> file.getName().equals("routes.txt"))
                                           .toList();
         if (routeFile.size() > 0){
             importRoutes(routeFile.get(0));
@@ -84,6 +80,25 @@ public class Controller {
             System.out.println("No stop file");
         }
 
+        List<File> tripFile = listOfFiles.stream()
+                .filter(file -> file.getName().equals("trips.txt"))
+                .toList();
+        if (stopFile.size() > 0){
+            importTrips(tripFile.get(0));
+        } else {
+            System.out.println("No trip file");
+        }
+
+        List<File> stopTimesFile = listOfFiles.stream()
+                .filter(file -> file.getName().equals("stop_times.txt"))
+                .toList();
+        if (stopFile.size() > 0){
+            importStopTimes(stopTimesFile.get(0));
+        } else {
+            System.out.println("No stop time file");
+        }
+
+        System.out.println("all valid files imported");
 
         /*for (File file: listOfFiles){
             if (file.getName().equals())
@@ -102,10 +117,73 @@ public class Controller {
                 throw new RuntimeException(e);
             }
         }*/
-        return false;
+        return true;
+    }
+
+    private void importStopTimes(File stopTimesFile) {
+        int index = 0;
+        try (Stream<String> lines = Files.lines(stopTimesFile.toPath())){
+            Iterator<String> it = lines.iterator();
+            String firstLine = it.next();
+            if (!firstLine.equals("trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
+                    "stop_headsign,pickup_type,drop_off_type")){
+
+                System.out.println("Unknown formatting encountered");
+            }
+            while (it.hasNext()){
+                CSVReader reader = new CSVReader(it.next());
+                try {
+                    index++;
+                    StopTime stopTime = new StopTime(
+                            reader.next(), reader.nextTime(), reader.nextTime(),
+                            reader.nextInt(), reader.nextInt(), reader.nextInt(),
+                            reader.nextInt(), reader.nextInt());
+
+                    Trip trip = trips.get(stopTime.getTripID());
+                    trip.getStopTimes().put(stopTime.getStopID(), stopTime);
+
+                } catch (CSVReader.EndOfStringException | NumberFormatException | ParseException e){
+                    System.out.println("Line " + index + " (StopTimes) is not formatted correctly, skipping\n"+e.getLocalizedMessage());
+                }
+            }
+        } catch (IOException e){
+            System.out.println("Error finding file, no Trips were imported");
+        }
+    }
+
+    private void importTrips(File tripFile) {
+        int index = 0;
+        try (Stream<String> lines = Files.lines(tripFile.toPath())){
+            Iterator<String> it = lines.iterator();
+            String firstLine = it.next();
+            if (!firstLine.equals("route_id,agency_id,route_short_name,route_long_name," +
+                    "route_desc,route_type,route_url,route_color,route_text_color")){
+
+                System.out.println("Unknown formatting encountered");
+            }
+            while (it.hasNext()){
+                CSVReader reader = new CSVReader(it.next());
+                try {
+                    index++;
+                    Trip trip = new Trip(
+                            reader.nextInt(), reader.next(), reader.next(),
+                            reader.next(), reader.nextInt(), reader.nextInt(),
+                            reader.next());
+                    // Add trip to corresponding route
+                    routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
+                    // Add trip to HashMap of all trips
+                    trips.put(trip.getTripID(), trip);
+                } catch (CSVReader.EndOfStringException | NumberFormatException e){
+                    System.out.println("Line " + index + " (Trips) is not formatted correctly, skipping");
+                }
+            }
+        } catch (IOException e){
+            System.out.println("Error finding file, no Trips were imported");
+        }
     }
 
     private void importStops(File stopFile) {
+        int index = 1;
         try (Stream<String> lines = Files.lines(stopFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
@@ -115,22 +193,22 @@ public class Controller {
             while (it.hasNext()){
                 CSVReader reader = new CSVReader(it.next());
                 try {
+                    index++;
                     Stop stop = new Stop(
                             reader.nextInt(), reader.next(), reader.next(),
                             reader.nextInt(), reader.nextInt());
                     allStops.put(stop.getStopID(), stop);
                 } catch (CSVReader.EndOfStringException | NumberFormatException e){
-                    System.out.println("Line is not formatted correctly, skipping");
+                    System.out.println("Line " + index + " (Stops) is not formatted correctly, skipping");
                 }
-
             }
         } catch (IOException e){
             System.out.println("Error finding file, no Stops were imported");
         }
-
     }
 
     private void importRoutes(File routeFile) {
+        int index = 1;
         try (Stream<String> lines = Files.lines(routeFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
@@ -143,13 +221,14 @@ public class Controller {
             while (it.hasNext()){
                 CSVReader reader = new CSVReader(it.next());
                 try {
+                    index++;
                     Route route = new Route(
-                            reader.nextInt(), reader.next(), reader.nextInt(),
+                            reader.next(), reader.next(), reader.next(),
                             reader.next(), reader.next(), reader.nextInt(),
                             reader.nextInt(), reader.nextInt(), reader.nextInt());
                     routes.put(route.getRouteID(), route);
                 } catch (CSVReader.EndOfStringException | NumberFormatException e){
-                    System.out.println("Line is not formatted correctly, skipping");
+                    System.out.println("Line " + index + " (Routes) is not formatted correctly, skipping");
                 }
 
             }

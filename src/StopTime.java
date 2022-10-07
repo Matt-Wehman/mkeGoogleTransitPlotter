@@ -80,11 +80,11 @@ public class StopTime {
         this.tripID = tripID;
     }
 
-    public StopTime(Time arrivalTime, Time departureTime, int drop_off_type, int pickup_type, int stopHeadsign, int stopID, int stopSequence, String tripID) {
+    public StopTime(String tripID, Time arrivalTime, Time departureTime, int stopID, int stopSequence, int stopHeadsign, int pickupType, int dropOffType) {
         this.arrivalTime = arrivalTime;
         this.departureTime = departureTime;
-        this.drop_off_type = drop_off_type;
-        this.pickup_type = pickup_type;
+        this.drop_off_type = dropOffType;
+        this.pickup_type = pickupType;
         this.stopHeadsign = stopHeadsign;
         this.stopID = stopID;
         this.stopSequence = stopSequence;

@@ -10,17 +10,16 @@ public class Route {
     private String agencyID;
     private int routeColor;
     private String routeDesc;
-    private int routeID;
+    private String routeID;
     private String routeLongName;
-    private int routeShortName;
+    private String routeShortName;
     private int routeTextColor;
     private int routeType;
     private int routeURL;
-    private HashMap<Integer, Stop> stops;
-    private HashMap<Integer, Trip> trips;
-    public Controller m_Controller;
+    private HashMap<Integer, Stop> stops = new HashMap<>();
+    private HashMap<String, Trip> trips = new HashMap<>();
 
-    public Route(int routeID, String agencyID, int routeShortName, String routeLongName, String routeDesc, int routeType, int routeURL, int routeColor, int routeTextColor) {
+    public Route(String routeID, String agencyID, String routeShortName, String routeLongName, String routeDesc, int routeType, int routeURL, int routeColor, int routeTextColor) {
         try {
             this.agencyID = agencyID;
             this.routeColor = routeColor;
@@ -48,7 +47,7 @@ public class Route {
         this.routeDesc = routeDesc;
     }
 
-    public void setRouteID(int routeID) {
+    public void setRouteID(String routeID) {
         this.routeID = routeID;
     }
 
@@ -56,7 +55,7 @@ public class Route {
         this.routeLongName = routeLongName;
     }
 
-    public void setRouteShortName(int routeShortName) {
+    public void setRouteShortName(String routeShortName) {
         this.routeShortName = routeShortName;
     }
 
@@ -84,7 +83,7 @@ public class Route {
         return routeDesc;
     }
 
-    public int getRouteID() {
+    public String getRouteID() {
         return routeID;
     }
 
@@ -92,7 +91,7 @@ public class Route {
         return routeLongName;
     }
 
-    public int getRouteShortName() {
+    public String getRouteShortName() {
         return routeShortName;
     }
 
@@ -112,7 +111,7 @@ public class Route {
         return stops;
     }
 
-    public HashMap<Integer, Trip> getTrips() {
+    public HashMap<String, Trip> getTrips() {
         return trips;
     }
 

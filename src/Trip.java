@@ -10,11 +10,11 @@ public class Trip {
 	private int blockID;
 	private int directionID;
 	private int routeID;
-	private int serviceID;
-	private int shapeID;
-	private HashMap<Integer, StopTime> StopTimes;
+	private String serviceID;
+	private String shapeID;
+	private HashMap<Integer, StopTime> StopTimes = new HashMap<>();
 	private String tripHeadSign;
-	private int tripID;
+	private String tripID;
 
 	public void setBlockID(int blockID) {
 		this.blockID = blockID;
@@ -28,11 +28,11 @@ public class Trip {
 		this.routeID = routeID;
 	}
 
-	public void setServiceID(int serviceID) {
+	public void setServiceID(String serviceID) {
 		this.serviceID = serviceID;
 	}
 
-	public void setShapeID(int shapeID) {
+	public void setShapeID(String shapeID) {
 		this.shapeID = shapeID;
 	}
 
@@ -40,7 +40,7 @@ public class Trip {
 		this.tripHeadSign = tripHeadSign;
 	}
 
-	public void setTripID(int tripID) {
+	public void setTripID(String tripID) {
 		this.tripID = tripID;
 	}
 
@@ -56,11 +56,11 @@ public class Trip {
 		return routeID;
 	}
 
-	public int getServiceID() {
+	public String getServiceID() {
 		return serviceID;
 	}
 
-	public int getShapeID() {
+	public String getShapeID() {
 		return shapeID;
 	}
 
@@ -72,11 +72,11 @@ public class Trip {
 		return tripHeadSign;
 	}
 
-	public int getTripID() {
+	public String getTripID() {
 		return tripID;
 	}
 
-	public Trip(int blockID, int directionID, int routeID, int serviceID, int shapeID, String tripHeadSign, int tripID) {
+	public Trip(int routeID, String serviceID, String tripID, String tripHeadSign, int directionID, int blockID, String shapeID) {
 		this.blockID = blockID;
 		this.directionID = directionID;
 		this.routeID = routeID;
