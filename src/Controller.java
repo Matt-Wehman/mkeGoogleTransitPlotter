@@ -12,9 +12,9 @@ import java.util.stream.Stream;
  */
 public class Controller {
 
-    private HashMap<Integer, Stop> allStops = new HashMap<>();
-    private HashMap<String, Route> routes = new HashMap<>();
-    private HashMap<String, Trip> trips = new HashMap<>();
+    protected HashMap<Integer, Stop> allStops = new HashMap<>();
+    protected HashMap<String, Route> routes = new HashMap<>();
+    protected HashMap<String, Trip> trips = new HashMap<>();
 
     public Controller() {
 
