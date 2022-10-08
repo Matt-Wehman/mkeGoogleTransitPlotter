@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
 import javafx.scene.control.Button;
+import javafx.stage.FileChooser;
 
 /**
  * @author czerkisi
@@ -137,7 +138,7 @@ public class Controller {
             if (!firstLine.equals("trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
                     "stop_headsign,pickup_type,drop_off_type")){
 
-                System.out.println("Unknown formatting encountered");
+                System.out.println("Unknown formatting encountered: StopTimes");
             }
             while (it.hasNext()){
                 CSVReader reader = new CSVReader(it.next());
@@ -168,7 +169,7 @@ public class Controller {
             if (!firstLine.equals("route_id,agency_id,route_short_name,route_long_name," +
                     "route_desc,route_type,route_url,route_color,route_text_color")){
 
-                System.out.println("Unknown formatting encountered");
+                System.out.println("Unknown formatting encountered: Trips");
             }
             while (it.hasNext()){
                 CSVReader reader = new CSVReader(it.next());
@@ -201,7 +202,7 @@ public class Controller {
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
             if (!firstLine.equals("stop_id,stop_name,stop_desc,stop_lat,stop_lon")){
-                System.out.println("Unknown formatting encountered");
+                System.out.println("Unknown formatting encountered: Stops");
             }
             while (it.hasNext()){
                 CSVReader reader = new CSVReader(it.next());
@@ -229,7 +230,7 @@ public class Controller {
             String firstLine = it.next();
             if (!firstLine.equals("route_id,agency_id,route_short_name,route_long_name," +
                     "route_desc,route_type,route_url,route_color,route_text_color")){
-                System.out.println("Unknown formatting encountered");
+                System.out.println("Unknown formatting encountered: Routes");
             }
             while (it.hasNext()){
                 CSVReader reader = new CSVReader(it.next());
@@ -253,8 +254,18 @@ public class Controller {
 
     @FXML
     public void importHelper(ActionEvent actionEvent) {
-
-    }
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        File selectedFile;
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("GSTF Files", "*.txt"));
+        List<File> f = fileChooser.showOpenMultipleDialog(null);
+        ArrayList<File> files = new ArrayList<>();
+        for(File file : f){
+            files.add(file);
+            System.out.println(files);
+        }
+        importFiles(files);
+        }
 
 
     /**
