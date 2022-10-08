@@ -126,4 +126,20 @@ public class Route {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "Route{" +
+                "agencyID='" + agencyID + '\'' +
+                ", routeColor=" + routeColor +
+                ", routeDesc='" + routeDesc + '\'' +
+                ", routeID='" + routeID + '\'' +
+                ", routeLongName='" + routeLongName + '\'' +
+                ", routeShortName='" + routeShortName + '\'' +
+                ", routeTextColor=" + routeTextColor +
+                ", routeType=" + routeType +
+                ", routeURL=" + routeURL +
+                ", stops=" + stops +
+                ", trips=" + trips +
+                '}';
+    }
 }

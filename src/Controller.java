@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.io.File;
 
 import javafx.event.ActionEvent;
@@ -20,7 +19,7 @@ public class Controller {
 
 
     @FXML
-     Button butt = new Button();
+     Button butt;
 
     protected HashMap<Integer, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
@@ -241,6 +240,7 @@ public class Controller {
                             reader.next(), reader.next(), reader.nextInt(),
                             reader.nextInt(), reader.nextInt(), reader.nextInt());
                     routes.put(route.getRouteID(), route);
+                    System.out.println("Imported route: " + route);
                 } catch (CSVReader.EndOfStringException | NumberFormatException e){
                     System.out.println("Line " + index + " (Routes) is not formatted correctly, skipping");
                 }
