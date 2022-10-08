@@ -164,8 +164,7 @@ public class Controller {
         try (Stream<String> lines = Files.lines(tripFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!firstLine.equals("route_id,agency_id,route_short_name,route_long_name," +
-                    "route_desc,route_type,route_url,route_color,route_text_color")){
+            if (!firstLine.equals("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id")){
 
                 System.out.println("Unknown formatting encountered");
             }
