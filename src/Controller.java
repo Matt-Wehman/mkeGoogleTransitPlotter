@@ -219,9 +219,7 @@ public class Controller {
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
             if (!firstLine.equals("route_id,agency_id,route_short_name,route_long_name," +
-                    "route_desc,route_type,route_url,route_color,route_text_colorroute_id," +
-                    "agency_id,route_short_name,route_long_name,route_desc,route_type," +
-                    "route_url,route_color,route_text_color")){
+                    "route_desc,route_type,route_url,route_color,route_text_color")){
                 System.out.println("Unknown formatting encountered");
             }
             while (it.hasNext()){
