@@ -4,12 +4,11 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
       <VBox layoutX="479.0" prefHeight="400.0" prefWidth="121.0">
          <children>
-            <Button mnemonicParsing="false" prefHeight="41.0" prefWidth="122.0" text="Import" />
+            <Button fx:id="butt" mnemonicParsing="false" onAction="#importHelper" prefHeight="41.0" prefWidth="122.0" text="Import" />
          </children>
       </VBox>
    </children>

@@ -1,9 +1,15 @@
+import java.awt.*;
 import java.io.File;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Stream;
+import javafx.scene.control.Button;
 
 /**
  * @author czerkisi
@@ -11,6 +17,10 @@ import java.util.stream.Stream;
  * @created 05-Oct-2022 12:59:52 PM
  */
 public class Controller {
+
+
+    @FXML
+     Button butt = new Button();
 
     protected HashMap<Integer, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
@@ -61,7 +71,7 @@ public class Controller {
     /**
      * @param listOfFiles
      */
-    public boolean import_files(ArrayList<File> listOfFiles) {
+    public boolean importFiles(ArrayList<File> listOfFiles) {
         List<File> routeFile = listOfFiles.stream()
                                           .filter(file -> file.getName().equals("routes.txt"))
                                           .toList();
@@ -241,6 +251,12 @@ public class Controller {
         }
 
     }
+
+    @FXML
+    public void importHelper(ActionEvent actionEvent) {
+
+    }
+
 
     /**
      * @param stopID
