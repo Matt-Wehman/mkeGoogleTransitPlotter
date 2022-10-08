@@ -1,6 +1,5 @@
-import java.awt.*;
-import java.io.File;
 
+import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import java.io.IOException;
