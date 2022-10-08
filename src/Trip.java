@@ -53,7 +53,7 @@ public class Trip {
 	}
 
 	public String getRouteID() {
-		return routeID;
+		return routeID.replaceAll("\\s", "");
 	}
 
 	public String getServiceID() {

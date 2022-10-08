@@ -1,4 +1,3 @@
-
 import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,7 +19,7 @@ public class Controller {
 
 
     @FXML
-     Button butt = new Button();
+     Button butt;
 
     protected HashMap<Integer, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
@@ -166,8 +165,7 @@ public class Controller {
         try (Stream<String> lines = Files.lines(tripFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!firstLine.equals("route_id,agency_id,route_short_name,route_long_name," +
-                    "route_desc,route_type,route_url,route_color,route_text_color")){
+            if (!firstLine.equals("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id")){
 
                 System.out.println("Unknown formatting encountered: Trips");
             }
@@ -241,6 +239,7 @@ public class Controller {
                             reader.next(), reader.next(), reader.nextInt(),
                             reader.nextInt(), reader.nextInt(), reader.nextInt());
                     routes.put(route.getRouteID(), route);
+                    System.out.println("Imported route: " + route);
                 } catch (CSVReader.EndOfStringException | NumberFormatException e){
                     System.out.println("Line " + index + " (Routes) is not formatted correctly, skipping");
                 }
