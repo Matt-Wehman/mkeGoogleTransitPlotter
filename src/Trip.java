@@ -1,97 +1,110 @@
 import java.util.HashMap;
 
 /**
+ * This is the Trip class. Most notably, it has a HashMap of StopTimes. 
  * @author czerkisi
  * @version 1.0
  * @created 05-Oct-2022 12:59:53 PM
  */
 public class Trip {
 
-	private int blockID;
-	private int directionID;
-	private String routeID;
-	private String serviceID;
-	private String shapeID;
-	private HashMap<Integer, StopTime> StopTimes = new HashMap<>();
-	private String tripHeadSign;
-	private String tripID;
+    private int blockID;
+    private int directionID;
+    private String routeID;
+    private String serviceID;
+    private String shapeID;
+    private HashMap<Integer, StopTime> stopTimes = new HashMap<>();
+    private String tripHeadSign;
+    private String tripID;
 
-	public void setBlockID(int blockID) {
-		this.blockID = blockID;
-	}
+    public void setBlockID(int blockID) {
+        this.blockID = blockID;
+    }
 
-	public void setDirectionID(int directionID) {
-		this.directionID = directionID;
-	}
+    public void setDirectionID(int directionID) {
+        this.directionID = directionID;
+    }
 
-	public void setRouteID(String routeID) {
-		this.routeID = routeID;
-	}
+    public void setRouteID(String routeID) {
+        this.routeID = routeID;
+    }
 
-	public void setServiceID(String serviceID) {
-		this.serviceID = serviceID;
-	}
+    public void setServiceID(String serviceID) {
+        this.serviceID = serviceID;
+    }
 
-	public void setShapeID(String shapeID) {
-		this.shapeID = shapeID;
-	}
+    public void setShapeID(String shapeID) {
+        this.shapeID = shapeID;
+    }
 
-	public void setTripHeadSign(String tripHeadSign) {
-		this.tripHeadSign = tripHeadSign;
-	}
+    public void setTripHeadSign(String tripHeadSign) {
+        this.tripHeadSign = tripHeadSign;
+    }
 
-	public void setTripID(String tripID) {
-		this.tripID = tripID;
-	}
+    public void setTripID(String tripID) {
+        this.tripID = tripID;
+    }
 
-	public int getBlockID() {
-		return blockID;
-	}
+    public int getBlockID() {
+        return blockID;
+    }
 
-	public int getDirectionID() {
-		return directionID;
-	}
+    public int getDirectionID() {
+        return directionID;
+    }
 
-	public String getRouteID() {
-		return routeID.replaceAll("\\s", "");
-	}
+    public String getRouteID() {
+        return routeID.replaceAll("\\s", "");
+    }
 
-	public String getServiceID() {
-		return serviceID;
-	}
+    public String getServiceID() {
+        return serviceID;
+    }
 
-	public String getShapeID() {
-		return shapeID;
-	}
+    public String getShapeID() {
+        return shapeID;
+    }
 
-	public HashMap<Integer, StopTime> getStopTimes() {
-		return StopTimes;
-	}
+    public HashMap<Integer, StopTime> getStopTimes() {
+        return stopTimes;
+    }
 
-	public String getTripHeadSign() {
-		return tripHeadSign;
-	}
+    public String getTripHeadSign() {
+        return tripHeadSign;
+    }
 
-	public String getTripID() {
-		return tripID;
-	}
+    public String getTripID() {
+        return tripID;
+    }
 
-	public Trip(String routeID, String serviceID, String tripID, String tripHeadSign, int directionID, int blockID, String shapeID) {
-		this.blockID = blockID;
-		this.directionID = directionID;
-		this.routeID = routeID;
-		this.serviceID = serviceID;
-		this.shapeID = shapeID;
-		this.tripHeadSign = tripHeadSign;
-		this.tripID = tripID;
-	}
+    /**
+     * Creates an instance of Trip Object
+     * @param routeID
+     * @param serviceID
+     * @param tripID
+     * @param tripHeadSign
+     * @param directionID
+     * @param blockID
+     * @param shapeID
+     */
+    public Trip(String routeID, String serviceID, String tripID, String tripHeadSign, int directionID, int blockID, String shapeID) {
+        this.blockID = blockID;
+        this.directionID = directionID;
+        this.routeID = routeID;
+        this.serviceID = serviceID;
+        this.shapeID = shapeID;
+        this.tripHeadSign = tripHeadSign;
+        this.tripID = tripID;
+    }
 
-	/**
-	 * 
-	 * @param newTrip
-	 */
-	public boolean update(Trip newTrip){
-		return false;
-	}
+    /**
+     * Takes in a new trip object and updates the old one
+     * This method has not been implemented yet
+     * @param newTrip
+     * @return boolean
+     */
+    public boolean update(Trip newTrip) {
+        return false;
+    }
 
 }
