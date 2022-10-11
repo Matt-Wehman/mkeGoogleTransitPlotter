@@ -6,6 +6,9 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
+/**
+ * Starts the GUI
+ */
 public class Main extends Application {
     /**
      * Width for JavaFX Scene
