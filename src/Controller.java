@@ -17,7 +17,6 @@ import javafx.stage.FileChooser;
  */
 public class Controller {
 
-
     @FXML
      Button butt;
 

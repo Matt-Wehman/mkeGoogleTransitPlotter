@@ -11,10 +11,10 @@ public class Tester {
     public void test() {
         Controller c = new Controller();
         ArrayList<File> files = new ArrayList<>();
-        files.add(new File("./GTFSFiles/routes.txt"));
-        files.add(new File("./GTFSFiles/stops.txt"));
-        files.add(new File("./GTFSFiles/trips.txt"));
-        files.add(new File("./GTFSFiles/stop_times.txt"));
+        files.add(new File("./se-lab2030/GTFSFiles/routes.txt"));
+        files.add(new File("./se-lab2030/GTFSFiles/stops.txt"));
+        files.add(new File("./se-lab2030/GTFSFiles/trips.txt"));
+        files.add(new File("./se-lab2030/GTFSFiles/stop_times.txt"));
         c.importFiles(files);
         Assert.assertEquals(c.allStops.size(), 5392);
         Assert.assertEquals(c.routes.size(), 62);
