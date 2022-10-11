@@ -6,6 +6,10 @@ import org.junit.Test;
 import java.io.File;
 import java.util.ArrayList;
 
+/**
+ * This is the Testing class that is responsible for checking whether or not the import
+ * methods worked correctly
+ */
 public class Tester {
     @Test
     public void test() {
