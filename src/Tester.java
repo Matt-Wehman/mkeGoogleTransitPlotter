@@ -1,4 +1,9 @@
-
+/**
+ * This class handles the methods from the GUI
+ * @author czerkisi
+ * @version 1.0
+ * @created 05-Oct-2022 12:59:52 PM
+ */
 
 import org.junit.Assert;
 import org.junit.Test;
