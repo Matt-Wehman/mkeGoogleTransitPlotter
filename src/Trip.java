@@ -1,7 +1,7 @@
 import java.util.HashMap;
 
 /**
- * This is the Trip class. Most notably, it has a HashMap of StopTimes. 
+ * This is the Trip class. Most notably, it has a HashMap of StopTimes.
  * @author czerkisi
  * @version 1.0
  * @created 05-Oct-2022 12:59:53 PM
