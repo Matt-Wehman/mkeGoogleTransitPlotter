@@ -1,6 +1,7 @@
 import java.util.HashMap;
 
 /**
+ * This is the Route class and it is the path which a bus will take
  * @author czerkisi
  * @version 1.0
  * @created 05-Oct-2022 12:59:52 PM
@@ -19,6 +20,18 @@ public class Route {
     private HashMap<Integer, Stop> stops = new HashMap<>();
     private HashMap<String, Trip> trips = new HashMap<>();
 
+    /**
+     * Creates an instance of a Route
+     * @param routeID
+     * @param agencyID
+     * @param routeShortName
+     * @param routeLongName
+     * @param routeDesc
+     * @param routeType
+     * @param routeURL
+     * @param routeColor
+     * @param routeTextColor
+     */
     public Route(String routeID, String agencyID, String routeShortName, String routeLongName, String routeDesc, int routeType, int routeURL, int routeColor, int routeTextColor) {
         try {
             this.agencyID = agencyID;
@@ -120,7 +133,10 @@ public class Route {
     }
 
     /**
+     * This takes in a new Route in place of the old one
+     * This method has not been implemented yet
      * @param newRoute
+     * @return boolean
      */
     public boolean update(Route newRoute) {
         return false;

@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 
 /**
+ * This class handles the methods from the GUI
  * @author czerkisi
  * @version 1.0
  * @created 05-Oct-2022 12:59:52 PM
@@ -24,49 +25,75 @@ public class Controller {
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
 
+    /**
+     * Creates Controller instance
+     */
     public Controller() {
 
     }
 
     /**
+     * Gets all the stops in a route by searching the routeID
+     * This method has not been implemented
      * @param routeID
+     * @return ArrayList<Integer>
      */
     public ArrayList<Integer> allStopsInRoute(int routeID) {
         return null;
     }
 
     /**
+     * Finds the average speed of a trip if given the tripID
+     * This method has not been implemented
      * @param tripID
+     * @return int
      */
     public int avgSpeed(int tripID) {
         return 0;
     }
 
+    /**
+     * Changes the time of a Stop's Arrival/Departure time
+     * This method has not been implemented
+     * @return boolean
+     */
     public boolean changeStopArivalDeparture() {
         return false;
     }
 
     /**
+     * Changes the location of a stop given stopID
+     * This method has not been implemented
      * @param latitude
      * @param longitude
      * @param stopID
+     * @return boolean
      */
     public boolean changeStopLocation(int latitude, int longitude, int stopID) {
         return false;
     }
 
     /**
+     * Displays the total distance of a route
+     * This method has not been implemented
      * @param routeID
+     * @return double
      */
     public double displayDistance(int routeID) {
         return 0;
     }
 
+    /**
+     * Exports the GTFS files to the desired place
+     * This method has not been implemented
+     * @return
+     */
     public boolean export() {
         return false;
     }
 
     /**
+     * Imports the GTFS files and calls helper methods to populate entity objects
      * @param listOfFiles
      */
     public boolean importFiles(ArrayList<File> listOfFiles) {
@@ -128,6 +155,10 @@ public class Controller {
         return true;
     }
 
+    /**
+     * Populates the StopTimes
+     * @param stopTimesFile
+     */
     private void importStopTimes(File stopTimesFile) {
         int index = 0;
         try (Stream<String> lines = Files.lines(stopTimesFile.toPath())){
@@ -159,6 +190,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Populates the Trips
+     * @param tripFile
+     */
     private void importTrips(File tripFile) {
         int index = 0;
         try (Stream<String> lines = Files.lines(tripFile.toPath())){
@@ -193,6 +228,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Populates the Stops
+     * @param stopFile
+     */
     private void importStops(File stopFile) {
         int index = 1;
         try (Stream<String> lines = Files.lines(stopFile.toPath())){
@@ -220,6 +259,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Populates the routes
+     * @param routeFile
+     */
     private void importRoutes(File routeFile) {
         int index = 1;
         try (Stream<String> lines = Files.lines(routeFile.toPath())){
@@ -250,6 +293,11 @@ public class Controller {
 
     }
 
+
+    /**
+     * Allows user to select multiple files
+     * @param actionEvent
+     */
     @FXML
     public void importHelper(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
@@ -264,10 +312,12 @@ public class Controller {
         }
         importFiles(files);
         //epic
-        }
+    }
 
 
-    /**
+     /**
+     * Finds the next trip at a certain stop given the time
+     * This method has not been implemented
      * @param stopID
      * @param currentTime
      */
@@ -276,86 +326,122 @@ public class Controller {
     }
 
     /**
+     * Plots the current trajectory of the bus
+     * This method has not been implemented
      * @param tripID
+     * @return boolean
      */
     public boolean plotBus(int tripID) {
         return false;
     }
 
     /**
+     * Plots the stops on a given route
+     * This method has not been implemented
      * @param routeID
+     * @return boolean
      */
     public boolean plotStops(int routeID) {
         return false;
     }
 
     /**
+     * finds all routes that contain a certian stop
+     * This method has not been implemented
      * @param stopID
+     * @return ArrayList<Integer>
      */
     public ArrayList<Integer> routesContainingStop(int stopID) {
         return null;
     }
 
     /**
+     * finds all the future trips given a routeID
+     * This method has not been implemented
      * @param routeID
+     * @return LinkedList<Integer>
      */
     public LinkedList<Integer> tripsInFuture(int routeID) {
         return null;
     }
 
     /**
+     * Finds all the trips at a stop
+     * This method has not been implemented
      * @param stopID
+     * @return int
      */
     public int tripsPerStop(int stopID) {
         return 0;
     }
 
     /**
+     * Updates all stoptimes in a trip
+     * This method has not been implemented
      * @param stopID
+     * @return boolean
      */
     public boolean updateAllStopTimes(int stopID) {
         return false;
     }
 
     /**
+     * Updates a group of stoptimes
+     * This method has not been implemented
      * @param stopTime
      * @param attribute
      * @param data
+     * @return boolean
      */
     public boolean updateGroupStopTime(StopTime stopTime, String attribute, int data) {
         return false;
     }
 
     /**
+     * Updates multiple stoptimes given an List of stoptimes
+     * This method has not been implemented
      * @param stopTimes
+     * @return boolean
      */
     public boolean updateMultipleStopTimes(ArrayList<StopTime> stopTimes) {
         return false;
     }
 
     /**
+     * Updates a route, certain attributes of the route may be different
+     * This method has not been implemented
      * @param route
+     * @return boolean
      */
     public boolean updateRoute(Route route) {
         return false;
     }
 
     /**
+     * Updates a stop, certain attributes of the stops may be different
+     * This method has not been implemented
      * @param stop
+     * @return boolean
      */
     public boolean updateStop(Stop stop) {
         return false;
     }
 
     /**
+     * Updates a StopTime, certain attributes of the StopTime may be different
+     * This method has not been implemented
      * @param stopTime
+     * @return boolean
      */
     public boolean updateStopTime(StopTime stopTime) {
         return false;
     }
 
     /**
+     * Updates a Trip, certain attributes of the Trip may be different
+     * This method has not been implemented
      * @param trip
+     * @return boolean
      */
     public boolean updateTrip(Trip trip) {
         return false;

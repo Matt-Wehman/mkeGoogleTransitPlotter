@@ -2,7 +2,12 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
+/**
+ * This class handles the calls from the import methods in the controller
+ * @author czerkisi
+ * @version 1.0
+ * @created 05-Oct-2022 12:59:52 PM
+ */
 public class CSVReader {
     String line;
     boolean hasNext = true;
@@ -11,6 +16,11 @@ public class CSVReader {
         this.line = line;
     }
 
+    /**
+     * Gets the next parameter after ','
+     * @return String
+     * @throws EndOfStringException
+     */
     public String next() throws EndOfStringException {
         if (!hasNext){
             throw new EndOfStringException("There is no more text to read");
@@ -26,27 +36,56 @@ public class CSVReader {
         return ret;
     }
 
+    /**
+     * Gets the next Int
+     * @return int
+     * @throws EndOfStringException
+     * @throws NumberFormatException
+     */
     public int nextInt() throws EndOfStringException, NumberFormatException {
         String ret = next();
         return ret.length() > 0 ? Integer.parseInt(ret): -1;
     }
 
+    /**
+     * Gets the next Time
+     * @return Time
+     * @throws EndOfStringException
+     * @throws ParseException
+     */
     public Time nextTime() throws EndOfStringException, ParseException {
         DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         return new Time(formatter.parse(next()).getTime());
     }
 
+    /**
+     * gets the next long
+     * @return long
+     * @throws EndOfStringException
+     */
     public long nextLong() throws EndOfStringException {
         String ret = next();
         return ret.length() > 0 ? Long.parseLong(ret): -1;
     }
 
+    /**
+     * Gets the nextDouble
+     * @return double
+     * @throws EndOfStringException
+     */
     public double nextDouble() throws EndOfStringException {
         String ret = next();
         return ret.length() > 0 ? Double.parseDouble(ret): -1;
     }
 
-    public class EndOfStringException extends Exception{
+    /**
+     * Inner class EndOfStringException
+     */
+    public class EndOfStringException extends Exception {
+        /**
+         * EndOfStringException
+         * @param errorMessage
+         */
         public EndOfStringException(String errorMessage){
             super(errorMessage);
         }

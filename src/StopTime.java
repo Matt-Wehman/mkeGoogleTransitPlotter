@@ -9,9 +9,9 @@ public class StopTime {
 
     private Time arrivalTime;
     private Time departureTime;
-    private int drop_off_type;
-    private int pickup_type;
-    private int stopHeadsign;
+    private int dropOffType;
+    private int pickupType;
+    private int stopHeadSign;
     private int stopID;
     private int stopSequence;
     private String tripID;
@@ -32,28 +32,28 @@ public class StopTime {
         this.departureTime = departureTime;
     }
 
-    public int getDrop_off_type() {
-        return drop_off_type;
+    public int getDropOffType() {
+        return dropOffType;
     }
 
-    public void setDrop_off_type(int drop_off_type) {
-        this.drop_off_type = drop_off_type;
+    public void setDropOfType(int dropOffType) {
+        this.dropOffType = dropOffType;
     }
 
-    public int getPickup_type() {
-        return pickup_type;
+    public int getPickupType() {
+        return pickupType;
     }
 
-    public void setPickup_type(int pickup_type) {
-        this.pickup_type = pickup_type;
+    public void setPickupType(int pickupType) {
+        this.pickupType = pickupType;
     }
 
-    public int getStopHeadsign() {
-        return stopHeadsign;
+    public int getStopHeadSign() {
+        return stopHeadSign;
     }
 
-    public void setStopHeadsign(int stopHeadsign) {
-        this.stopHeadsign = stopHeadsign;
+    public void setStopHeadSign(int stopHeadSign) {
+        this.stopHeadSign = stopHeadSign;
     }
 
     public int getStopID() {
@@ -80,18 +80,35 @@ public class StopTime {
         this.tripID = tripID;
     }
 
-    public StopTime(String tripID, Time arrivalTime, Time departureTime, int stopID, int stopSequence, int stopHeadsign, int pickupType, int dropOffType) {
+    /**
+     * Creates an instance of a StopTime Object
+     * @param tripID
+     * @param arrivalTime
+     * @param departureTime
+     * @param stopID
+     * @param stopSequence
+     * @param stopHeadSign
+     * @param pickupType
+     * @param dropOffType
+     */
+    public StopTime(String tripID, Time arrivalTime, Time departureTime, int stopID, int stopSequence, int stopHeadSign, int pickupType, int dropOffType) {
+        this.tripID = tripID;
         this.arrivalTime = arrivalTime;
         this.departureTime = departureTime;
-        this.drop_off_type = dropOffType;
-        this.pickup_type = pickupType;
-        this.stopHeadsign = stopHeadsign;
         this.stopID = stopID;
         this.stopSequence = stopSequence;
-        this.tripID = tripID;
+        this.stopHeadSign = stopHeadSign;
+        this.pickupType = pickupType;
+        this.dropOffType = dropOffType;
+
+
+
+
     }
 
     /**
+     * Replaces StopTime object in a Trip with a new StopTime object. This essentially updates it.
+     * This method has not been implemented yet
      * @param newStopTime
      */
     public boolean update(StopTime newStopTime) {
