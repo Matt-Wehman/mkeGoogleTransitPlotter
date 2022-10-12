@@ -135,60 +135,63 @@ public class Controller {
         }
 
         System.out.println("all valid files imported");
-
-        /*for (File file: listOfFiles){
-            if (file.getName().equals())
-        }
-        for (int i = 0; i < listOfFiles.size(); i++){
-
-            ArrayList<String> lines = new ArrayList<>();
-
-
-            try {
-                scanner = new Scanner(listOfFiles.get(i));
-                while (scanner.hasNextLine()){
-
-                }
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }*/
         return true;
     }
 
     /**
-     * Populates the StopTimes
-     * @param stopTimesFile
+     * Populates the StopTimes in each Trip
+     * @param stopTimesFile the File to read from
+     * @author Ian Czerkis
      */
     private void importStopTimes(File stopTimesFile) {
-        int index = 0;
-        try (Stream<String> lines = Files.lines(stopTimesFile.toPath())){
+        try (Stream<String> lines = Files.lines(stopTimesFile.toPath())) {
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!firstLine.equals("trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
-                    "stop_headsign,pickup_type,drop_off_type")){
-
-                System.out.println("Unknown formatting encountered: StopTimes");
-            }
-            while (it.hasNext()){
-                CSVReader reader = new CSVReader(it.next());
-                try {
-                    index++;
-                    StopTime stopTime = new StopTime(
-                            reader.next(), reader.nextTime(), reader.nextTime(),
-                            reader.nextInt(), reader.nextInt(), reader.nextInt(),
-                            reader.nextInt(), reader.nextInt());
-
-                    Trip trip = trips.get(stopTime.getTripID());
-                    trip.getStopTimes().put(stopTime.getStopID(), stopTime);
-                    reader.checkEndOfLine();
-                } catch (CSVReader.EndOfStringException | NumberFormatException | ParseException e){
-                    System.out.println("Line " + index + " (StopTimes) is not formatted correctly, skipping");
+            if (validateFirstStopTimeLine(firstLine)) {
+                while (it.hasNext()) {
+                    StopTime stopTime = validateStopTimeLine(it.next());
+                    if (!Objects.equals(stopTime, null)) {
+                        Trip trip = trips.get(stopTime.getTripID());
+                        trip.getStopTimes().put(stopTime.getStopID(), stopTime);
+                    }
                 }
             }
         } catch (IOException e){
-            System.out.println("Error finding file, no Trips were imported");
+            System.out.println("Error finding Stop Time File");
         }
+    }
+
+    /**
+     * creates a StopTime from a single line in the StopTime file
+     * @param line the line to parse
+     * @return the StopTime object if the file is valid or null if the file is invalid
+     * @author Ian Czerkis
+     */
+    public static StopTime validateStopTimeLine(String line) {
+        StopTime stopTime;
+        try {
+            CSVReader reader = new CSVReader(line);
+            stopTime = new StopTime(
+                    reader.next(), reader.nextTime(), reader.nextTime(),
+                    reader.nextInt(), reader.nextInt(), reader.nextInt(),
+                    reader.nextInt(), reader.nextInt());
+
+            reader.checkEndOfLine();
+        } catch (CSVReader.EndOfStringException | NumberFormatException | ParseException e) {
+            return null;
+        }
+        return stopTime;
+    }
+
+    /**
+     * validates the first line of the StopTime file
+     * @param firstLine the line to parse
+     * @return True if the line is valid False if it is invalid
+     * @auther Ian Czerkis
+     */
+    public static boolean validateFirstStopTimeLine(String firstLine) {
+        return firstLine.equals("trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
+                "stop_headsign,pickup_type,drop_off_type");
     }
 
     /**
@@ -290,36 +293,64 @@ public class Controller {
 
     /**
      * Populates the routes
-     * @param routeFile
+     * @param routeFile the file that contains the route lines
      */
     private void importRoutes(File routeFile) {
-        int index = 1;
         try (Stream<String> lines = Files.lines(routeFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!firstLine.equals("route_id,agency_id,route_short_name,route_long_name," +
-                    "route_desc,route_type,route_url,route_color,route_text_color")){
-                System.out.println("Unknown formatting encountered: Routes");
-            }
-            while (it.hasNext()){
-                CSVReader reader = new CSVReader(it.next());
-                try {
-                    index++;
-                    Route route = new Route(
-                            reader.next(), reader.next(), reader.next(),
-                            reader.next(), reader.next(), reader.nextInt(),
-                            reader.nextInt(), reader.nextInt(), reader.nextInt());
-                    routes.put(route.getRouteID(), route);
-                    reader.checkEndOfLine();
-                } catch (CSVReader.EndOfStringException | NumberFormatException e){
-                    System.out.println("Line " + index + " (Routes) is not formatted correctly, skipping");
+            if(validateRouteHeader(firstLine)){
+                while (it.hasNext()){
+                    Route route = validateRouteLine(it.next());
+                    if(!Objects.equals(route, null)){
+                        routes.put(route.getRouteID(), route);
+                    }
                 }
-
             }
         } catch (IOException e){
             System.out.println("Error finding file, no Routes were imported");
         }
 
+    }
+
+
+    /**
+     * validates that the header for the route file is formatted correctly
+     * @param header string header
+     * @return true if header is valid, false if not
+     * @author Chrstian Basso
+     */
+    public boolean validateRouteHeader(String header) {
+        if (!header.equals("route_id,agency_id,route_short_name,route_long_name," +
+                "route_desc,route_type,route_url,route_color,route_text_color")){
+            System.out.println("Unknown formatting encountered: Routes");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+    /**
+     * Validates line that represents a route object
+     * @param line string of parameters
+     * @return the object created from the parameters, or null if an exception is thrown
+     * @author Christian B
+     */
+    public Route validateRouteLine(String line) {
+        Route route;
+        CSVReader reader = new CSVReader(line);
+        try {
+            route = new Route(
+                    reader.next(), reader.next(), reader.next(),
+                    reader.next(), reader.next(), reader.nextInt(),
+                    reader.nextInt(), reader.nextInt(), reader.nextInt());
+            routes.put(route.getRouteID(), route);
+            reader.checkEndOfLine();
+        } catch (CSVReader.EndOfStringException | NumberFormatException e){
+            return null;
+        }
+        return route;
     }
 
 
