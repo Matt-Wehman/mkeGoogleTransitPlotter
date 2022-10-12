@@ -11,7 +11,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library name="JUnit4">
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.13.1/junit-4.13.1.jar!/" />
@@ -22,7 +22,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="lib" level="application" />
-    <orderEntry type="module-library" scope="TEST">
+    <orderEntry type="module-library" exported="" scope="TEST">
       <library name="JUnit5.7.0">
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter/5.7.0/junit-jupiter-5.7.0.jar!/" />
