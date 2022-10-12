@@ -207,10 +207,14 @@ public class Controller {
             }
             while (it.hasNext()) {
                 String tripLine = it.next();
-                index++;
-                Trip trip = validateTripLines(tripLine, index);
+                Trip trip = validateTripLines(tripLine);
                 // Add trip to corresponding route
-                if (!Objects.equals(trip,null)){
+                if(!Objects.equals(null, trip)) {
+                if(!routes.containsKey(trip.getRouteID())){
+                    System.out.println("Route " + trip.getRouteID()+ " was mentioned on line: "+ index + " but not found");
+                } else {
+                    routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
+                }
                     trips.put(trip.getTripID(), trip);
                 }
             }
@@ -225,31 +229,25 @@ public class Controller {
      * @return boolean
      * @Author Matt Wehman
      */
-    public boolean validateTripHeader(String header){
+    public static boolean validateTripHeader(String header){
         return header.equals("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id");
     }
 
     /**
      * Validates each line of trip file.
      * @param tripLine
-     * @param index
      * @return trip of no exceptions are thrown and null if line is invalid
      * @Author Matthew Wehman
      */
-    public Trip validateTripLines(String tripLine, int index) {
+    public static Trip validateTripLines(String tripLine) {
         try {
         CSVReader reader = new CSVReader(tripLine);
         Trip trip = new Trip(
                 reader.next(), reader.next(), reader.next(),
-                reader.next(), reader.nextInt(), reader.nextInt(),
+                reader.next(), Integer.parseInt(reader.next()), Integer.parseInt(reader.next()),
                 reader.next());
-        if(!routes.containsKey(trip.getRouteID())){
-            System.out.println("Route " + trip.getRouteID()+ " was mentioned on line: "+ index + " but not found");
-        } else {
-            routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
-        }
         reader.checkEndOfLine();
-        return trip;
+            return trip;
         } catch (CSVReader.EndOfStringException | NumberFormatException e){
             return null;
         }

@@ -79,7 +79,7 @@ public class CSVReader {
     }
 
     public void checkEndOfLine() throws EndOfStringException {
-        if (line.length()>0){
+        if (line.length() > 0){
             throw new EndOfStringException("The line is too long");
         }
     }
