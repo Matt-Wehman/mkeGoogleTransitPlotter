@@ -1,8 +1,8 @@
-import junit.framework.TestCase;
-import org.junit.Assert;
-import sr
 
-public class ControllerTest extends TestCase {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+public class ControllerTest {
 
 
     /**
@@ -10,7 +10,6 @@ public class ControllerTest extends TestCase {
      * @author Christian Basso
      */
     public void testValidateRouteHeader() {
-
     }
 
     /**
@@ -21,16 +20,24 @@ public class ControllerTest extends TestCase {
     }
 
     /**
-     * Validates a line in the StopTime file
-     * @author Ian Czerkis
+     * Tests Stop Header Lines
+     * @author Patrick McDonald
      */
-    public void testValidateStopTimeLine() {
-
+    @Test
+    public void validateStopHeaderLines(){
+        Assertions.assertTrue(Controller.validateStopHeader("stop_id,stop_name,stop_desc,stop_lat,stop_lon"));
     }
 
     /**
-     * validates the first line in the StopTime file
+     * Validates individual Stop Lines
+     * @author Patrick McDonald
      */
-    public void testValidateFirstStopTimeLine() {
-    }
+//    public void validateStopBodyLines(){
+//        Assertions.assertEquals(,Controller.validateLinesInStop(
+//                "1801,S92 & ORCHARD #1801,,43.0138967,-88.0272162"));
+//        Assertions.assertNull(Controller.validateLinesInStop(
+//                "1801,S92 & ORCHARD #1801,,43.0138967,"));
+//    }
+
+
 }

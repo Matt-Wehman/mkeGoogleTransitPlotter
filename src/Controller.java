@@ -287,7 +287,7 @@ public class Controller {
      * @return boolean
      * @author Patrick McDonald
      */
-    public boolean validateStopHeader(String firstLine){
+    public static boolean validateStopHeader(String firstLine){
         return firstLine.equals("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
     }
 
@@ -298,7 +298,7 @@ public class Controller {
      * @return stop
      * @author Patrick McDonald
      */
-    public Stop validateLinesInStop(String stopLine) {
+    public static Stop validateLinesInStop(String stopLine) {
         CSVReader reader = new CSVReader(stopLine);
         Stop stop;
         try {
