@@ -18,7 +18,6 @@ import javafx.stage.FileChooser;
  */
 public class Controller {
 
-
     @FXML
      Button butt;
 
@@ -203,35 +202,59 @@ public class Controller {
         try (Stream<String> lines = Files.lines(tripFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!firstLine.equals("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id")){
-
+            if (!validateTripHeader(firstLine)){
                 System.out.println("Unknown formatting encountered: Trips");
             }
-            while (it.hasNext()){
-                CSVReader reader = new CSVReader(it.next());
-                try {
-                    index++;
-                    Trip trip = new Trip(
-                            reader.next(), reader.next(), reader.next(),
-                            reader.next(), reader.nextInt(), reader.nextInt(),
-                            reader.next());
-                    // Add trip to corresponding route
-                    if(!routes.containsKey(trip.getRouteID())){
-                        System.out.println("Route " + trip.getRouteID()+ " was mentioned on line: "+index + " but not found");
-                    } else {
-                        routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
-                    }
-                    // Add trip to HashMap of all trips
+            while (it.hasNext()) {
+                String tripLine = it.next();
+                index++;
+                Trip trip = validateTripLines(tripLine, index);
+                // Add trip to corresponding route
+                if (!Objects.equals(trip,null)){
                     trips.put(trip.getTripID(), trip);
-                    reader.checkEndOfLine();
-                } catch (CSVReader.EndOfStringException | NumberFormatException e){
-                    System.out.println("Line " + index + " (Trips) is not formatted correctly, skipping");
                 }
             }
         } catch (IOException e){
             System.out.println("Error finding file, no Trips were imported");
         }
     }
+
+    /**
+     * Checks if Trip header is valid against known valid header.
+     * @param header trip header
+     * @return boolean
+     * @Author Matt Wehman
+     */
+    public boolean validateTripHeader(String header){
+        return header.equals("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id");
+    }
+
+    /**
+     * Validates each line of trip file.
+     * @param tripLine
+     * @param index
+     * @return trip of no exceptions are thrown and null if line is invalid
+     * @Author Matthew Wehman
+     */
+    public Trip validateTripLines(String tripLine, int index) {
+        try {
+        CSVReader reader = new CSVReader(tripLine);
+        Trip trip = new Trip(
+                reader.next(), reader.next(), reader.next(),
+                reader.next(), reader.nextInt(), reader.nextInt(),
+                reader.next());
+        if(!routes.containsKey(trip.getRouteID())){
+            System.out.println("Route " + trip.getRouteID()+ " was mentioned on line: "+ index + " but not found");
+        } else {
+            routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
+        }
+        reader.checkEndOfLine();
+        return trip;
+        } catch (CSVReader.EndOfStringException | NumberFormatException e){
+            return null;
+        }
+    }
+
 
     /**
      * Populates the Stops
@@ -242,27 +265,53 @@ public class Controller {
         try (Stream<String> lines = Files.lines(stopFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!firstLine.equals("stop_id,stop_name,stop_desc,stop_lat,stop_lon")){
+            if (!validateStopHeader(firstLine)){
                 System.out.println("Unknown formatting encountered: Stops");
             }
             while (it.hasNext()){
-                CSVReader reader = new CSVReader(it.next());
-                try {
-                    index++;
-                    Stop stop = new Stop(
-                            reader.nextInt(), reader.next(), reader.next(),
-                            reader.nextDouble(), reader.nextDouble());
+                String stopLine = it.next();
+                Stop stop = validateLinesInStop(stopLine);
+                if(!Objects.equals(null, stop)) {
                     allStops.put(stop.getStopID(), stop);
-                    reader.checkEndOfLine();
-                } catch (CSVReader.EndOfStringException | NumberFormatException e){
-                    System.out.println("Line " + index + " (Stops) is not formatted correctly, skipping");
-                    System.out.println(e.getLocalizedMessage());
-                    System.out.println(e.getMessage());
                 }
+
             }
         } catch (IOException e){
             System.out.println("Error finding file, no Stops were imported");
         }
+    }
+
+    /**
+     * This method validates the Stop headerline and makes sure it follows the correct syntax
+     * @param firstLine
+     * @return boolean
+     * @author Patrick McDonald
+     */
+    public boolean validateStopHeader(String firstLine){
+        return firstLine.equals("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
+    }
+
+    /**
+     * This method validates each individual Stop and makes sure it is formatted correctly
+     * or else it returns a null
+     * @param stopLine
+     * @return stop
+     * @author Patrick McDonald
+     */
+    public Stop validateLinesInStop(String stopLine) {
+        CSVReader reader = new CSVReader(stopLine);
+        Stop stop;
+        try {
+            stop = new Stop(
+                    reader.nextInt(), reader.next(), reader.next(),
+                    reader.nextDouble(), reader.nextDouble());
+            reader.checkEndOfLine();
+        } catch (CSVReader.EndOfStringException | NumberFormatException e){
+            System.out.println(e.getLocalizedMessage());
+            System.out.println(e.getMessage());
+            return null;
+        }
+        return stop;
     }
 
     /**
