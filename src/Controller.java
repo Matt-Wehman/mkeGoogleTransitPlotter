@@ -58,7 +58,7 @@ public class Controller {
      * This method has not been implemented
      * @return boolean
      */
-    public boolean changeStopArivalDeparture() {
+    public boolean changeStopArrivalDeparture() {
         return false;
     }
 
@@ -173,7 +173,7 @@ public class Controller {
             CSVReader reader = new CSVReader(line);
             stopTime = new StopTime(
                     reader.next(), reader.nextTime(), reader.nextTime(),
-                    reader.nextInt(), reader.nextInt(), reader.nextInt(),
+                    reader.nextInt(), reader.nextInt(), reader.next(),
                     reader.nextInt(), reader.nextInt());
 
             reader.checkEndOfLine();
