@@ -180,7 +180,7 @@ public class Controller {
 
                     Trip trip = trips.get(stopTime.getTripID());
                     trip.getStopTimes().put(stopTime.getStopID(), stopTime);
-
+                    reader.checkEndOfLine();
                 } catch (CSVReader.EndOfStringException | NumberFormatException | ParseException e){
                     System.out.println("Line " + index + " (StopTimes) is not formatted correctly, skipping");
                 }
@@ -219,6 +219,7 @@ public class Controller {
                     }
                     // Add trip to HashMap of all trips
                     trips.put(trip.getTripID(), trip);
+                    reader.checkEndOfLine();
                 } catch (CSVReader.EndOfStringException | NumberFormatException e){
                     System.out.println("Line " + index + " (Trips) is not formatted correctly, skipping");
                 }
@@ -248,6 +249,7 @@ public class Controller {
                             reader.nextInt(), reader.next(), reader.next(),
                             reader.nextDouble(), reader.nextDouble());
                     allStops.put(stop.getStopID(), stop);
+                    reader.checkEndOfLine();
                 } catch (CSVReader.EndOfStringException | NumberFormatException e){
                     System.out.println("Line " + index + " (Stops) is not formatted correctly, skipping");
                     System.out.println(e.getLocalizedMessage());
@@ -281,7 +283,7 @@ public class Controller {
                             reader.next(), reader.next(), reader.nextInt(),
                             reader.nextInt(), reader.nextInt(), reader.nextInt());
                     routes.put(route.getRouteID(), route);
-                    System.out.println("Imported route: " + route);
+                    reader.checkEndOfLine();
                 } catch (CSVReader.EndOfStringException | NumberFormatException e){
                     System.out.println("Line " + index + " (Routes) is not formatted correctly, skipping");
                 }
