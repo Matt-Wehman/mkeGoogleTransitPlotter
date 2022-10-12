@@ -139,8 +139,9 @@ public class Controller {
     }
 
     /**
-     * Populates the StopTimes
-     * @param stopTimesFile
+     * Populates the StopTimes in each Trip
+     * @param stopTimesFile the File to read from
+     * @author Ian Czerkis
      */
     private void importStopTimes(File stopTimesFile) {
         try (Stream<String> lines = Files.lines(stopTimesFile.toPath())) {
@@ -160,6 +161,12 @@ public class Controller {
         }
     }
 
+    /**
+     * creates a StopTime from a single line in the StopTime file
+     * @param line the line to parse
+     * @return the StopTime object if the file is valid or null if the file is invalid
+     * @author Ian Czerkis
+     */
     public static StopTime validateStopTimeLine(String line) {
         StopTime stopTime;
         try {
@@ -176,6 +183,12 @@ public class Controller {
         return stopTime;
     }
 
+    /**
+     * validates the first line of the StopTime file
+     * @param firstLine the line to parse
+     * @return True if the line is valid False if it is invalid
+     * @auther Ian Czerkis
+     */
     public static boolean validateFirstStopTimeLine(String firstLine) {
         return firstLine.equals("trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
                 "stop_headsign,pickup_type,drop_off_type");
