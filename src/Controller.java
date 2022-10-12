@@ -135,24 +135,6 @@ public class Controller {
         }
 
         System.out.println("all valid files imported");
-
-        /*for (File file: listOfFiles){
-            if (file.getName().equals())
-        }
-        for (int i = 0; i < listOfFiles.size(); i++){
-
-            ArrayList<String> lines = new ArrayList<>();
-
-
-            try {
-                scanner = new Scanner(listOfFiles.get(i));
-                while (scanner.hasNextLine()){
-
-                }
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }*/
         return true;
     }
 
@@ -161,34 +143,42 @@ public class Controller {
      * @param stopTimesFile
      */
     private void importStopTimes(File stopTimesFile) {
-        int index = 0;
-        try (Stream<String> lines = Files.lines(stopTimesFile.toPath())){
+        try (Stream<String> lines = Files.lines(stopTimesFile.toPath())) {
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!firstLine.equals("trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
-                    "stop_headsign,pickup_type,drop_off_type")){
-
-                System.out.println("Unknown formatting encountered: StopTimes");
-            }
-            while (it.hasNext()){
-                CSVReader reader = new CSVReader(it.next());
-                try {
-                    index++;
-                    StopTime stopTime = new StopTime(
-                            reader.next(), reader.nextTime(), reader.nextTime(),
-                            reader.nextInt(), reader.nextInt(), reader.nextInt(),
-                            reader.nextInt(), reader.nextInt());
-
-                    Trip trip = trips.get(stopTime.getTripID());
-                    trip.getStopTimes().put(stopTime.getStopID(), stopTime);
-                    reader.checkEndOfLine();
-                } catch (CSVReader.EndOfStringException | NumberFormatException | ParseException e){
-                    System.out.println("Line " + index + " (StopTimes) is not formatted correctly, skipping");
+            if (validateFirstStopTimeLine(firstLine)) {
+                while (it.hasNext()) {
+                    StopTime stopTime = validateStopTimeLine(it.next());
+                    if (!Objects.equals(stopTime, null)) {
+                        Trip trip = trips.get(stopTime.getTripID());
+                        trip.getStopTimes().put(stopTime.getStopID(), stopTime);
+                    }
                 }
             }
         } catch (IOException e){
-            System.out.println("Error finding file, no Trips were imported");
+            System.out.println("Error finding Stop Time File");
         }
+    }
+
+    public static StopTime validateStopTimeLine(String line) {
+        StopTime stopTime;
+        try {
+            CSVReader reader = new CSVReader(line);
+            stopTime = new StopTime(
+                    reader.next(), reader.nextTime(), reader.nextTime(),
+                    reader.nextInt(), reader.nextInt(), reader.nextInt(),
+                    reader.nextInt(), reader.nextInt());
+
+            reader.checkEndOfLine();
+        } catch (CSVReader.EndOfStringException | NumberFormatException | ParseException e) {
+            return null;
+        }
+        return stopTime;
+    }
+
+    public static boolean validateFirstStopTimeLine(String firstLine) {
+        return firstLine.equals("trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
+                "stop_headsign,pickup_type,drop_off_type");
     }
 
     /**
