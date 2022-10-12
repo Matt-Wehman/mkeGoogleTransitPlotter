@@ -239,27 +239,53 @@ public class Controller {
         try (Stream<String> lines = Files.lines(stopFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!firstLine.equals("stop_id,stop_name,stop_desc,stop_lat,stop_lon")){
+            if (!validateStopHeader(firstLine)){
                 System.out.println("Unknown formatting encountered: Stops");
             }
             while (it.hasNext()){
-                CSVReader reader = new CSVReader(it.next());
-                try {
-                    index++;
-                    Stop stop = new Stop(
-                            reader.nextInt(), reader.next(), reader.next(),
-                            reader.nextDouble(), reader.nextDouble());
+                String stopLine = it.next();
+                Stop stop = validateLinesInStop(stopLine);
+                if(!Objects.equals(null, stop)) {
                     allStops.put(stop.getStopID(), stop);
-                    reader.checkEndOfLine();
-                } catch (CSVReader.EndOfStringException | NumberFormatException e){
-                    System.out.println("Line " + index + " (Stops) is not formatted correctly, skipping");
-                    System.out.println(e.getLocalizedMessage());
-                    System.out.println(e.getMessage());
                 }
+
             }
         } catch (IOException e){
             System.out.println("Error finding file, no Stops were imported");
         }
+    }
+
+    /**
+     * This method validates the Stop headerline and makes sure it follows the correct syntax
+     * @param firstLine
+     * @return boolean
+     * @author Patrick McDonald
+     */
+    public boolean validateStopHeader(String firstLine){
+        return firstLine.equals("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
+    }
+
+    /**
+     * This method validates each individual Stop and makes sure it is formatted correctly
+     * or else it returns a null
+     * @param stopLine
+     * @return stop
+     * @author Patrick McDonald
+     */
+    public Stop validateLinesInStop(String stopLine) {
+        CSVReader reader = new CSVReader(stopLine);
+        Stop stop;
+        try {
+            stop = new Stop(
+                    reader.nextInt(), reader.next(), reader.next(),
+                    reader.nextDouble(), reader.nextDouble());
+            reader.checkEndOfLine();
+        } catch (CSVReader.EndOfStringException | NumberFormatException e){
+            System.out.println(e.getLocalizedMessage());
+            System.out.println(e.getMessage());
+            return null;
+        }
+        return stop;
     }
 
     /**
