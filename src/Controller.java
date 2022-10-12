@@ -276,8 +276,9 @@ public class Controller {
             if(validateRouteHeader(firstLine)){
                 while (it.hasNext()){
                     Route route = validateRouteLine(it.next());
-                    routes.put(route.getRouteID(), route);
-
+                    if(!Objects.equals(route, null)){
+                        routes.put(route.getRouteID(), route);
+                    }
                 }
             }
         } catch (IOException e){
