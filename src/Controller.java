@@ -299,8 +299,9 @@ public class Controller {
             if(validateRouteHeader(firstLine)){
                 while (it.hasNext()){
                     Route route = validateRouteLine(it.next());
-                    routes.put(route.getRouteID(), route);
-
+                    if(!Objects.equals(route, null)){
+                        routes.put(route.getRouteID(), route);
+                    }
                 }
             }
         } catch (IOException e){
@@ -314,7 +315,7 @@ public class Controller {
      * validates that the header for the route file is formatted correctly
      * @param header string header
      * @return true if header is valid, false if not
-     * @author Chrstian B
+     * @author Chrstian Basso
      */
     public boolean validateRouteHeader(String header) {
         if (!header.equals("route_id,agency_id,route_short_name,route_long_name," +
