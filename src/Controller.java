@@ -57,7 +57,7 @@ public class Controller {
      * This method has not been implemented
      * @return boolean
      */
-    public boolean changeStopArivalDeparture() {
+    public boolean changeStopArrivalDeparture() {
         return false;
     }
 
@@ -172,7 +172,7 @@ public class Controller {
             CSVReader reader = new CSVReader(line);
             stopTime = new StopTime(
                     reader.next(), reader.nextTime(), reader.nextTime(),
-                    reader.nextInt(), reader.nextInt(), reader.nextInt(),
+                    reader.nextInt(), reader.nextInt(), reader.next(),
                     reader.nextInt(), reader.nextInt());
 
             reader.checkEndOfLine();
@@ -285,7 +285,7 @@ public class Controller {
      * @return boolean
      * @author Patrick McDonald
      */
-    public boolean validateStopHeader(String firstLine){
+    public static boolean validateStopHeader(String firstLine){
         return firstLine.equals("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
     }
 
@@ -296,7 +296,7 @@ public class Controller {
      * @return stop
      * @author Patrick McDonald
      */
-    public Stop validateLinesInStop(String stopLine) {
+    public static Stop validateLinesInStop(String stopLine) {
         CSVReader reader = new CSVReader(stopLine);
         Stop stop;
         try {
@@ -365,10 +365,16 @@ public class Controller {
             route = new Route(
                     reader.next(), reader.next(), reader.next(),
                     reader.next(), reader.next(), reader.nextInt(),
-                    reader.nextInt(), reader.nextInt(), reader.nextInt());
-            routes.put(route.getRouteID(), route);
+                    reader.nextInt(), reader.next(), reader.nextInt());
+            if(route.getRouteID().equals("") || route.getRouteColor().equals("")) {
+                throw new IllegalArgumentException();
+            }
             reader.checkEndOfLine();
         } catch (CSVReader.EndOfStringException | NumberFormatException e){
+            return null;
+        }
+        catch (IllegalArgumentException e) {
+            System.out.println("Route must have a route_id and a route_color");
             return null;
         }
         return route;

@@ -1,7 +1,7 @@
-import junit.framework.TestCase;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class ControllerTest extends TestCase {
+public class ControllerTest {
 
 
     /**
@@ -19,15 +19,26 @@ public class ControllerTest extends TestCase {
     }
 
     /**
-     * Tests trip header lines
+     * Tests Stop Header Lines
+     * @author Patrick McDonald
      */
-    public void testValidateTripHeader() {
-        assertTrue(Controller.validateTripHeader("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id"));
-        assertFalse(Controller.validateTripHeader("route_id,service_id,trip_id,block_id,shape_id"));
+    @Test
+    public void validateStopHeaderLines(){
+        Assertions.assertTrue(Controller.validateStopHeader("stop_id,stop_name,stop_desc,stop_lat,stop_lon"));
     }
 
-    public void testValidateTripLines() {
-        Assert.assertNotNull("Failed", Controller.validateTripLines("64,17-SEP_SUN,21736565_2537,60TH-VLIET,0,64102,17-SEP_64_0_23"));
-        assertNull(Controller.validateTripLines("64,17-S64102,17-SEP_64_0_23"));
+    /**
+     * Validates individual Stop Lines
+     * @author Patrick McDonald
+     */
+    @Test
+    public void validateStopBodyLines(){
+        //Assertions.assertEquals(,
+        Controller.validateLinesInStop(
+                "1801,S92 & ORCHARD #1801,,43.0138967,-88.0272162");
+//        Assertions.assertNull(Controller.validateLinesInStop(
+//                "1801,S92 & ORCHARD #1801,,43.0138967,"));
     }
+
+
 }

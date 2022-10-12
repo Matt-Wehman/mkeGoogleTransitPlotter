@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class Route {
 
     private String agencyID;
-    private int routeColor;
+    private String routeColor;
     private String routeDesc;
     private String routeID;
     private String routeLongName;
@@ -32,7 +32,7 @@ public class Route {
      * @param routeColor
      * @param routeTextColor
      */
-    public Route(String routeID, String agencyID, String routeShortName, String routeLongName, String routeDesc, int routeType, int routeURL, int routeColor, int routeTextColor) {
+    public Route(String routeID, String agencyID, String routeShortName, String routeLongName, String routeDesc, int routeType, int routeURL, String routeColor, int routeTextColor) {
         try {
             this.agencyID = agencyID;
             this.routeColor = routeColor;
@@ -52,7 +52,7 @@ public class Route {
         this.agencyID = agencyID;
     }
 
-    public void setRouteColor(int routeColor) {
+    public void setRouteColor(String routeColor) {
         this.routeColor = routeColor;
     }
 
@@ -88,7 +88,7 @@ public class Route {
         return agencyID;
     }
 
-    public int getRouteColor() {
+    public String getRouteColor() {
         return routeColor;
     }
 
