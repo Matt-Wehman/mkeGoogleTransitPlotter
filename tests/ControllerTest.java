@@ -1,4 +1,3 @@
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,12 +31,14 @@ public class ControllerTest {
      * Validates individual Stop Lines
      * @author Patrick McDonald
      */
-//    public void validateStopBodyLines(){
-//        Assertions.assertEquals(,Controller.validateLinesInStop(
-//                "1801,S92 & ORCHARD #1801,,43.0138967,-88.0272162"));
+    @Test
+    public void validateStopBodyLines(){
+        //Assertions.assertEquals(,
+        Controller.validateLinesInStop(
+                "1801,S92 & ORCHARD #1801,,43.0138967,-88.0272162");
 //        Assertions.assertNull(Controller.validateLinesInStop(
 //                "1801,S92 & ORCHARD #1801,,43.0138967,"));
-//    }
+    }
 
 
 }

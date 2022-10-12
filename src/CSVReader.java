@@ -31,6 +31,7 @@ public class CSVReader {
             line = line.substring(line.indexOf(',')+1);
         } else {
             ret = "";
+            line = "";
             hasNext = false;
         }
         return ret;
@@ -80,7 +81,7 @@ public class CSVReader {
 
     public void checkEndOfLine() throws EndOfStringException {
         if (line.length()>0){
-            throw new EndOfStringException("The line is too long");
+            throw new EndOfStringException("The line is too long: " + line);
         }
     }
 
