@@ -292,7 +292,7 @@ public class Controller {
      * validates that the header for the route file is formatted correctly
      * @param header string header
      * @return true if header is valid, false if not
-     * @author Chrstian B
+     * @author Chrstian Basso
      */
     public boolean validateRouteHeader(String header) {
         if (!header.equals("route_id,agency_id,route_short_name,route_long_name," +
