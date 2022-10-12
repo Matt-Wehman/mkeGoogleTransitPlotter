@@ -318,10 +318,16 @@ public class Controller {
             route = new Route(
                     reader.next(), reader.next(), reader.next(),
                     reader.next(), reader.next(), reader.nextInt(),
-                    reader.nextInt(), reader.nextInt(), reader.nextInt());
-            routes.put(route.getRouteID(), route);
+                    reader.nextInt(), reader.next(), reader.nextInt());
+            if(route.getRouteID().equals("") || route.getRouteColor().equals("")) {
+                throw new IllegalArgumentException();
+            }
             reader.checkEndOfLine();
         } catch (CSVReader.EndOfStringException | NumberFormatException e){
+            return null;
+        }
+        catch (IllegalArgumentException e) {
+            System.out.println("Route must have a route_id and a route_color");
             return null;
         }
         return route;
