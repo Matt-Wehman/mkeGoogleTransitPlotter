@@ -267,36 +267,63 @@ public class Controller {
 
     /**
      * Populates the routes
-     * @param routeFile
+     * @param routeFile the file that contains the route lines
      */
     private void importRoutes(File routeFile) {
-        int index = 1;
         try (Stream<String> lines = Files.lines(routeFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!firstLine.equals("route_id,agency_id,route_short_name,route_long_name," +
-                    "route_desc,route_type,route_url,route_color,route_text_color")){
-                System.out.println("Unknown formatting encountered: Routes");
-            }
-            while (it.hasNext()){
-                CSVReader reader = new CSVReader(it.next());
-                try {
-                    index++;
-                    Route route = new Route(
-                            reader.next(), reader.next(), reader.next(),
-                            reader.next(), reader.next(), reader.nextInt(),
-                            reader.nextInt(), reader.nextInt(), reader.nextInt());
+            if(validateRouteHeader(firstLine)){
+                while (it.hasNext()){
+                    Route route = validateRouteLine(it.next());
                     routes.put(route.getRouteID(), route);
-                    reader.checkEndOfLine();
-                } catch (CSVReader.EndOfStringException | NumberFormatException e){
-                    System.out.println("Line " + index + " (Routes) is not formatted correctly, skipping");
-                }
 
+                }
             }
         } catch (IOException e){
             System.out.println("Error finding file, no Routes were imported");
         }
 
+    }
+
+
+    /**
+     * validates that the header for the route file is formatted correctly
+     * @param header string header
+     * @return true if header is valid, false if not
+     * @author Chrstian B
+     */
+    public boolean validateRouteHeader(String header) {
+        if (!header.equals("route_id,agency_id,route_short_name,route_long_name," +
+                "route_desc,route_type,route_url,route_color,route_text_color")){
+            System.out.println("Unknown formatting encountered: Routes");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+    /**
+     * Validates line that represents a route object
+     * @param line string of parameters
+     * @return the object created from the parameters, or null if an exception is thrown
+     * @author Christian B
+     */
+    public Route validateRouteLine(String line) {
+        Route route;
+        CSVReader reader = new CSVReader(line);
+        try {
+            route = new Route(
+                    reader.next(), reader.next(), reader.next(),
+                    reader.next(), reader.next(), reader.nextInt(),
+                    reader.nextInt(), reader.nextInt(), reader.nextInt());
+            routes.put(route.getRouteID(), route);
+            reader.checkEndOfLine();
+        } catch (CSVReader.EndOfStringException | NumberFormatException e){
+            return null;
+        }
+        return route;
     }
 
 
