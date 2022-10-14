@@ -21,14 +21,13 @@ import javafx.stage.FileChooser;
 public class Controller {
 
     @FXML
-<<<<<<< HEAD
     Button butt;
-=======
-     Button importButton;
+
+    @FXML
+    Button importButton;
 
     @FXML
     Button exportButton;
->>>>>>> 6119310b4077a354c0d76a9186c7286e5f57bf22
 
     protected HashMap<Integer, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
