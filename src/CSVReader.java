@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 public class CSVReader {
     String line;
     boolean hasNext = true;
+    boolean hasRun = false;
 
     CSVReader(String line){
         this.line = line;
@@ -29,10 +30,17 @@ public class CSVReader {
         if (line.contains(",")){
             ret = line.substring(0, line.indexOf(','));
             line = line.substring(line.indexOf(',')+1);
+            hasRun = true;
         } else {
-            ret = "";
-            line = "";
-            hasNext = false;
+            if(hasRun){
+                ret = line;
+                line = "";
+                hasRun = false;
+            } else {
+                ret = "";
+                line = "";
+                hasNext = false;
+            }
         }
         return ret;
     }

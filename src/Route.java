@@ -158,14 +158,14 @@ public class Route {
 
     @Override
     public String toString() {
-        return routeID + "," +
-                agencyID + "," +
-                routeShortName + ","
-                + routeLongName  + ","
+        return routeID + ","
+                +agencyID + ","
+                +routeShortName + ","
+                +routeLongName  + ","
                 +routeDesc + ","
-                + routeType  + ","
+                +routeType  + ","
                 +routeURL + ","
                 +routeColor + ","
-                + routeTextColor;
+                +routeTextColor;
     }
 }

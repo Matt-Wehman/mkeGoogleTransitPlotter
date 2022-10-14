@@ -1,4 +1,4 @@
-import org.junit.Assert;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -89,11 +89,26 @@ public class ControllerTest {
      */
     @Test
     public void validateStopBodyLines(){
-        //Assertions.assertEquals(,
-        Controller.validateLinesInStop(
-                "1801,S92 & ORCHARD #1801,,43.0138967,-88.0272162");
-//        Assertions.assertNull(Controller.validateLinesInStop(
-//                "1801,S92 & ORCHARD #1801,,43.0138967,"));
+        Stop correctStop1 = (Controller.validateLinesInStop(
+                "1801,S92 & ORCHARD #1801,,43.0138967,-87.8935061"));
+        Assertions.assertNotNull(correctStop1);
+
+        Stop correctStop2 = (Controller.validateLinesInStop(
+                "1785,NATIONAL & S6 #1785,,43.0231768,-87.9184932"));
+        Assertions.assertNotNull(correctStop2);
+
+        Stop badStop1 = Controller.validateLinesInStop(
+                "4361,PROSPECT & ALBION #4361,,43.0498663,");
+        Assertions.assertNull(badStop1);
+
+
+        Stop badStop2 = Controller.validateLinesInStop(
+                "4361,,,43.0498663,");
+        Assertions.assertNull(badStop2);
+
+        Stop badStop3 = Controller.validateLinesInStop(
+                "PROSPECT & ALBION #4361,afdasd,43.0498663,");
+        Assertions.assertNull(badStop3);
     }
 
     /**

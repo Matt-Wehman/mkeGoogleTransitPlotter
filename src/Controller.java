@@ -1,6 +1,8 @@
 import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
@@ -19,7 +21,14 @@ import javafx.stage.FileChooser;
 public class Controller {
 
     @FXML
+<<<<<<< HEAD
     Button butt;
+=======
+     Button importButton;
+
+    @FXML
+    Button exportButton;
+>>>>>>> 6119310b4077a354c0d76a9186c7286e5f57bf22
 
     protected HashMap<Integer, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
@@ -83,13 +92,35 @@ public class Controller {
         return 0;
     }
 
+
+    public void exportHelper(ActionEvent actionEvent) {
+
+    }
+
     /**
      * Exports the GTFS files to the desired place
      * This method has not been implemented
      * @return
      */
-    public boolean export() {
-        return false;
+    public File exportRoutes() {
+        File routeFile = new File("routeExport.txt");
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(routeFile);
+        } catch (IOException e) {
+            System.out.println("Route file could not be found");
+        }
+
+        Set<Map.Entry<String, Route>> routeSet = routes.entrySet();
+        Iterator<Map.Entry<String, Route>> it = routeSet.iterator();
+        while(it.hasNext()) {
+            try {
+                writer.write(it.next().toString());
+            } catch (IOException e) {
+                System.out.println("Could not write route export file");
+            }
+        }
+        return routeFile;
     }
 
     /**
@@ -302,13 +333,20 @@ public class Controller {
         CSVReader reader = new CSVReader(stopLine);
         Stop stop;
         try {
-            stop = new Stop(
-                    reader.nextInt(), reader.next(), reader.next(),
-                    reader.nextDouble(), reader.nextDouble());
+            int stopId = reader.nextInt();
+            String name = reader.next();
+            String description = reader.next();
+            double lat = reader.nextDouble();
+            double lon = reader.nextDouble();
+            if(lat == -1 || lon == -1){
+                throw new NumberFormatException("empty");
+            }
+
+            stop = new Stop(stopId, name, description, lat, lon);
             reader.checkEndOfLine();
         } catch (CSVReader.EndOfStringException | NumberFormatException e){
-            System.out.println(e.getLocalizedMessage());
-            System.out.println(e.getMessage());
+//            System.out.println(e.getLocalizedMessage());
+//            System.out.println(e.getMessage());
             return null;
         }
         return stop;
