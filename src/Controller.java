@@ -19,7 +19,7 @@ import javafx.stage.FileChooser;
 public class Controller {
 
     @FXML
-     Button butt;
+    Button butt;
 
     protected HashMap<Integer, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
@@ -172,11 +172,13 @@ public class Controller {
             CSVReader reader = new CSVReader(line);
             stopTime = new StopTime(
                     reader.next(), reader.nextTime(), reader.nextTime(),
-                    reader.nextInt(), reader.nextInt(), reader.next(),
-                    reader.nextInt(), reader.nextInt());
+                    reader.next(), reader.next(), reader.next(),
+                    reader.next(), reader.next());
 
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | NumberFormatException | ParseException e) {
+            stopTime.checkRequired();
+        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
+                 | NumberFormatException | ParseException e) {
             return null;
         }
         return stopTime;

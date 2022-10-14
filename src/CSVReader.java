@@ -86,7 +86,7 @@ public class CSVReader {
     }
 
     /**
-     * Inner class EndOfStringException
+     * if the end of the String is reached before parsing is finished
      */
     public class EndOfStringException extends Exception {
         /**
@@ -94,6 +94,19 @@ public class CSVReader {
          * @param errorMessage
          */
         public EndOfStringException(String errorMessage){
+            super(errorMessage);
+        }
+    }
+
+    /**
+     * if a required field is missing
+     */
+    public static class MissingRequiredFieldException extends Exception {
+        /**
+         * EndOfStringException
+         * @param errorMessage
+         */
+        public MissingRequiredFieldException(String errorMessage){
             super(errorMessage);
         }
     }

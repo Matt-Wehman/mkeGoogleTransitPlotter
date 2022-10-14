@@ -2,6 +2,9 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.util.ArrayList;
+
 public class ControllerTest {
 
 
@@ -92,4 +95,60 @@ public class ControllerTest {
 //        Assertions.assertNull(Controller.validateLinesInStop(
 //                "1801,S92 & ORCHARD #1801,,43.0138967,"));
     }
+
+    /**
+     * Validates a line in the StopTime file
+     * @author Ian Czerkis
+     */
+    @Test
+    public void validateFirstStopTimeLine() {
+        String correctFirstLine = "trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
+                "stop_headsign,pickup_type,drop_off_type";
+        Assertions.assertFalse(Controller.validateFirstStopTimeLine("fail"));
+        Assertions.assertTrue(Controller.validateFirstStopTimeLine(correctFirstLine));
+        Assertions.assertFalse(Controller.validateFirstStopTimeLine(correctFirstLine + ",test"));
+    }
+
+    /**
+     * validates the first line in the StopTime file
+     * @author Ian Czerkis
+     */
+    @Test
+    public void validateStopTimeLine() {
+        String[] correctFormats = {"21736564_2535,08:51:00,08:51:00,9113,1,,0,0",
+                "217312321_1231,09:12:00,12:09:00,,,,,0",
+                "21849620_1284,22:47:00,22:47:00,874,52,,0,0"};
+        String[] incorrectFormats = {"fail", "212340_34532,22:47:00",
+                "21849620_1284,22:47:00,22:47:00,874,52,0,0"};
+
+        for (String c: correctFormats){
+            Assertions.assertNotNull(Controller.validateStopTimeLine(c));
+        }
+        for (String i: incorrectFormats){
+            Assertions.assertNull(Controller.validateStopTimeLine(i));
+        }
+
+        for (String c: correctFormats){
+            StopTime test = Controller.validateStopTimeLine(c);
+            Assertions.assertEquals(c, test.toString());
+        }
+    }
+
+    /**
+     * tests importing files
+     */
+    @Test
+    public void testImportFiles() {
+        Controller c = new Controller();
+        ArrayList<File> files = new ArrayList<>();
+        files.add(new File("./se-lab2030/GTFSFiles/routes.txt"));
+        files.add(new File("./se-lab2030/GTFSFiles/stops.txt"));
+        files.add(new File("./se-lab2030/GTFSFiles/trips.txt"));
+        files.add(new File("./se-lab2030/GTFSFiles/stop_times.txt"));
+        c.importFiles(files);
+        Assertions.assertEquals(c.allStops.size(), 5392);
+        Assertions.assertEquals(c.routes.size(), 62);
+        Assertions.assertEquals(c.trips.size(), 9300);
+    }
+
 }
