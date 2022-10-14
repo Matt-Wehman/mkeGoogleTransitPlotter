@@ -92,6 +92,7 @@ public class ControllerTest {
 
         Stop correctStop2 = (Controller.validateLinesInStop(
                 "1785,NATIONAL & S6 #1785,,43.0231768,-87.9184932"));
+        Assertions.assertNotNull(correctStop2);
 
         Stop badStop1 = Controller.validateLinesInStop(
                 "4361,PROSPECT & ALBION #4361,,43.0498663,");
