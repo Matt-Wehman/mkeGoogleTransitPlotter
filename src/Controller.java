@@ -1,6 +1,8 @@
 import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
@@ -19,7 +21,10 @@ import javafx.stage.FileChooser;
 public class Controller {
 
     @FXML
-     Button butt;
+     Button importButton;
+
+    @FXML
+    Button exportButton;
 
     protected HashMap<Integer, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
@@ -83,13 +88,35 @@ public class Controller {
         return 0;
     }
 
+
+    public void exportHelper(ActionEvent actionEvent) {
+
+    }
+
     /**
      * Exports the GTFS files to the desired place
      * This method has not been implemented
      * @return
      */
-    public boolean export() {
-        return false;
+    public File exportRoutes() {
+        File routeFile = new File("routeExport.txt");
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(routeFile);
+        } catch (IOException e) {
+            System.out.println("Route file could not be found");
+        }
+
+        Set<Map.Entry<String, Route>> routeSet = routes.entrySet();
+        Iterator<Map.Entry<String, Route>> it = routeSet.iterator();
+        while(it.hasNext()) {
+            try {
+                writer.write(it.next().toString());
+            } catch (IOException e) {
+                System.out.println("Could not write route export file");
+            }
+        }
+        return routeFile;
     }
 
     /**

@@ -8,7 +8,8 @@
    <children>
       <VBox layoutX="479.0" prefHeight="400.0" prefWidth="121.0">
          <children>
-            <Button fx:id="butt" mnemonicParsing="false" onAction="#importHelper" prefHeight="41.0" prefWidth="122.0" text="Import" />
+            <Button fx:id="importButton" mnemonicParsing="false" onAction="#importHelper" prefHeight="41.0" prefWidth="122.0" text="Import" />
+            <Button fx:id="exportButton" mnemonicParsing="false" onAction="#exportHelper" prefHeight="41.0" prefWidth="122.0" text="Export" />
          </children>
       </VBox>
    </children>
