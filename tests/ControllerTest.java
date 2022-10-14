@@ -134,7 +134,8 @@ public class ControllerTest {
                 "217312321_1231,09:12:00,12:09:00,1,1,,,",
                 "21849620_1284,22:47:00,22:47:00,874,52,,0,0"};
         String[] incorrectFormats = {"fail", "212340_34532,22:47:00",
-                "21849620_1284,22:47:00,22:47:00,874,52,0,0"};
+                "21849620_1284,22:47:00,22:47:00,874,52,0,0",
+                "21794282_2306,,11:24:00,10,48,,0,0"};
 
         for (String c: correctFormats){
             Assertions.assertNotNull(Controller.validateStopTimeLine(c));
@@ -147,23 +148,6 @@ public class ControllerTest {
             StopTime test = Controller.validateStopTimeLine(c);
             Assertions.assertEquals(c, test.toString());
         }
-    }
-
-    /**
-     * tests importing files
-     */
-    @Test
-    public void testImportFiles() {
-        Controller c = new Controller();
-        ArrayList<File> files = new ArrayList<>();
-        files.add(new File("./se-lab2030/GTFSFiles/routes.txt"));
-        files.add(new File("./se-lab2030/GTFSFiles/stops.txt"));
-        files.add(new File("./se-lab2030/GTFSFiles/trips.txt"));
-        files.add(new File("./se-lab2030/GTFSFiles/stop_times.txt"));
-        c.importFiles(files);
-        Assertions.assertEquals(c.allStops.size(), 5392);
-        Assertions.assertEquals(c.routes.size(), 62);
-        Assertions.assertEquals(c.trips.size(), 9300);
     }
 
 }

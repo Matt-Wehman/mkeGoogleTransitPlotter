@@ -382,7 +382,7 @@ public class Controller {
     public static boolean validateRouteHeader(String header) {
         if (!header.equals("route_id,agency_id,route_short_name,route_long_name," +
                 "route_desc,route_type,route_url,route_color,route_text_color")){
-            System.out.println("Unknown formatting encountered: Routes");
+
             return false;
         } else {
             return true;
