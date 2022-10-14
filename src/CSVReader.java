@@ -23,23 +23,17 @@ public class CSVReader {
      * @throws EndOfStringException
      */
     public String next() throws EndOfStringException {
-        if (!hasNext){
-            throw new EndOfStringException("There is no more text to read");
-        }
         String ret;
         if (line.contains(",")){
             ret = line.substring(0, line.indexOf(','));
             line = line.substring(line.indexOf(',')+1);
-            hasRun = true;
         } else {
-            if(hasRun){
+            if(hasNext){
                 ret = line;
                 line = "";
-                hasRun = false;
-            } else {
-                ret = "";
-                line = "";
                 hasNext = false;
+            } else {
+                throw new EndOfStringException("There is no more text to read");
             }
         }
         return ret;

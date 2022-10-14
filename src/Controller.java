@@ -291,7 +291,6 @@ public class Controller {
      * @param stopFile
      */
     private void importStops(File stopFile) {
-        int index = 1;
         try (Stream<String> lines = Files.lines(stopFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
@@ -406,10 +405,11 @@ public class Controller {
                     reader.next(), reader.next(), reader.nextInt(),
                     reader.nextInt(), reader.next(), reader.nextInt());
             if(route.getRouteID().equals("") || route.getRouteColor().equals("")) {
-                throw new IllegalArgumentException();
+                throw new CSVReader.MissingRequiredFieldException("A required field is missing");
             }
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | NumberFormatException e){
+        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
+                | NumberFormatException e){
             return null;
         } catch (IllegalArgumentException e) {
             System.out.println("Route must have a route_id and a route_color");
