@@ -58,14 +58,17 @@ public class ControllerTest {
     }
     @Test
     public void validateTripBody(){
-        String[] validBodies = new String[]{"64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23"
-                ,"64,17-SEP_SUN,21736569_2545,60TH-VLIET,0,64102,17-SEP_64_0_23",
-        "64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19"};
+        String tripString = "64,17-SEP_SUN,21736564_2535,60TH-VLIET,0,64102,17-SEP_64_0_23";
+
         String[] invalidBodies = new String[]{"64,17-SEP_SUN,21736567_2541," +
                 "60TH-VLIET,0,64102,17-SEP_64_0_23,dsoad,dsao,poi", "19", "64,17-SEP_SUN,21736567_2541" };
-        for(int i = 0; i < validBodies.length; i++){
-            Assertions.assertNotNull(Controller.validateTripLines(validBodies[i]));
-        }
+
+        Trip trip = Controller.validateTripLines(tripString);
+        Trip trueTrip = new Trip("64","17-SEP_SUN", "21736564_2535", "60TH-VLIET", 0, 64102, "17-SEP_64_0_23");
+        System.out.println(trip.toString());
+        System.out.println(trueTrip.toString());
+
+        Assertions.assertEquals(trueTrip.toString(), trip.toString());
         for(int i = 0; i < invalidBodies.length; i++){
             Assertions.assertNull(Controller.validateTripLines(invalidBodies[i]));
         }
