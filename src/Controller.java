@@ -341,7 +341,7 @@ public class Controller {
      * @return true if header is valid, false if not
      * @author Chrstian Basso
      */
-    public boolean validateRouteHeader(String header) {
+    public static boolean validateRouteHeader(String header) {
         if (!header.equals("route_id,agency_id,route_short_name,route_long_name," +
                 "route_desc,route_type,route_url,route_color,route_text_color")){
             System.out.println("Unknown formatting encountered: Routes");
@@ -358,7 +358,7 @@ public class Controller {
      * @return the object created from the parameters, or null if an exception is thrown
      * @author Christian B
      */
-    public Route validateRouteLine(String line) {
+    public static Route validateRouteLine(String line) {
         Route route;
         CSVReader reader = new CSVReader(line);
         try {
