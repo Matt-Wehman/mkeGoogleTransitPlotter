@@ -300,13 +300,21 @@ public class Controller {
         CSVReader reader = new CSVReader(stopLine);
         Stop stop;
         try {
-            stop = new Stop(
-                    reader.nextInt(), reader.next(), reader.next(),
-                    reader.nextDouble(), reader.nextDouble());
+            int stopId = reader.nextInt();
+            String name = reader.next();
+            String description = reader.next();
+            double lat = reader.nextDouble();
+            double lon = reader.nextDouble();
+
+            if(lat == -1 || lon == -1){
+                throw new NumberFormatException("empty");
+            }
+
+            stop = new Stop(stopId, name, description, lat, lon);
             reader.checkEndOfLine();
         } catch (CSVReader.EndOfStringException | NumberFormatException e){
-            System.out.println(e.getLocalizedMessage());
-            System.out.println(e.getMessage());
+//            System.out.println(e.getLocalizedMessage());
+//            System.out.println(e.getMessage());
             return null;
         }
         return stop;
