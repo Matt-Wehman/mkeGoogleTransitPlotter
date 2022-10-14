@@ -107,4 +107,9 @@ public class Trip {
         return false;
     }
 
+    public String toString(){
+        String string = routeID + "," + serviceID + "," + tripID + "," + tripHeadSign + "," + directionID + "," + blockID + ","+ shapeID;
+        return string;
+    }
+
 }
