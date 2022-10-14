@@ -20,7 +20,10 @@ public class ControllerTest {
 
     @Test
     public void validateTripHeader(){
-        Assertions.assertTrue(Controller.validateTripHeader("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id"));
+        String validHeader = "route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id";
+        String invalidHeader =  "route_id,se,block_id,shape_id";
+        Assertions.assertTrue(Controller.validateTripHeader(validHeader));
+        Assertions.assertFalse(Controller.validateTripHeader(invalidHeader));
     }
 
     /**
