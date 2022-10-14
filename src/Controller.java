@@ -372,8 +372,7 @@ public class Controller {
             reader.checkEndOfLine();
         } catch (CSVReader.EndOfStringException | NumberFormatException e){
             return null;
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Route must have a route_id and a route_color");
             return null;
         }
