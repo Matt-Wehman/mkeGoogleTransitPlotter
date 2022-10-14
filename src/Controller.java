@@ -332,7 +332,6 @@ public class Controller {
             String description = reader.next();
             double lat = reader.nextDouble();
             double lon = reader.nextDouble();
-
             if(lat == -1 || lon == -1){
                 throw new NumberFormatException("empty");
             }
