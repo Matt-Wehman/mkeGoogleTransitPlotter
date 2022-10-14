@@ -142,20 +142,30 @@ public class Route {
         return false;
     }
 
+
+    public boolean equals(Route r) {
+        return
+                this.routeID.equals(r.routeID) &&
+                        this.routeColor.equals(r.routeColor) &&
+                        this.routeDesc.equals((r.routeDesc)) &&
+                        this.agencyID.equals(r.agencyID) &&
+                        this.routeLongName.equals(r.routeLongName) &&
+                        this.routeShortName.equals(r.routeShortName) &&
+                        this.routeURL == r.routeURL &&
+                        this.routeType == r.routeType;
+
+    }
+
     @Override
     public String toString() {
-        return "Route{" +
-                "agencyID='" + agencyID + '\'' +
-                ", routeColor=" + routeColor +
-                ", routeDesc='" + routeDesc + '\'' +
-                ", routeID='" + routeID + '\'' +
-                ", routeLongName='" + routeLongName + '\'' +
-                ", routeShortName='" + routeShortName + '\'' +
-                ", routeTextColor=" + routeTextColor +
-                ", routeType=" + routeType +
-                ", routeURL=" + routeURL +
-                ", stops=" + stops +
-                ", trips=" + trips +
-                '}';
+        return routeID + ","
+                +agencyID + ","
+                +routeShortName + ","
+                +routeLongName  + ","
+                +routeDesc + ","
+                +routeType  + ","
+                +routeURL + ","
+                +routeColor + ","
+                +routeTextColor;
     }
 }

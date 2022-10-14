@@ -1,3 +1,4 @@
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -8,14 +9,44 @@ public class ControllerTest {
      * Tests route header validation
      * @author Christian Basso
      */
+
+    @Test
     public void testValidateRouteHeader() {
+        String validHeader = "route_id,agency_id,route_short_name,route_long_name," +
+                "route_desc,route_type,route_url,route_color,route_text_color";
+        String invalidHeader = "INVALIDSTRINGroute_id,agency_id,route_short_name,route_long_name," +
+                "route_desc,route_type,route_url,route_color,route_text_color";
+        Assertions.assertTrue(Controller.validateRouteHeader(validHeader));
+        Assertions.assertFalse(Controller.validateRouteHeader(invalidHeader));
     }
 
     /**
      * Tests route header lines
      * @author Christian Basso
      */
+
+    @Test
     public void testValidateRouteLine() {
+        String validRouteLine1 = "23D,MCTS,23,Fond du lac-National (17-SEP) - DETOUR,This Route is in Detour,3,,008345,";
+        String validRouteLine2 = "27,MCTS,27,27th Street,,3,,008345,";
+        String validRouteLine3 = "42U,,,,,,,008345,";
+
+        String invalidRouteLine1 = "33,MCTS,33,Vliet Street,,3,,008345,,INVALID";
+        String invalidRouteLine2 = "33,MCTS,33,Vliet Street,,3,,,";
+        String invalidRouteLine3 = ",MCTS,33,Vliet Street,,3,,008345,";
+
+        Route validRoute = new Route("23D", "MCTS", "23", "Fond du lac-National (17-SEP) - DETOUR", "This Route is in Detour", 3, -1, "008345", -1);
+
+        Assertions.assertTrue(validRoute.equals(Controller.validateRouteLine(validRouteLine1)));
+
+        Assertions.assertNotNull(validRouteLine1);
+        Assertions.assertNotNull(validRouteLine2);
+        Assertions.assertNotNull(validRouteLine3);
+
+        Assertions.assertNull(Controller.validateRouteLine(invalidRouteLine1));
+        Assertions.assertNull(Controller.validateRouteLine(invalidRouteLine2));
+        Assertions.assertNull(Controller.validateRouteLine(invalidRouteLine3));
+
     }
 
     @Test
@@ -55,12 +86,25 @@ public class ControllerTest {
      */
     @Test
     public void validateStopBodyLines(){
-        //Assertions.assertEquals(,
-        Controller.validateLinesInStop(
-                "1801,S92 & ORCHARD #1801,,43.0138967,-88.0272162");
-//        Assertions.assertNull(Controller.validateLinesInStop(
-//                "1801,S92 & ORCHARD #1801,,43.0138967,"));
+        Stop correctStop1 = (Controller.validateLinesInStop(
+                "1801,S92 & ORCHARD #1801,,43.0138967,-87.8935061"));
+        Assertions.assertNotNull(correctStop1);
+
+        Stop correctStop2 = (Controller.validateLinesInStop(
+                "1785,NATIONAL & S6 #1785,,43.0231768,-87.9184932"));
+        Assertions.assertNotNull(correctStop2);
+
+        Stop badStop1 = Controller.validateLinesInStop(
+                "4361,PROSPECT & ALBION #4361,,43.0498663,");
+        Assertions.assertNull(badStop1);
+
+
+        Stop badStop2 = Controller.validateLinesInStop(
+                "4361,,,43.0498663,");
+        Assertions.assertNull(badStop2);
+
+        Stop badStop3 = Controller.validateLinesInStop(
+                "PROSPECT & ALBION #4361,afdasd,43.0498663,");
+        Assertions.assertNull(badStop3);
     }
-
-
 }

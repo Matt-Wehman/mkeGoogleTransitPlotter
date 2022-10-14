@@ -1,6 +1,8 @@
 import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
@@ -19,7 +21,10 @@ import javafx.stage.FileChooser;
 public class Controller {
 
     @FXML
-     Button butt;
+     Button importButton;
+
+    @FXML
+    Button exportButton;
 
     protected HashMap<Integer, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
@@ -83,13 +88,35 @@ public class Controller {
         return 0;
     }
 
+
+    public void exportHelper(ActionEvent actionEvent) {
+
+    }
+
     /**
      * Exports the GTFS files to the desired place
      * This method has not been implemented
      * @return
      */
-    public boolean export() {
-        return false;
+    public File exportRoutes() {
+        File routeFile = new File("routeExport.txt");
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(routeFile);
+        } catch (IOException e) {
+            System.out.println("Route file could not be found");
+        }
+
+        Set<Map.Entry<String, Route>> routeSet = routes.entrySet();
+        Iterator<Map.Entry<String, Route>> it = routeSet.iterator();
+        while(it.hasNext()) {
+            try {
+                writer.write(it.next().toString());
+            } catch (IOException e) {
+                System.out.println("Could not write route export file");
+            }
+        }
+        return routeFile;
     }
 
     /**
@@ -341,7 +368,7 @@ public class Controller {
      * @return true if header is valid, false if not
      * @author Chrstian Basso
      */
-    public boolean validateRouteHeader(String header) {
+    public static boolean validateRouteHeader(String header) {
         if (!header.equals("route_id,agency_id,route_short_name,route_long_name," +
                 "route_desc,route_type,route_url,route_color,route_text_color")){
             System.out.println("Unknown formatting encountered: Routes");
@@ -358,7 +385,7 @@ public class Controller {
      * @return the object created from the parameters, or null if an exception is thrown
      * @author Christian B
      */
-    public Route validateRouteLine(String line) {
+    public static Route validateRouteLine(String line) {
         Route route;
         CSVReader reader = new CSVReader(line);
         try {
@@ -372,8 +399,7 @@ public class Controller {
             reader.checkEndOfLine();
         } catch (CSVReader.EndOfStringException | NumberFormatException e){
             return null;
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Route must have a route_id and a route_color");
             return null;
         }
