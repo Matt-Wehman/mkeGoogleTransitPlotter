@@ -98,11 +98,11 @@ public class Stop {
     @Override
     public String toString() {
         return "Stop{" +
-                "stopID='" + stopID + '\'' +
+                "stopID='" + stopID +
                 ", stopName=" + stopName +
                 ", stopDesc=" + stopDesc +
                 ", stopLat=" + stopLat +
-                ", stopLong='" + stopLong + '\'' +
+                ", stopLong='" + stopLong +
                 '}';
     }
 }
