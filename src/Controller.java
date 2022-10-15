@@ -471,13 +471,19 @@ public class Controller {
     }
 
     /**
-     * finds all routes that contain a certian stop
-     * This method has not been implemented
-     * @param stopID
-     * @return ArrayList<Integer>
+     * searches all routes to see if they contain the specified stopID
+     * @param stopID the stop ID to search
+     * @return ArrayList<String> the list of routeID that contain
      */
-    public ArrayList<Integer> routesContainingStop(int stopID) {
-        return null;
+    public ArrayList<String> routesContainingStop(String stopID) {
+        ArrayList<String> routesContaining = new ArrayList<>();
+        for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
+            Trip trip = mapEntry.getValue();
+            if (trip.getStopTimes().containsKey(stopID)){
+                routesContaining.add(trip.getRouteID());
+            }
+        }
+        return routesContaining;
     }
 
     /**
