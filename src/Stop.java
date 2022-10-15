@@ -95,4 +95,14 @@ public class Stop {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "Stop{" +
+                "stopID='" + stopID +
+                ", stopName=" + stopName +
+                ", stopDesc=" + stopDesc +
+                ", stopLat=" + stopLat +
+                ", stopLong='" + stopLong +
+                '}';
+    }
 }

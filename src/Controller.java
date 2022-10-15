@@ -265,9 +265,13 @@ public class Controller {
                     reader.next(), reader.nextTime(), reader.nextTime(),
                     reader.next(), reader.nextInt(), reader.next(),
                     reader.nextInt(), reader.nextInt());
+                    reader.next(), reader.next(), reader.next(),
+                    reader.next(), reader.next());
 
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | NumberFormatException | ParseException e) {
+            stopTime.checkRequired();
+        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
+                 | NumberFormatException | ParseException e) {
             return null;
         }
         return stopTime;
@@ -350,7 +354,6 @@ public class Controller {
      * @param stopFile
      */
     private void importStops(File stopFile) {
-        int index = 1;
         try (Stream<String> lines = Files.lines(stopFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
@@ -468,7 +471,8 @@ public class Controller {
                 throw new IllegalArgumentException();
             }
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | NumberFormatException e){
+        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
+                | NumberFormatException e){
             return null;
         } catch (IllegalArgumentException e) {
             System.out.println("Route must have a route_id and a route_color");

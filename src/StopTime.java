@@ -1,4 +1,5 @@
 import java.sql.Time;
+import java.text.ParseException;
 
 /**
  * @author czerkisi
@@ -9,11 +10,11 @@ public class StopTime {
 
     private Time arrivalTime;
     private Time departureTime;
-    private int dropOffType;
-    private int pickupType;
+    private String dropOffType;
+    private String pickupType;
     private String stopHeadSign;
     private String stopID;
-    private int stopSequence;
+    private String stopSequence;
     private String tripID;
 
     public Time getArrivalTime() {
@@ -32,19 +33,19 @@ public class StopTime {
         this.departureTime = departureTime;
     }
 
-    public int getDropOffType() {
+    public String getDropOffType() {
         return dropOffType;
     }
 
-    public void setDropOfType(int dropOffType) {
+    public void setDropOfType(String dropOffType) {
         this.dropOffType = dropOffType;
     }
 
-    public int getPickupType() {
+    public String getPickupType() {
         return pickupType;
     }
 
-    public void setPickupType(int pickupType) {
+    public void setPickupType(String pickupType) {
         this.pickupType = pickupType;
     }
 
@@ -64,11 +65,11 @@ public class StopTime {
         this.stopID = stopID;
     }
 
-    public int getStopSequence() {
+    public String getStopSequence() {
         return stopSequence;
     }
 
-    public void setStopSequence(int stopSequence) {
+    public void setStopSequence(String stopSequence) {
         this.stopSequence = stopSequence;
     }
 
@@ -91,7 +92,7 @@ public class StopTime {
      * @param pickupType
      * @param dropOffType
      */
-    public StopTime(String tripID, Time arrivalTime, Time departureTime, String stopID, int stopSequence, String stopHeadSign, int pickupType, int dropOffType) {
+    public StopTime(String tripID, Time arrivalTime, Time departureTime, String stopID, String stopSequence, String stopHeadSign, String pickupType, String dropOffType) {
         this.tripID = tripID;
         this.arrivalTime = arrivalTime;
         this.departureTime = departureTime;
@@ -100,10 +101,13 @@ public class StopTime {
         this.stopHeadSign = stopHeadSign;
         this.pickupType = pickupType;
         this.dropOffType = dropOffType;
+    }
 
-
-
-
+    @Override
+    public String toString(){
+        return tripID + ',' + arrivalTime + ',' + departureTime + ','
+                + stopID + ',' + stopSequence + ',' + stopHeadSign  + ','
+                + pickupType  + ',' + dropOffType;
     }
 
     /**
@@ -115,4 +119,13 @@ public class StopTime {
         return false;
     }
 
+
+    public void checkRequired() throws CSVReader.MissingRequiredFieldException {
+        if (tripID.isEmpty() || arrivalTime.toString().isEmpty() ||
+                departureTime.toString().isEmpty() || stopID.isEmpty()
+                || stopSequence.isEmpty()){
+            throw new CSVReader.MissingRequiredFieldException("A required field is missing");
+        }
+    }
 }
+
