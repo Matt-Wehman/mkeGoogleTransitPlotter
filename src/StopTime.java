@@ -12,7 +12,7 @@ public class StopTime {
     private int dropOffType;
     private int pickupType;
     private String stopHeadSign;
-    private int stopID;
+    private String stopID;
     private int stopSequence;
     private String tripID;
 
@@ -56,11 +56,11 @@ public class StopTime {
         this.stopHeadSign = stopHeadSign;
     }
 
-    public int getStopID() {
+    public String getStopID() {
         return stopID;
     }
 
-    public void setStopID(int stopID) {
+    public void setStopID(String stopID) {
         this.stopID = stopID;
     }
 
@@ -91,7 +91,7 @@ public class StopTime {
      * @param pickupType
      * @param dropOffType
      */
-    public StopTime(String tripID, Time arrivalTime, Time departureTime, int stopID, int stopSequence, String stopHeadSign, int pickupType, int dropOffType) {
+    public StopTime(String tripID, Time arrivalTime, Time departureTime, String stopID, int stopSequence, String stopHeadSign, int pickupType, int dropOffType) {
         this.tripID = tripID;
         this.arrivalTime = arrivalTime;
         this.departureTime = departureTime;

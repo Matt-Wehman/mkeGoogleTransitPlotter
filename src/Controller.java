@@ -26,7 +26,7 @@ public class Controller {
     @FXML
     Button exportButton;
 
-    protected HashMap<Integer, Stop> allStops = new HashMap<>();
+    protected HashMap<String, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
 
@@ -90,13 +90,16 @@ public class Controller {
 
 
     public void exportHelper(ActionEvent actionEvent) {
+        File routeExport = exportRoutes();
+        File stopExport = exportStops();
+        File tripExport = exportTrips();
 
     }
 
     /**
      * Exports the GTFS files to the desired place
      * This method has not been implemented
-     * @return
+     * @return route gtfs file
      */
     public File exportRoutes() {
         File routeFile = new File("routeExport.txt");
@@ -116,7 +119,68 @@ public class Controller {
                 System.out.println("Could not write route export file");
             }
         }
+        try {
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Could not close File Writer");
+        }
         return routeFile;
+    }
+
+    public File exportStops() {
+        File stopFile = new File("stopExport.txt");
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(stopFile);
+        } catch (IOException e) {
+            System.out.println("Stop file could not be found");
+        }
+
+        Set<Map.Entry<String, Stop>> stopSet = allStops.entrySet();
+        Iterator<Map.Entry<String, Stop>> it = stopSet.iterator();
+        while(it.hasNext()) {
+            try {
+                assert writer != null;
+                writer.write(it.next().toString());
+            } catch (IOException e) {
+                System.out.println("Could not write stop export file");
+            }
+        }
+        try {
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Could not close File Writer");
+        }
+
+        return stopFile;
+    }
+
+    public File exportTrips() {
+        File tripFile = new File("teipExport.txt");
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(tripFile);
+        } catch (IOException e) {
+            System.out.println("Trip file could not be found");
+        }
+
+        Set<Map.Entry<String, Trip>> tripSet = trips.entrySet();
+        Iterator<Map.Entry<String, Trip>> it = tripSet.iterator();
+        while(it.hasNext()) {
+            try {
+                assert writer != null;
+                writer.write(it.next().toString());
+            } catch (IOException e) {
+                System.out.println("Could not write trip export file");
+            }
+        }
+
+        try {
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Could not close File Writer");
+        }
+        return tripFile;
     }
 
     /**
@@ -199,7 +263,7 @@ public class Controller {
             CSVReader reader = new CSVReader(line);
             stopTime = new StopTime(
                     reader.next(), reader.nextTime(), reader.nextTime(),
-                    reader.nextInt(), reader.nextInt(), reader.next(),
+                    reader.next(), reader.nextInt(), reader.next(),
                     reader.nextInt(), reader.nextInt());
 
             reader.checkEndOfLine();
@@ -297,7 +361,7 @@ public class Controller {
                 String stopLine = it.next();
                 Stop stop = validateLinesInStop(stopLine);
                 if(!Objects.equals(null, stop)) {
-                    allStops.put(stop.getStopID(), stop);
+                    allStops.put(stop.getStopID() + "", stop);
                 }
 
             }
@@ -327,7 +391,7 @@ public class Controller {
         CSVReader reader = new CSVReader(stopLine);
         Stop stop;
         try {
-            int stopId = reader.nextInt();
+            String stopId = reader.next();
             String name = reader.next();
             String description = reader.next();
             double lat = reader.nextDouble();
