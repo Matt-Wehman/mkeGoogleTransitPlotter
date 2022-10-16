@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.*;
 import java.util.List;
@@ -90,9 +91,15 @@ public class Controller {
 
 
     public void exportHelper(ActionEvent actionEvent) {
-        File routeExport = exportRoutes();
-        File stopExport = exportStops();
-        File tripExport = exportTrips();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Save Directory");
+        File file = fileChooser.showSaveDialog(null);
+        boolean bool = file.mkdir();
+
+        File routeExport = exportRoutes(file.toPath());
+        File stopExport = exportStops(file.toPath());
+        File tripExport = exportTrips(file.toPath());
+        File stopTimeExport = exportStopTimes(file.toPath());
 
     }
 
@@ -101,86 +108,82 @@ public class Controller {
      * This method has not been implemented
      * @return route gtfs file
      */
-    public File exportRoutes() {
-        File routeFile = new File("routeExport.txt");
+    public File exportRoutes(Path path) {
+        File routeFile = new File(path + "/routes.txt");
         FileWriter writer = null;
-        try {
-            writer = new FileWriter(routeFile);
-        } catch (IOException e) {
-            System.out.println("Route file could not be found");
-        }
-
         Set<Map.Entry<String, Route>> routeSet = routes.entrySet();
         Iterator<Map.Entry<String, Route>> it = routeSet.iterator();
-        while(it.hasNext()) {
-            try {
-                writer.write(it.next().toString());
-            } catch (IOException e) {
-                System.out.println("Could not write route export file");
-            }
-        }
         try {
+            writer = new FileWriter(routeFile);
+            writer.write("route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color");
+            while(it.hasNext()) {
+                writer.write("\n" + it.next().toString());
+            }
             writer.close();
         } catch (IOException e) {
-            System.out.println("Could not close File Writer");
+            System.out.println("Route file could not be found");
         }
         return routeFile;
     }
 
-    public File exportStops() {
-        File stopFile = new File("stopExport.txt");
+    public File exportStops(Path path) {
+        File stopFile = new File(path + "/stops.txt");
         FileWriter writer = null;
-        try {
-            writer = new FileWriter(stopFile);
-        } catch (IOException e) {
-            System.out.println("Stop file could not be found");
-        }
-
         Set<Map.Entry<String, Stop>> stopSet = allStops.entrySet();
         Iterator<Map.Entry<String, Stop>> it = stopSet.iterator();
-        while(it.hasNext()) {
-            try {
-                assert writer != null;
-                writer.write(it.next().toString());
-            } catch (IOException e) {
-                System.out.println("Could not write stop export file");
-            }
-        }
         try {
+            writer = new FileWriter(stopFile);
+            writer.write("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
+            while(it.hasNext()) {
+                writer.write("\n" + it.next().toString());
+            }
             writer.close();
         } catch (IOException e) {
-            System.out.println("Could not close File Writer");
+            System.out.println("Stop file could not be found");
         }
 
         return stopFile;
     }
 
-    public File exportTrips() {
-        File tripFile = new File("teipExport.txt");
+    public File exportTrips(Path path) {
+        File tripFile = new File(path + "/trips.txt");
         FileWriter writer = null;
+        Set<Map.Entry<String, Trip>> tripSet = trips.entrySet();
+        Iterator<Map.Entry<String, Trip>> it = tripSet.iterator();
         try {
             writer = new FileWriter(tripFile);
+            writer.write("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id");
+            while(it.hasNext()) {
+                writer.write("\n" + it.next().toString());
+            }
+            writer.close();
         } catch (IOException e) {
             System.out.println("Trip file could not be found");
         }
 
-        Set<Map.Entry<String, Trip>> tripSet = trips.entrySet();
-        Iterator<Map.Entry<String, Trip>> it = tripSet.iterator();
-        while(it.hasNext()) {
-            try {
-                assert writer != null;
-                writer.write(it.next().toString());
-            } catch (IOException e) {
-                System.out.println("Could not write trip export file");
-            }
-        }
+        return tripFile;
+    }
 
+    public File exportStopTimes(Path path) {
+        File stopTimeFile = new File(path + "/stop_times.txt");
+        FileWriter writer = null;
         try {
+            writer = new FileWriter(stopTimeFile);
+            writer.write("trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type");
+            for(Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
+                Trip trip = mapEntry.getValue();
+                for(Map.Entry<String, StopTime> mapEntry2 : trip.getStopTimes().entrySet()) {
+                    StopTime stopTime = mapEntry2.getValue();
+                    writer.write("\n" + stopTime.toString());
+                }
+            }
             writer.close();
         } catch (IOException e) {
-            System.out.println("Could not close File Writer");
+            System.out.println("stopTime file could not be found");
         }
-        return tripFile;
+
+
+        return stopTimeFile;
     }
 
     /**
@@ -263,8 +266,6 @@ public class Controller {
             CSVReader reader = new CSVReader(line);
             stopTime = new StopTime(
                     reader.next(), reader.nextTime(), reader.nextTime(),
-                    reader.next(), reader.nextInt(), reader.next(),
-                    reader.nextInt(), reader.nextInt());
                     reader.next(), reader.next(), reader.next(),
                     reader.next(), reader.next());
 
@@ -471,8 +472,7 @@ public class Controller {
                 throw new IllegalArgumentException();
             }
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
-                | NumberFormatException e){
+        } catch (CSVReader.EndOfStringException | NumberFormatException e){
             return null;
         } catch (IllegalArgumentException e) {
             System.out.println("Route must have a route_id and a route_color");
