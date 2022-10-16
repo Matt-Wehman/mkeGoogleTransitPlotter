@@ -10,6 +10,8 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 
 /**
@@ -29,6 +31,23 @@ public class Controller {
     @FXML
     Button exportButton;
 
+    @FXML
+    Button stopIdButton;
+
+    @FXML
+    Button routeIdButton;
+
+    @FXML
+    Button tripIdButton;
+
+    @FXML
+    TextField searchBar;
+
+    @FXML
+    Label searchBarLabel;
+
+
+
     protected HashMap<Integer, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
@@ -39,6 +58,9 @@ public class Controller {
     public Controller() {
 
     }
+
+    @FXML
+    public void generateStopIdInterface(Action )
 
     /**
      * Gets all the stops in a route by searching the routeID
@@ -90,6 +112,10 @@ public class Controller {
     public double displayDistance(int routeID) {
         return 0;
     }
+
+
+
+
 
 
     public void exportHelper(ActionEvent actionEvent) {
