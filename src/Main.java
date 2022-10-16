@@ -29,8 +29,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainDisplay.fxml")));
         FXMLLoader primaryLoader = new FXMLLoader();
+
+        Parent root = primaryLoader.load(Objects.requireNonNull(getClass().getResource("MainDisplay.fxml")).openStream());
 
         stage.setTitle("GTSF APP");
 
@@ -54,30 +55,30 @@ public class Main extends Application {
 
         FXMLLoader tripLoader = new FXMLLoader();
 
-        Parent tripRoot = routeLoader.load(getClass()
+        Parent tripRoot = tripLoader.load(getClass()
                 .getResource("tripDisplay.fxml").openStream());
 
         //Create secondary stage (Instantiation)
         Stage tripStage = new Stage();
 
         //Secondary Stage/Window
-        routeStage.setTitle("Route info");
-        routeStage.setScene(new Scene(tripRoot));
-        routeStage.hide();
+        tripStage.setTitle("Route info");
+        tripStage.setScene(new Scene(tripRoot));
+        tripStage.hide();
 
 
         FXMLLoader stopLoader = new FXMLLoader();
 
-        Parent stopRoot = routeLoader.load(getClass()
+        Parent stopRoot = stopLoader.load(getClass()
                 .getResource("stopDisplay.fxml").openStream());
 
         //Create secondary stage (Instantiation)
         Stage stopStage = new Stage();
 
         //Secondary Stage/Window
-        routeStage.setTitle("Route info");
-        routeStage.setScene(new Scene(tripRoot));
-        routeStage.hide();
+        stopStage.setTitle("Route info");
+        stopStage.setScene(new Scene(stopRoot));
+        stopStage.hide();
 
         Controller primaryController = primaryLoader.getController();
 
@@ -86,8 +87,6 @@ public class Main extends Application {
         primaryController.setTripStage(tripStage);
 
         primaryController.setStopStage(stopStage);
-
-
 
     }
 }

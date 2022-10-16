@@ -78,17 +78,17 @@ public class Controller {
 
     @FXML
     public void generateStopIdInterface(ActionEvent actionevent){
-
+        stopDisplay.show();
     }
 
     @FXML
     public void generateRouteIdInterface(ActionEvent actionevent){
-
+        routeDisplay.show();
     }
 
     @FXML
     public void generateTripIdInterface(ActionEvent actionevent){
-
+        tripDisplay.show();
     }
 
     protected void setRouteStage(Stage stage){
