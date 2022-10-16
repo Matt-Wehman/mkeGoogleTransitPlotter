@@ -46,6 +46,11 @@ public class Controller {
     @FXML
     Label searchBarLabel;
 
+    private Stage routeDisplay;
+
+    private Stage tripDisplay;
+
+    private Stage stopDisplay;
 
 
     protected HashMap<Integer, Stop> allStops = new HashMap<>();
@@ -78,6 +83,21 @@ public class Controller {
     public void generateTripIdInterface(ActionEvent actionevent){
 
     }
+
+    protected void setRouteStage(Stage stage){
+        this.routeDisplay = stage;
+    }
+
+    protected void setTripStage(Stage stage){
+        this.tripDisplay = stage;
+    }
+
+    protected void setStopStage(Stage stage){
+        this.stopDisplay = stage;
+    }
+
+
+
 
     /**
      * Gets all the stops in a route by searching the routeID
