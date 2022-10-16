@@ -507,8 +507,7 @@ public class Controller {
                 throw new IllegalArgumentException();
             }
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
-                | NumberFormatException e){
+        } catch (CSVReader.EndOfStringException | NumberFormatException e){
             return null;
         } catch (IllegalArgumentException e) {
             System.out.println("Route must have a route_id and a route_color");
