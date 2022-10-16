@@ -32,8 +32,6 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainDisplay.fxml")));
         FXMLLoader primaryLoader = new FXMLLoader();
 
-        Parent root = primaryLoader.load(Objects.requireNonNull(getClass().getResource("fxmlFile.fxml")));
-
         stage.setTitle("GTSF APP");
 
         stage.setScene(new Scene(root, SCENE_WIDTH, SCENE_HEIGHT));
