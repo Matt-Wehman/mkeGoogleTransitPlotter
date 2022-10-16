@@ -70,14 +70,18 @@ public class Controller {
 
     }
 
-    @FXML
-    public void getId(ActionEvent actionEvent) {
-        String id = searchBar.getText();
-
+    /**
+     * gets the text from the search bar
+     * @return String id
+     */
+    public String getId() {
+        return searchBar.getText();
     }
+
 
     @FXML
     public void generateStopIdInterface(ActionEvent actionevent){
+        String stopId = getId();
         stopDisplay.show();
     }
 
@@ -259,7 +263,7 @@ public class Controller {
 
     /**
      * Imports the GTFS files and calls helper methods to populate entity objects
-     * @param listOfFiles
+     * @param listOfFiles directories of the files to import
      */
     public boolean importFiles(ArrayList<File> listOfFiles) {
         List<File> routeFile = listOfFiles.stream()
