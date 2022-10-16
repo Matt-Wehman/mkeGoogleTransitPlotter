@@ -12,7 +12,9 @@ import java.util.stream.Stream;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.shape.Path;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  * This class handles the methods from the GUI
@@ -46,9 +48,15 @@ public class Controller {
     @FXML
     Label searchBarLabel;
 
+    Stage tripDisplay;
+
+    Stage routeDisplay;
+
+    Stage stopDisplay;
 
 
-    protected HashMap<Integer, Stop> allStops = new HashMap<>();
+
+    protected HashMap<String, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
 
@@ -446,7 +454,7 @@ public class Controller {
         CSVReader reader = new CSVReader(stopLine);
         Stop stop;
         try {
-            int stopId = reader.nextInt();
+            String stopId = reader.next();
             String name = reader.next();
             String description = reader.next();
             double lat = reader.nextDouble();
