@@ -14,9 +14,9 @@ public class Route {
     private String routeID;
     private String routeLongName;
     private String routeShortName;
-    private int routeTextColor;
-    private int routeType;
-    private int routeURL;
+    private String routeTextColor;
+    private String routeType;
+    private String routeURL;
     private HashMap<Integer, Stop> stops = new HashMap<>();
     private HashMap<String, Trip> trips = new HashMap<>();
 
@@ -32,7 +32,7 @@ public class Route {
      * @param routeColor
      * @param routeTextColor
      */
-    public Route(String routeID, String agencyID, String routeShortName, String routeLongName, String routeDesc, int routeType, int routeURL, String routeColor, int routeTextColor) {
+    public Route(String routeID, String agencyID, String routeShortName, String routeLongName, String routeDesc, String routeType, String routeURL, String routeColor, String routeTextColor) {
         try {
             this.agencyID = agencyID;
             this.routeColor = routeColor;
@@ -72,15 +72,15 @@ public class Route {
         this.routeShortName = routeShortName;
     }
 
-    public void setRouteTextColor(int routeTextColor) {
+    public void setRouteTextColor(String routeTextColor) {
         this.routeTextColor = routeTextColor;
     }
 
-    public void setRouteType(int routeType) {
+    public void setRouteType(String routeType) {
         this.routeType = routeType;
     }
 
-    public void setRouteURL(int routeURL) {
+    public void setRouteURL(String routeURL) {
         this.routeURL = routeURL;
     }
 
@@ -108,15 +108,15 @@ public class Route {
         return routeShortName;
     }
 
-    public int getRouteTextColor() {
+    public String getRouteTextColor() {
         return routeTextColor;
     }
 
-    public int getRouteType() {
+    public String getRouteType() {
         return routeType;
     }
 
-    public int getRouteURL() {
+    public String getRouteURL() {
         return routeURL;
     }
 
@@ -143,6 +143,7 @@ public class Route {
     }
 
 
+
     public boolean equals(Route r) {
         return
                 this.routeID.equals(r.routeID) &&
@@ -151,8 +152,8 @@ public class Route {
                         this.agencyID.equals(r.agencyID) &&
                         this.routeLongName.equals(r.routeLongName) &&
                         this.routeShortName.equals(r.routeShortName) &&
-                        this.routeURL == r.routeURL &&
-                        this.routeType == r.routeType;
+                        this.routeURL.equals(r.routeURL) &&
+                        this.routeType.equals(r.routeType);
 
     }
 

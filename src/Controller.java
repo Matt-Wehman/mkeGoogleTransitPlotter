@@ -501,8 +501,8 @@ public class Controller {
         try {
             route = new Route(
                     reader.next(), reader.next(), reader.next(),
-                    reader.next(), reader.next(), reader.nextInt(),
-                    reader.nextInt(), reader.next(), reader.nextInt());
+                    reader.next(), reader.next(), reader.next(),
+                    reader.next(), reader.next(), reader.next());
             if(route.getRouteID().equals("") || route.getRouteColor().equals("")) {
                 throw new IllegalArgumentException();
             }
