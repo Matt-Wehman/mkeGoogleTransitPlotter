@@ -91,6 +91,10 @@ public class Stop {
         return false;
     }
 
+    public void checkRequired(){
+
+    }
+
     @Override
     public String toString() {
         return stopID + "," +
