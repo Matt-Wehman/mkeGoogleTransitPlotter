@@ -2,6 +2,9 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.util.ArrayList;
+
 public class ControllerTest {
 
 
@@ -172,6 +175,21 @@ public class ControllerTest {
             StopTime test = Controller.validateStopTimeLine(c);
             Assertions.assertEquals(c, test.toString());
         }
+    }
+
+    @Test
+    public void testTripsPerStop(){
+        Controller controller = new Controller();
+        ArrayList<File> listOfFiles = new ArrayList<>();
+        listOfFiles.add(new File("./GTFSFiles/routes.txt"));
+        listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
+        listOfFiles.add(new File("./GTFSFiles/stops.txt"));
+        listOfFiles.add(new File("./GTFSFiles/trips.txt"));
+        controller.importFiles(listOfFiles);
+
+        System.out.println(controller.tripsPerStop("6712"));
+        System.out.println(controller.tripsPerStop("4628"));
+
     }
 
 }

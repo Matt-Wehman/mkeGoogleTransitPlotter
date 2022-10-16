@@ -251,7 +251,7 @@ public class Controller {
 
     /**
      * Imports the GTFS files and calls helper methods to populate entity objects
-     * @param listOfFiles
+     * @param listOfFiles directories of the files to import
      */
     public boolean importFiles(ArrayList<File> listOfFiles) {
         List<File> routeFile = listOfFiles.stream()
