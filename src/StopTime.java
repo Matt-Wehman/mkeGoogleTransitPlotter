@@ -120,6 +120,10 @@ public class StopTime {
     }
 
 
+    /**
+     * checks that all required fields are filled
+     * @throws CSVReader.MissingRequiredFieldException if any required field is empty
+     */
     public void checkRequired() throws CSVReader.MissingRequiredFieldException {
         if (tripID.isEmpty() || arrivalTime.toString().isEmpty() ||
                 departureTime.toString().isEmpty() || stopID.isEmpty()
