@@ -29,9 +29,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainDisplay.fxml")));
         FXMLLoader primaryLoader = new FXMLLoader();
-
-        Parent root = primaryLoader.load(Objects.requireNonNull(getClass().getResource("fxmlFile.fxml")));
 
         stage.setTitle("GTSF APP");
 

@@ -35,7 +35,7 @@ public class ControllerTest {
         String invalidRouteLine2 = "33,MCTS,33,Vliet Street,,3,,,";
         String invalidRouteLine3 = ",MCTS,33,Vliet Street,,3,,008345,";
 
-        Route validRoute = new Route("23D", "MCTS", "23", "Fond du lac-National (17-SEP) - DETOUR", "This Route is in Detour", 3, -1, "008345", -1);
+        Route validRoute = new Route("23D", "MCTS", "23", "Fond du lac-National (17-SEP) - DETOUR", "This Route is in Detour", "3", "", "008345","");
 
         Assertions.assertTrue(validRoute.equals(Controller.validateRouteLine(validRouteLine1)));
 
