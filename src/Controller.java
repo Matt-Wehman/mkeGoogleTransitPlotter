@@ -48,10 +48,13 @@ public class Controller {
     @FXML
     Label searchBarLabel;
 
+    @FXML
     Stage tripDisplay;
 
+    @FXML
     Stage routeDisplay;
 
+    @FXML
     Stage stopDisplay;
 
 
@@ -69,6 +72,7 @@ public class Controller {
 
     @FXML
     public void getId(ActionEvent actionEvent) {
+        String id = searchBar.getText();
 
     }
 
