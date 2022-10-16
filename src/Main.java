@@ -29,12 +29,66 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("fxmlFile.fxml")));
+        FXMLLoader primaryLoader = new FXMLLoader();
+
+        Parent root = primaryLoader.load(Objects.requireNonNull(getClass().getResource("fxmlFile.fxml")));
 
         stage.setTitle("GTSF APP");
 
         stage.setScene(new Scene(root, SCENE_WIDTH, SCENE_HEIGHT));
 
         stage.show();
+
+        FXMLLoader routeLoader = new FXMLLoader();
+
+        Parent routeRoot = routeLoader.load(getClass()
+                .getResource("routeDisplay.fxml").openStream());
+
+        //Create secondary stage (Instantiation)
+        Stage routeStage = new Stage();
+
+        //Secondary Stage/Window
+        routeStage.setTitle("Route info");
+        routeStage.setScene(new Scene(routeRoot));
+        routeStage.hide();
+
+
+        FXMLLoader tripLoader = new FXMLLoader();
+
+        Parent tripRoot = routeLoader.load(getClass()
+                .getResource("tripDisplay.fxml").openStream());
+
+        //Create secondary stage (Instantiation)
+        Stage tripStage = new Stage();
+
+        //Secondary Stage/Window
+        routeStage.setTitle("Route info");
+        routeStage.setScene(new Scene(tripRoot));
+        routeStage.hide();
+
+
+        FXMLLoader stopLoader = new FXMLLoader();
+
+        Parent stopRoot = routeLoader.load(getClass()
+                .getResource("stopDisplay.fxml").openStream());
+
+        //Create secondary stage (Instantiation)
+        Stage stopStage = new Stage();
+
+        //Secondary Stage/Window
+        routeStage.setTitle("Route info");
+        routeStage.setScene(new Scene(tripRoot));
+        routeStage.hide();
+
+        Controller primaryController = primaryLoader.getController();
+
+        primaryController.setRouteStage(routeStage);
+
+        primaryController.setTripStage(tripStage);
+
+        primaryController.setStopStage(stopStage);
+
+
+
     }
 }

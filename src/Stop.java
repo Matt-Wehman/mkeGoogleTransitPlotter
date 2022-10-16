@@ -8,7 +8,7 @@
 public class Stop {
 
     private String stopDesc;
-    private int stopID;
+    private String stopID;
     private double stopLat;
     private double stopLong;
     private String stopName;
@@ -21,11 +21,11 @@ public class Stop {
         this.stopDesc = stopDesc;
     }
 
-    public int getStopID() {
+    public String getStopID() {
         return stopID;
     }
 
-    public void setStopID(int stopID) {
+    public void setStopID(String stopID) {
         this.stopID = stopID;
     }
 
@@ -61,7 +61,7 @@ public class Stop {
 	 * @param stopLat
 	 * @param stopLong
 	 */
-    public Stop(int stopID, String stopName, String stopDesc, double stopLat, double stopLong) {
+    public Stop(String stopID, String stopName, String stopDesc, double stopLat, double stopLong) {
         try {
             this.stopDesc = stopDesc;
             this.stopID = stopID;
