@@ -218,7 +218,7 @@ public class Controller {
      * validates the first line of the StopTime file
      * @param firstLine the line to parse
      * @return True if the line is valid False if it is invalid
-     * @auther Ian Czerkis
+     * @author Ian Czerkis
      */
     public static boolean validateFirstStopTimeLine(String firstLine) {
         return firstLine.equals("trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
@@ -380,13 +380,8 @@ public class Controller {
      * @author Chrstian Basso
      */
     public static boolean validateRouteHeader(String header) {
-        if (!header.equals("route_id,agency_id,route_short_name,route_long_name," +
-                "route_desc,route_type,route_url,route_color,route_text_color")){
-
-            return false;
-        } else {
-            return true;
-        }
+        return header.equals("route_id,agency_id,route_short_name,route_long_name," +
+                "route_desc,route_type,route_url,route_color,route_text_color");
     }
 
 
@@ -497,13 +492,19 @@ public class Controller {
     }
 
     /**
-     * Finds all the trips at a stop
-     * This method has not been implemented
-     * @param stopID
-     * @return int
+     * Counts the number trips that use the specified stop
+     * @param stopID the stopID to search for
+     * @return the number of occurances of trips containing that stop
      */
-    public int tripsPerStop(int stopID) {
-        return 0;
+    public int tripsPerStop(String stopID) {
+        int counter = 0;
+        for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
+            Trip trip = mapEntry.getValue();
+            if (trip.getStopTimes().containsKey(stopID)){
+                counter++;
+            }
+        }
+        return counter;
     }
 
     /**
