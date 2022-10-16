@@ -42,13 +42,21 @@ public class ControllerTest {
 
         Assertions.assertTrue(validRoute.equals(Controller.validateRouteLine(validRouteLine1)));
 
-        Assertions.assertNotNull(validRouteLine1);
-        Assertions.assertNotNull(validRouteLine2);
-        Assertions.assertNotNull(validRouteLine3);
+        Route validRoute1 = Controller.validateRouteLine(validRouteLine1);
+        Route validRoute2 = Controller.validateRouteLine(validRouteLine2);
+        Route validRoute3 = Controller.validateRouteLine(validRouteLine3);
+
+        Assertions.assertNotNull(validRoute1);
+        Assertions.assertNotNull(validRoute2);
+        Assertions.assertNotNull(validRoute3);
 
         Assertions.assertNull(Controller.validateRouteLine(invalidRouteLine1));
         Assertions.assertNull(Controller.validateRouteLine(invalidRouteLine2));
         Assertions.assertNull(Controller.validateRouteLine(invalidRouteLine3));
+
+        Assertions.assertEquals(validRoute1.toString(), "23D,MCTS,23,Fond du lac-National (17-SEP) - DETOUR,This Route is in Detour,3,,008345,");
+        Assertions.assertEquals(validRoute2.toString(), "27,MCTS,27,27th Street,,3,,008345,");
+        Assertions.assertEquals(validRoute3.toString(), "42U,,,,,,,008345,");
 
     }
 
@@ -61,19 +69,21 @@ public class ControllerTest {
     }
     @Test
     public void validateTripBody(){
-        String tripString = "64,17-SEP_SUN,21736564_2535,60TH-VLIET,0,64102,17-SEP_64_0_23";
-
+        String[] validBodies = new String[]{"64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23"
+                ,"64,17-SEP_SUN,21736569_2545,60TH-VLIET,0,64102,17-SEP_64_0_23",
+        "64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19"};
         String[] invalidBodies = new String[]{"64,17-SEP_SUN,21736567_2541," +
                 "60TH-VLIET,0,64102,17-SEP_64_0_23,dsoad,dsao,poi", "19", "64,17-SEP_SUN,21736567_2541" };
+        for (String validBody : validBodies) {
+            Assertions.assertNotNull(Controller.validateTripLines(validBody));
+        }
+        for (String invalidBody : invalidBodies) {
+            Assertions.assertNull(Controller.validateTripLines(invalidBody));
+        }
 
-        Trip trip = Controller.validateTripLines(tripString);
-        Trip trueTrip = new Trip("64","17-SEP_SUN", "21736564_2535", "60TH-VLIET", 0, 64102, "17-SEP_64_0_23");
-        System.out.println(trip.toString());
-        System.out.println(trueTrip.toString());
-
-        Assertions.assertEquals(trueTrip.toString(), trip.toString());
-        for(int i = 0; i < invalidBodies.length; i++){
-            Assertions.assertNull(Controller.validateTripLines(invalidBodies[i]));
+        for (String validBody: validBodies){
+            Trip test = Controller.validateTripLines(validBody);
+            Assertions.assertEquals(validBody, test.toString());
         }
     }
 
@@ -84,6 +94,7 @@ public class ControllerTest {
     @Test
     public void validateStopHeaderLines(){
         Assertions.assertTrue(Controller.validateStopHeader("stop_id,stop_name,stop_desc,stop_lat,stop_lon"));
+        Assertions.assertFalse(Controller.validateStopHeader("fail"));
     }
 
     /**
@@ -112,6 +123,9 @@ public class ControllerTest {
         Stop badStop3 = Controller.validateLinesInStop(
                 "PROSPECT & ALBION #4361,afdasd,43.0498663,");
         Assertions.assertNull(badStop3);
+
+        Assertions.assertEquals(correctStop1.toString(), "1801,S92 & ORCHARD #1801,,43.0138967,-87.8935061");
+        Assertions.assertEquals(correctStop2.toString(), "1785,NATIONAL & S6 #1785,,43.0231768,-87.9184932");
     }
 
     /**
