@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.*;
 import java.util.List;
@@ -13,7 +12,9 @@ import java.util.stream.Stream;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.shape.Path;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  * This class handles the methods from the GUI
@@ -22,13 +23,16 @@ import javafx.stage.FileChooser;
  * @created 05-Oct-2022 12:59:52 PM
  */
 public class Controller {
-    
+
     @FXML
-     Button importButton;
+    Button butt;
+
+    @FXML
+    Button importButton;
 
     @FXML
     Button exportButton;
-    
+
     @FXML
     Button stopIdButton;
 
@@ -43,10 +47,15 @@ public class Controller {
 
     @FXML
     Label searchBarLabel;
-    
-    
-    
-    
+
+    Stage tripDisplay;
+
+    Stage routeDisplay;
+
+    Stage stopDisplay;
+
+
+
     protected HashMap<String, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
@@ -77,6 +86,21 @@ public class Controller {
     public void generateTripIdInterface(ActionEvent actionevent){
 
     }
+
+    protected void setRouteStage(Stage stage){
+        this.routeDisplay = stage;
+    }
+
+    protected void setTripStage(Stage stage){
+        this.tripDisplay = stage;
+    }
+
+    protected void setStopStage(Stage stage){
+        this.stopDisplay = stage;
+    }
+
+
+
 
     /**
      * Gets all the stops in a route by searching the routeID
@@ -130,16 +154,11 @@ public class Controller {
     }
 
 
-    public void exportHelper(ActionEvent actionEvent) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Save Directory");
-        File file = fileChooser.showSaveDialog(null);
-        boolean bool = file.mkdir();
 
-        File routeExport = exportRoutes(file.toPath());
-        File stopExport = exportStops(file.toPath());
-        File tripExport = exportTrips(file.toPath());
-        File stopTimeExport = exportStopTimes(file.toPath());
+
+
+
+    public void exportHelper(ActionEvent actionEvent) {
 
     }
 
@@ -405,7 +424,7 @@ public class Controller {
                 String stopLine = it.next();
                 Stop stop = validateLinesInStop(stopLine);
                 if(!Objects.equals(null, stop)) {
-                    allStops.put(stop.getStopID() + "", stop);
+                    allStops.put(stop.getStopID(), stop);
                 }
 
             }

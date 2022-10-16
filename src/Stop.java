@@ -62,15 +62,11 @@ public class Stop {
 	 * @param stopLong
 	 */
     public Stop(String stopID, String stopName, String stopDesc, double stopLat, double stopLong) {
-        try {
-            this.stopDesc = stopDesc;
-            this.stopID = stopID;
-            this.stopLat = stopLat;
-            this.stopLong = stopLong;
-            this.stopName = stopName;
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("File is not formatted correctly");
-        }
+        this.stopDesc = stopDesc;
+        this.stopID = stopID;
+        this.stopLat = stopLat;
+        this.stopLong = stopLong;
+        this.stopName = stopName;
     }
 
     /**
