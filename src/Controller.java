@@ -57,7 +57,7 @@ public class Controller {
     @FXML
     Stage stopDisplay;
 
-
+    StopController stopController;
 
     protected HashMap<String, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
@@ -78,10 +78,14 @@ public class Controller {
         return searchBar.getText();
     }
 
-
+    public void setStopController(StopController stop){
+        stopController = stop;
+    }
     @FXML
     public void generateStopIdInterface(ActionEvent actionevent){
         String stopId = getId();
+        stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
+        stopController.setStopID(stopId);
         stopDisplay.show();
     }
 

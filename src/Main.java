@@ -82,11 +82,16 @@ public class Main extends Application {
 
         Controller primaryController = primaryLoader.getController();
 
+        StopController stopController = stopLoader.getController();
+
         primaryController.setRouteStage(routeStage);
 
         primaryController.setTripStage(tripStage);
 
         primaryController.setStopStage(stopStage);
 
+        stopController.setController(primaryController);
+
+        primaryController.setStopController(stopController);
     }
 }
