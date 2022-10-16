@@ -72,6 +72,7 @@ public class Controller {
 
     @FXML
     public void getId(ActionEvent actionEvent) {
+        String id = searchBar.getText();
 
     }
 
