@@ -60,7 +60,24 @@ public class Controller {
     }
 
     @FXML
-    public void generateStopIdInterface(Action )
+    public void getId(ActionEvent actionEvent) {
+
+    }
+
+    @FXML
+    public void generateStopIdInterface(ActionEvent actionevent){
+
+    }
+
+    @FXML
+    public void generateRouteIdInterface(ActionEvent actionevent){
+
+    }
+
+    @FXML
+    public void generateTripIdInterface(ActionEvent actionevent){
+
+    }
 
     /**
      * Gets all the stops in a route by searching the routeID
