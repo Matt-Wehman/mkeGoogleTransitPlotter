@@ -48,10 +48,13 @@ public class Controller {
     @FXML
     Label searchBarLabel;
 
+    @FXML
     Stage tripDisplay;
 
+    @FXML
     Stage routeDisplay;
 
+    @FXML
     Stage stopDisplay;
 
 
