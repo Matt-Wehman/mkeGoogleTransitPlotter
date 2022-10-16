@@ -70,14 +70,18 @@ public class Controller {
 
     }
 
-    @FXML
-    public void getId(ActionEvent actionEvent) {
-        String id = searchBar.getText();
-
+    /**
+     * gets the text from the search bar
+     * @return String id
+     */
+    public String getId() {
+        return searchBar.getText();
     }
+
 
     @FXML
     public void generateStopIdInterface(ActionEvent actionevent){
+        String stopId = getId();
         stopDisplay.show();
     }
 
