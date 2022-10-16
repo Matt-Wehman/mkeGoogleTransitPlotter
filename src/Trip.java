@@ -13,7 +13,7 @@ public class Trip {
     private String routeID;
     private String serviceID;
     private String shapeID;
-    private HashMap<Integer, StopTime> stopTimes = new HashMap<>();
+    private final HashMap<String, StopTime> stopTimes = new HashMap<>();
     private String tripHeadSign;
     private String tripID;
 
@@ -65,7 +65,7 @@ public class Trip {
         return shapeID;
     }
 
-    public HashMap<Integer, StopTime> getStopTimes() {
+    public HashMap<String, StopTime> getStopTimes() {
         return stopTimes;
     }
 

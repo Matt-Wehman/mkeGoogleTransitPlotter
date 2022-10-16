@@ -21,7 +21,10 @@ import javafx.stage.FileChooser;
 public class Controller {
 
     @FXML
-     Button importButton;
+    Button butt;
+
+    @FXML
+    Button importButton;
 
     @FXML
     Button exportButton;
@@ -199,11 +202,13 @@ public class Controller {
             CSVReader reader = new CSVReader(line);
             stopTime = new StopTime(
                     reader.next(), reader.nextTime(), reader.nextTime(),
-                    reader.nextInt(), reader.nextInt(), reader.next(),
-                    reader.nextInt(), reader.nextInt());
+                    reader.next(), reader.next(), reader.next(),
+                    reader.next(), reader.next());
 
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | NumberFormatException | ParseException e) {
+            stopTime.checkRequired();
+        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
+                 | NumberFormatException | ParseException e) {
             return null;
         }
         return stopTime;
@@ -286,7 +291,6 @@ public class Controller {
      * @param stopFile
      */
     private void importStops(File stopFile) {
-        int index = 1;
         try (Stream<String> lines = Files.lines(stopFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
@@ -378,7 +382,7 @@ public class Controller {
     public static boolean validateRouteHeader(String header) {
         if (!header.equals("route_id,agency_id,route_short_name,route_long_name," +
                 "route_desc,route_type,route_url,route_color,route_text_color")){
-            System.out.println("Unknown formatting encountered: Routes");
+
             return false;
         } else {
             return true;
@@ -401,10 +405,11 @@ public class Controller {
                     reader.next(), reader.next(), reader.nextInt(),
                     reader.nextInt(), reader.next(), reader.nextInt());
             if(route.getRouteID().equals("") || route.getRouteColor().equals("")) {
-                throw new IllegalArgumentException();
+                throw new CSVReader.MissingRequiredFieldException("A required field is missing");
             }
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | NumberFormatException e){
+        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
+                | NumberFormatException e){
             return null;
         } catch (IllegalArgumentException e) {
             System.out.println("Route must have a route_id and a route_color");
@@ -466,13 +471,19 @@ public class Controller {
     }
 
     /**
-     * finds all routes that contain a certian stop
-     * This method has not been implemented
-     * @param stopID
-     * @return ArrayList<Integer>
+     * searches all routes to see if they contain the specified stopID
+     * @param stopID the stop ID to search
+     * @return ArrayList<String> the list of routeID that contain
      */
-    public ArrayList<Integer> routesContainingStop(int stopID) {
-        return null;
+    public ArrayList<String> routesContainingStop(String stopID) {
+        ArrayList<String> routesContaining = new ArrayList<>();
+        for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
+            Trip trip = mapEntry.getValue();
+            if (trip.getStopTimes().containsKey(stopID)){
+                routesContaining.add(trip.getRouteID());
+            }
+        }
+        return routesContaining;
     }
 
     /**

@@ -2,6 +2,9 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.util.ArrayList;
+
 public class ControllerTest {
 
 
@@ -110,4 +113,44 @@ public class ControllerTest {
                 "PROSPECT & ALBION #4361,afdasd,43.0498663,");
         Assertions.assertNull(badStop3);
     }
+
+    /**
+     * Validates a line in the StopTime file
+     * @author Ian Czerkis
+     */
+    @Test
+    public void validateFirstStopTimeLine() {
+        String correctFirstLine = "trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
+                "stop_headsign,pickup_type,drop_off_type";
+        Assertions.assertFalse(Controller.validateFirstStopTimeLine("fail"));
+        Assertions.assertTrue(Controller.validateFirstStopTimeLine(correctFirstLine));
+        Assertions.assertFalse(Controller.validateFirstStopTimeLine(correctFirstLine + ",test"));
+    }
+
+    /**
+     * validates the first line in the StopTime file
+     * @author Ian Czerkis
+     */
+    @Test
+    public void validateStopTimeLine() {
+        String[] correctFormats = {"21736564_2535,08:51:00,08:51:00,9113,1,,0,0",
+                "217312321_1231,09:12:00,12:09:00,1,1,,,",
+                "21849620_1284,22:47:00,22:47:00,874,52,,0,0"};
+        String[] incorrectFormats = {"fail", "212340_34532,22:47:00",
+                "21849620_1284,22:47:00,22:47:00,874,52,0,0",
+                "21794282_2306,,11:24:00,10,48,,0,0"};
+
+        for (String c: correctFormats){
+            Assertions.assertNotNull(Controller.validateStopTimeLine(c));
+        }
+        for (String i: incorrectFormats){
+            Assertions.assertNull(Controller.validateStopTimeLine(i));
+        }
+
+        for (String c: correctFormats){
+            StopTime test = Controller.validateStopTimeLine(c);
+            Assertions.assertEquals(c, test.toString());
+        }
+    }
+
 }
