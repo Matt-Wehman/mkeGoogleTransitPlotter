@@ -11,6 +11,8 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 
 /**
@@ -20,13 +22,31 @@ import javafx.stage.FileChooser;
  * @created 05-Oct-2022 12:59:52 PM
  */
 public class Controller {
-
+    
     @FXML
      Button importButton;
 
     @FXML
     Button exportButton;
+    
+    @FXML
+    Button stopIdButton;
 
+    @FXML
+    Button routeIdButton;
+
+    @FXML
+    Button tripIdButton;
+
+    @FXML
+    TextField searchBar;
+
+    @FXML
+    Label searchBarLabel;
+    
+    
+    
+    
     protected HashMap<String, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
@@ -35,6 +55,26 @@ public class Controller {
      * Creates Controller instance
      */
     public Controller() {
+
+    }
+
+    @FXML
+    public void getId(ActionEvent actionEvent) {
+
+    }
+
+    @FXML
+    public void generateStopIdInterface(ActionEvent actionevent){
+
+    }
+
+    @FXML
+    public void generateRouteIdInterface(ActionEvent actionevent){
+
+    }
+
+    @FXML
+    public void generateTripIdInterface(ActionEvent actionevent){
 
     }
 
@@ -282,7 +322,7 @@ public class Controller {
      * validates the first line of the StopTime file
      * @param firstLine the line to parse
      * @return True if the line is valid False if it is invalid
-     * @auther Ian Czerkis
+     * @author Ian Czerkis
      */
     public static boolean validateFirstStopTimeLine(String firstLine) {
         return firstLine.equals("trip_id,arrival_time,departure_time,stop_id,stop_sequence," +
@@ -444,13 +484,8 @@ public class Controller {
      * @author Chrstian Basso
      */
     public static boolean validateRouteHeader(String header) {
-        if (!header.equals("route_id,agency_id,route_short_name,route_long_name," +
-                "route_desc,route_type,route_url,route_color,route_text_color")){
-            System.out.println("Unknown formatting encountered: Routes");
-            return false;
-        } else {
-            return true;
-        }
+        return header.equals("route_id,agency_id,route_short_name,route_long_name," +
+                "route_desc,route_type,route_url,route_color,route_text_color");
     }
 
 
@@ -472,7 +507,8 @@ public class Controller {
                 throw new IllegalArgumentException();
             }
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | NumberFormatException e){
+        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
+                | NumberFormatException e){
             return null;
         } catch (IllegalArgumentException e) {
             System.out.println("Route must have a route_id and a route_color");
@@ -534,13 +570,19 @@ public class Controller {
     }
 
     /**
-     * finds all routes that contain a certian stop
-     * This method has not been implemented
-     * @param stopID
-     * @return ArrayList<Integer>
+     * searches all routes to see if they contain the specified stopID
+     * @param stopID the stop ID to search
+     * @return ArrayList<String> the list of routeID that contain
      */
-    public ArrayList<Integer> routesContainingStop(int stopID) {
-        return null;
+    public ArrayList<String> routesContainingStop(String stopID) {
+        ArrayList<String> routesContaining = new ArrayList<>();
+        for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
+            Trip trip = mapEntry.getValue();
+            if (trip.getStopTimes().containsKey(stopID)){
+                routesContaining.add(trip.getRouteID());
+            }
+        }
+        return routesContaining;
     }
 
     /**
@@ -554,13 +596,19 @@ public class Controller {
     }
 
     /**
-     * Finds all the trips at a stop
-     * This method has not been implemented
-     * @param stopID
-     * @return int
+     * Counts the number trips that use the specified stop
+     * @param stopID the stopID to search for
+     * @return the number of occurances of trips containing that stop
      */
-    public int tripsPerStop(int stopID) {
-        return 0;
+    public int tripsPerStop(String stopID) {
+        int counter = 0;
+        for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
+            Trip trip = mapEntry.getValue();
+            if (trip.getStopTimes().containsKey(stopID)){
+                counter++;
+            }
+        }
+        return counter;
     }
 
     /**

@@ -13,7 +13,7 @@ public class Trip {
     private String routeID;
     private String serviceID;
     private String shapeID;
-    private HashMap<String, StopTime> stopTimes = new HashMap<>();
+    private final HashMap<String, StopTime> stopTimes = new HashMap<>();
     private String tripHeadSign;
     private String tripID;
 
@@ -105,6 +105,11 @@ public class Trip {
      */
     public boolean update(Trip newTrip) {
         return false;
+    }
+
+    public String toString(){
+        String string = routeID + "," + serviceID + "," + tripID + "," + tripHeadSign + "," + directionID + "," + blockID + ","+ shapeID;
+        return string;
     }
 
 }
