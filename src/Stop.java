@@ -91,8 +91,14 @@ public class Stop {
         return false;
     }
 
-    public void checkRequired(){
-
+    /**
+     * ensures all required fields are filled in
+     * @throws CSVReader.MissingRequiredFieldException if a required field is empty
+     */
+    public void checkRequired() throws CSVReader.MissingRequiredFieldException {
+        if (stopID.isEmpty()){
+            throw new CSVReader.MissingRequiredFieldException("Missing a required field");
+        }
     }
 
     @Override

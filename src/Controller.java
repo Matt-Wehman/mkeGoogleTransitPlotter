@@ -402,8 +402,9 @@ public class Controller {
                 reader.next(), Integer.parseInt(reader.next()), Integer.parseInt(reader.next()),
                 reader.next());
         reader.checkEndOfLine();
+        trip.checkRequired();
             return trip;
-        } catch (CSVReader.EndOfStringException | NumberFormatException e){
+        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException | NumberFormatException e){
             return null;
         }
     }
@@ -465,9 +466,8 @@ public class Controller {
 
             stop = new Stop(stopId, name, description, lat, lon);
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | NumberFormatException e){
-//            System.out.println(e.getLocalizedMessage());
-//            System.out.println(e.getMessage());
+            stop.checkRequired();
+        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException | NumberFormatException e){
             return null;
         }
         return stop;
@@ -522,14 +522,9 @@ public class Controller {
                     reader.next(), reader.next(), reader.next(),
                     reader.next(), reader.next(), reader.next(),
                     reader.next(), reader.next(), reader.next());
-            if(route.getRouteID().equals("") || route.getRouteColor().equals("")) {
-                throw new IllegalArgumentException();
-            }
             reader.checkEndOfLine();
-        } catch (CSVReader.EndOfStringException | NumberFormatException e){
-            return null;
-        } catch (IllegalArgumentException e) {
-            System.out.println("Route must have a route_id and a route_color");
+            route.checkRequired();
+        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException | NumberFormatException e){
             return null;
         }
         return route;

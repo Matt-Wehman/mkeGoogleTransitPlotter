@@ -107,6 +107,16 @@ public class Trip {
         return false;
     }
 
+    /**
+     * checks that all required fields are filled
+     * @throws CSVReader.MissingRequiredFieldException if a required field is empty
+     */
+    public void checkRequired() throws CSVReader.MissingRequiredFieldException {
+        if (routeID.isEmpty() | serviceID.isEmpty() | tripID.isEmpty()){
+            throw new CSVReader.MissingRequiredFieldException("A required field is empty");
+        }
+    }
+
     public String toString(){
         String string = routeID + "," + serviceID + "," + tripID + "," + tripHeadSign + "," + directionID + "," + blockID + ","+ shapeID;
         return string;
