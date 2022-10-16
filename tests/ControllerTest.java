@@ -82,12 +82,8 @@ public class ControllerTest {
 
         String tripString = "64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23";
         Trip trip = Controller.validateTripLines(tripString);
-        Trip trueTrip = new Trip("64","17-SEP_SUN", "21736564_2535", "60TH-VLIET", 0, 64102, "17-SEP_64_0_23");
 
-        System.out.println(trip.toString());
-        System.out.println(trueTrip.toString());
-
-        Assertions.assertEquals(trueTrip.toString(), trip.toString());
+        Assertions.assertEquals("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23", trip.toString());
 
 
         for(String i: invalidBodies){
