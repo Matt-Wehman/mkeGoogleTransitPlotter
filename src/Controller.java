@@ -81,6 +81,12 @@ public class Controller {
     public void setStopController(StopController stop){
         stopController = stop;
     }
+
+    /**
+     * Show the stop stage and sets all information inside it
+     * @param actionevent when button is clicked
+     * @author Matt Wehman
+     */
     @FXML
     public void generateStopIdInterface(ActionEvent actionevent){
         String stopId = getId();
@@ -88,25 +94,41 @@ public class Controller {
         stopController.setStopID(stopId);
         stopDisplay.show();
     }
-
+    /**
+     * Shows the route stage and sets all information inside it
+     * @param actionevent when button is clicked
+     */
     @FXML
     public void generateRouteIdInterface(ActionEvent actionevent){
         routeDisplay.show();
     }
-
+    /**
+     * Shows the trip stage and sets all information inside it
+     * @param actionevent when button is clicked
+     */
     @FXML
     public void generateTripIdInterface(ActionEvent actionevent){
         tripDisplay.show();
     }
 
+    /**
+     * Sets the route stage
+     * @param stage stage to be set
+     */
     protected void setRouteStage(Stage stage){
         this.routeDisplay = stage;
     }
-
+    /**
+     * Sets the trip stage
+     * @param stage stage to be set
+     */
     protected void setTripStage(Stage stage){
         this.tripDisplay = stage;
     }
-
+    /**
+     * Sets the stop stage
+     * @param stage stage to be set
+     */
     protected void setStopStage(Stage stage){
         this.stopDisplay = stage;
     }
