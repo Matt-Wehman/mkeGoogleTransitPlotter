@@ -73,6 +73,10 @@ public class Trip {
         return tripHeadSign;
     }
 
+    public double distance() {
+        return -1;
+    }
+
     public String getTripID() {
         return tripID;
     }
@@ -117,6 +121,11 @@ public class Trip {
         }
     }
 
+    /**
+     * Makes trip into a string using trip's variables
+     * @return string
+     * @author wehman
+     */
     public String toString(){
         String string = routeID + "," + serviceID + "," + tripID + "," + tripHeadSign + "," + directionID + "," + blockID + ","+ shapeID;
         return string;
