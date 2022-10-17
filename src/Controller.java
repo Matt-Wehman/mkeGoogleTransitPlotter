@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.*;
 import java.util.List;
@@ -12,7 +13,6 @@ import java.util.stream.Stream;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.shape.Path;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -81,6 +81,12 @@ public class Controller {
     public void setStopController(StopController stop){
         stopController = stop;
     }
+
+    /**
+     * Show the stop stage and sets all information inside it
+     * @param actionevent when button is clicked
+     * @author Matt Wehman
+     */
     @FXML
     public void generateStopIdInterface(ActionEvent actionevent){
         String stopId = getId();
@@ -88,25 +94,41 @@ public class Controller {
         stopController.setStopID(stopId);
         stopDisplay.show();
     }
-
+    /**
+     * Shows the route stage and sets all information inside it
+     * @param actionevent when button is clicked
+     */
     @FXML
     public void generateRouteIdInterface(ActionEvent actionevent){
         routeDisplay.show();
     }
-
+    /**
+     * Shows the trip stage and sets all information inside it
+     * @param actionevent when button is clicked
+     */
     @FXML
     public void generateTripIdInterface(ActionEvent actionevent){
         tripDisplay.show();
     }
 
+    /**
+     * Sets the route stage
+     * @param stage stage to be set
+     */
     protected void setRouteStage(Stage stage){
         this.routeDisplay = stage;
     }
-
+    /**
+     * Sets the trip stage
+     * @param stage stage to be set
+     */
     protected void setTripStage(Stage stage){
         this.tripDisplay = stage;
     }
-
+    /**
+     * Sets the stop stage
+     * @param stage stage to be set
+     */
     protected void setStopStage(Stage stage){
         this.stopDisplay = stage;
     }
@@ -171,6 +193,14 @@ public class Controller {
 
 
     public void exportHelper(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Save Directory");
+        File file = fileChooser.showSaveDialog(null);
+        boolean bool = file.mkdir();
+        File routeExport = exportRoutes(file.toPath());
+        File stopExport = exportStops(file.toPath());
+        File tripExport = exportTrips(file.toPath());
+        File stopTimeExport = exportStopTimes(file.toPath());
 
     }
 
@@ -179,7 +209,7 @@ public class Controller {
      * This method has not been implemented
      * @return route gtfs file
      */
-    public File exportRoutes(Path path) {
+    public File exportRoutes(java.nio.file.Path path) {
         File routeFile = new File(path + "/routes.txt");
         FileWriter writer = null;
         Set<Map.Entry<String, Route>> routeSet = routes.entrySet();
@@ -197,7 +227,7 @@ public class Controller {
         return routeFile;
     }
 
-    public File exportStops(Path path) {
+    public File exportStops(java.nio.file.Path path) {
         File stopFile = new File(path + "/stops.txt");
         FileWriter writer = null;
         Set<Map.Entry<String, Stop>> stopSet = allStops.entrySet();
@@ -216,7 +246,7 @@ public class Controller {
         return stopFile;
     }
 
-    public File exportTrips(Path path) {
+    public File exportTrips(java.nio.file.Path path) {
         File tripFile = new File(path + "/trips.txt");
         FileWriter writer = null;
         Set<Map.Entry<String, Trip>> tripSet = trips.entrySet();
@@ -604,7 +634,9 @@ public class Controller {
         for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
             Trip trip = mapEntry.getValue();
             if (trip.getStopTimes().containsKey(stopID)){
-                routesContaining.add(trip.getRouteID());
+                if(!routesContaining.contains(trip.getRouteID())) {
+                    routesContaining.add(trip.getRouteID());
+                }
             }
         }
         return routesContaining;
@@ -707,5 +739,12 @@ public class Controller {
     public boolean updateTrip(Trip trip) {
         return false;
     }
+
+    /**
+     * Returns all routes that contain a certain stop
+     * @param stopId
+     * @return Arraylist of routes
+     */
+
 
 }

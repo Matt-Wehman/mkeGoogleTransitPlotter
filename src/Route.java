@@ -147,7 +147,7 @@ public class Route {
      * @throws CSVReader.MissingRequiredFieldException if a required field is empty
      */
     public void checkRequired() throws CSVReader.MissingRequiredFieldException {
-        if (routeID.isEmpty() | routeType.isEmpty()){
+        if (routeID.isEmpty() | routeColor.isEmpty()){
             throw new CSVReader.MissingRequiredFieldException("A required field is missing");
         }
     }

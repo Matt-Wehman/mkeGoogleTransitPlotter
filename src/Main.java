@@ -44,10 +44,10 @@ public class Main extends Application {
         Parent routeRoot = routeLoader.load(getClass()
                 .getResource("routeDisplay.fxml").openStream());
 
-        //Create secondary stage (Instantiation)
+        //Create route stage (Instantiation)
         Stage routeStage = new Stage();
 
-        //Secondary Stage/Window
+        //Route Stage/Window
         routeStage.setTitle("Route info");
         routeStage.setScene(new Scene(routeRoot));
         routeStage.hide();
@@ -58,10 +58,10 @@ public class Main extends Application {
         Parent tripRoot = tripLoader.load(getClass()
                 .getResource("tripDisplay.fxml").openStream());
 
-        //Create secondary stage (Instantiation)
+        //Create trip stage (Instantiation)
         Stage tripStage = new Stage();
 
-        //Secondary Stage/Window
+        //Trip Stage/Window
         tripStage.setTitle("Route info");
         tripStage.setScene(new Scene(tripRoot));
         tripStage.hide();
@@ -72,10 +72,10 @@ public class Main extends Application {
         Parent stopRoot = stopLoader.load(getClass()
                 .getResource("stopDisplay.fxml").openStream());
 
-        //Create secondary stage (Instantiation)
+        //Create Stop stage (Instantiation)
         Stage stopStage = new Stage();
 
-        //Secondary Stage/Window
+        // Stop Stage/Window
         stopStage.setTitle("Route info");
         stopStage.setScene(new Scene(stopRoot));
         stopStage.hide();
