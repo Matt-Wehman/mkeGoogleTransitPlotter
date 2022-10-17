@@ -626,7 +626,9 @@ public class Controller {
         for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
             Trip trip = mapEntry.getValue();
             if (trip.getStopTimes().containsKey(stopID)){
-                routesContaining.add(trip.getRouteID());
+                if(!routesContaining.contains(trip.getRouteID())) {
+                    routesContaining.add(trip.getRouteID());
+                }
             }
         }
         return routesContaining;
@@ -729,5 +731,12 @@ public class Controller {
     public boolean updateTrip(Trip trip) {
         return false;
     }
+
+    /**
+     * Returns all routes that contain a certain stop
+     * @param stopId
+     * @return Arraylist of routes
+     */
+
 
 }

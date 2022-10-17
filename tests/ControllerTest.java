@@ -1,11 +1,25 @@
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ControllerTest {
+    Controller controller;
+    @BeforeEach
+    private void setUp(){
+        controller = new Controller();
+        ArrayList<File> listOfFiles = new ArrayList<>();
+        listOfFiles.add(new File("./GTFSFiles/routes.txt"));
+        listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
+        listOfFiles.add(new File("./GTFSFiles/stops.txt"));
+        listOfFiles.add(new File("./GTFSFiles/trips.txt"));
+        controller.importFiles(listOfFiles);
+    }
 
 
     /**
@@ -179,17 +193,28 @@ public class ControllerTest {
 
     @Test
     public void testTripsPerStop(){
-        Controller controller = new Controller();
-        ArrayList<File> listOfFiles = new ArrayList<>();
-        listOfFiles.add(new File("./GTFSFiles/routes.txt"));
-        listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
-        listOfFiles.add(new File("./GTFSFiles/stops.txt"));
-        listOfFiles.add(new File("./GTFSFiles/trips.txt"));
-        controller.importFiles(listOfFiles);
-
         System.out.println(controller.tripsPerStop("6712"));
         System.out.println(controller.tripsPerStop("4628"));
 
+    }
+
+    @Test
+    public void testRoutesContainingStop(){
+        String[] stops = new String[]{"1801","5006"};
+        ArrayList<String> firstRoutes = new ArrayList<String>(
+                List.of("67")
+        );
+        ArrayList<String> secRoutes = new ArrayList<String>(
+                List.of("50")
+        );
+        ArrayList<String> finalRoutes = new ArrayList<>(
+                List.of("57D","GRE","143")
+        );
+        ArrayList<String>[] routes = new ArrayList[]{firstRoutes,secRoutes,finalRoutes};
+        for(int i = 0; i < stops.length; i++){
+            ArrayList<String> found = controller.routesContainingStop(stops[i]);
+            Assertions.assertEquals(routes[i], found);
+        }
     }
 
 }
