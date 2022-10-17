@@ -1,6 +1,11 @@
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
 
+/**
+ * This class handles the method for the stop display
+ * @author wehmanm
+ * @version 1.0
+ */
 public class StopController {
 
     Controller controller;
