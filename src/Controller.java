@@ -502,7 +502,8 @@ public class Controller {
             String description = reader.next();
             double lat = reader.nextDouble();
             double lon = reader.nextDouble();
-            if(lat == -1 || lon == -1){
+            if(lat == -1 || lon == -1 || (lat < -90.00 || lat > 90.00) ||
+                    (lon < -180.00 || lon > 180.00)){
                 throw new NumberFormatException("empty");
             }
 
