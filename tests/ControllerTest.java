@@ -4,8 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ControllerTest {
@@ -34,6 +35,31 @@ public class ControllerTest {
         Assertions.assertEquals(correctDistance2, testTrip2.distance());
         Assertions.assertNotEquals(incorrectDistance1, testTrip1.distance());
 
+    }
+
+    /**
+     * feature 8 tests
+     * @author Ian Czerkis
+     */
+    @Test
+    public void testNextTripAtStop(){
+        String stopID = "21794626_1570";
+        Time currentTime = new Time(8, 37, 0);
+        LinkedList<Integer> nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
+        Assertions.assertTrue(nextTripAtStop.contains(1661));
+        Assertions.assertFalse(nextTripAtStop.contains(1660));
+
+        stopID = "21850870_756";
+        currentTime = new Time(18, 32, 0);
+        nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
+        Assertions.assertTrue(nextTripAtStop.contains(6037));
+        Assertions.assertFalse(nextTripAtStop.contains(6036));
+
+        stopID = "21794234_1711";
+        currentTime = new Time(13, 21, 0);
+        nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
+        Assertions.assertTrue(nextTripAtStop.contains(3878));
+        Assertions.assertFalse(nextTripAtStop.contains(3877));
     }
 
 

@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Time;
 import java.text.ParseException;
 import java.util.*;
 import java.util.List;
@@ -600,7 +601,7 @@ public class Controller {
      * @param stopID
      * @param currentTime
      */
-    public LinkedList<Integer> nextTripAtStop(int stopID, int currentTime) {
+    public LinkedList<Integer> nextTripAtStop(String stopID, Time currentTime) {
         return null;
     }
 
