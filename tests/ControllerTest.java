@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * tests methods in the controller class
+ */
 public class ControllerTest {
     Controller controller;
     @BeforeEach
