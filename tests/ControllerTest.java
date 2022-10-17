@@ -177,6 +177,10 @@ public class ControllerTest {
         }
     }
 
+    /**
+     * tests the trip per stop method
+     * @author Ian Czerkis
+     */
     @Test
     public void testTripsPerStop(){
         Controller controller = new Controller();
@@ -187,9 +191,11 @@ public class ControllerTest {
         listOfFiles.add(new File("./GTFSFiles/trips.txt"));
         controller.importFiles(listOfFiles);
 
-        System.out.println(controller.tripsPerStop("6712"));
-        System.out.println(controller.tripsPerStop("4628"));
-
+        Assertions.assertEquals(58, controller.tripsPerStop("6712"));
+        Assertions.assertEquals(149, controller.tripsPerStop("4628"));
+        Assertions.assertEquals(80, controller.tripsPerStop("8298"));
+        Assertions.assertEquals(72, controller.tripsPerStop("1557"));
+        Assertions.assertEquals(98, controller.tripsPerStop("5224"));
     }
 
 }
