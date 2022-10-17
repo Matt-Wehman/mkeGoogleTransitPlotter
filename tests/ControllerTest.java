@@ -25,6 +25,11 @@ public class ControllerTest {
         controller.importFiles(listOfFiles);
     }
 
+    /**
+     * Tests distance calculations for a trip (Feature 2)
+     * @author Christian B
+     */
+
     @Test
     public void testDistance() {
         int correctDistance1 = 100;
