@@ -152,7 +152,7 @@ public class Controller {
      * @param tripID
      * @return int
      */
-    public int avgSpeed(int tripID) {
+    public static int avgSpeed(String tripID) {
         return 0;
     }
 

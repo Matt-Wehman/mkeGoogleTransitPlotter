@@ -37,11 +37,27 @@ public class ControllerTest {
     }
 
 
+    @Test
+    public void testSpeed() {
+        //Time for trips1 is 32, and for trip2 33 mins
+        int correctSpeed1 = 100/32;
+        int correctSpeed2 = 100/33;
+        int incorrectSpeed1 = 100/50;
+
+        Trip testTrip1 = Controller.validateTripLines("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23");
+        Trip testTrip2 = Controller.validateTripLines("64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19");
+
+        Assertions.assertEquals(correctSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
+        Assertions.assertEquals(correctSpeed2, Controller.avgSpeed(testTrip2.getTripID()));
+        Assertions.assertNotEquals(incorrectSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
+
+    }
+
+
     /**
      * Tests route header validation
      * @author Christian Basso
      */
-
     @Test
     public void testValidateRouteHeader() {
         String validHeader = "route_id,agency_id,route_short_name,route_long_name," +
