@@ -73,6 +73,10 @@ public class Trip {
         return tripHeadSign;
     }
 
+    public double distance() {
+        return -1;
+    }
+
     public String getTripID() {
         return tripID;
     }
