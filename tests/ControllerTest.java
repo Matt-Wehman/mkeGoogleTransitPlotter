@@ -9,7 +9,7 @@ public class ControllerTest {
 
     @Test
     public void testDistance() {
-        int correctDistance1 = 10;
+        int correctDistance1 = 100;
         int correctDistance2 = 100;
         int incorrectDistance1 = 99;
 
