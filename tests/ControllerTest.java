@@ -1,11 +1,29 @@
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
+/**
+ * tests methods in the controller class
+ */
 public class ControllerTest {
+    Controller controller;
+    @BeforeEach
+    private void setUp(){
+        controller = new Controller();
+        ArrayList<File> listOfFiles = new ArrayList<>();
+        listOfFiles.add(new File("./GTFSFiles/routes.txt"));
+        listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
+        listOfFiles.add(new File("./GTFSFiles/stops.txt"));
+        listOfFiles.add(new File("./GTFSFiles/trips.txt"));
+        controller.importFiles(listOfFiles);
+    }
 
     @Test
     public void testDistance() {
@@ -22,12 +40,53 @@ public class ControllerTest {
 
     }
 
+    /**
+     * feature 8 tests
+     * @author Ian Czerkis
+     */
+    @Test
+    public void testNextTripAtStop(){
+        String stopID = "21794626_1570";
+        Time currentTime = new Time(8, 37, 0);
+        LinkedList<Integer> nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
+        Assertions.assertTrue(nextTripAtStop.contains(1661));
+        Assertions.assertFalse(nextTripAtStop.contains(1660));
+
+        stopID = "21850870_756";
+        currentTime = new Time(18, 32, 0);
+        nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
+        Assertions.assertTrue(nextTripAtStop.contains(6037));
+        Assertions.assertFalse(nextTripAtStop.contains(6036));
+
+        stopID = "21794234_1711";
+        currentTime = new Time(13, 21, 0);
+        nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
+        Assertions.assertTrue(nextTripAtStop.contains(3878));
+        Assertions.assertFalse(nextTripAtStop.contains(3877));
+    }
+
+
+    @Test
+    public void testSpeed() {
+        //Time for trips1 is 32, and for trip2 33 mins
+        int correctSpeed1 = 100/32;
+        int correctSpeed2 = 100/33;
+        int incorrectSpeed1 = 100/50;
+
+        Trip testTrip1 = Controller.validateTripLines("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23");
+        Trip testTrip2 = Controller.validateTripLines("64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19");
+
+        Assertions.assertEquals(correctSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
+        Assertions.assertEquals(correctSpeed2, Controller.avgSpeed(testTrip2.getTripID()));
+        Assertions.assertNotEquals(incorrectSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
+
+    }
+
 
     /**
      * Tests route header validation
      * @author Christian Basso
      */
-
     @Test
     public void testValidateRouteHeader() {
         String validHeader = "route_id,agency_id,route_short_name,route_long_name," +
@@ -75,6 +134,10 @@ public class ControllerTest {
 
     }
 
+    /**
+     * Tests trip header format
+     * @author Matthew Wehman
+     */
     @Test
     public void validateTripHeader(){
         String validHeader = "route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id";
@@ -82,11 +145,16 @@ public class ControllerTest {
         Assertions.assertTrue(Controller.validateTripHeader(validHeader));
         Assertions.assertFalse(Controller.validateTripHeader(invalidHeader));
     }
+
+    /**
+     * Tests trip body line format
+     * @author Matthew Wehman
+     */
     @Test
     public void validateTripBody(){
         String[] validBodies = new String[]{"64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23"
                 ,"64,17-SEP_SUN,21736569_2545,60TH-VLIET,0,64102,17-SEP_64_0_23",
-        "64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19"};
+                "64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19"};
 
         String[] invalidBodies = new String[]{"64,17-SEP_SUN,21736567_2541," +
                 "60TH-VLIET,0,64102,17-SEP_64_0_23,dsoad,dsao,poi", "19", "64,17-SEP_SUN,21736567_2541" };
@@ -188,19 +256,40 @@ public class ControllerTest {
         }
     }
 
+    /**
+     * tests the trip per stop method
+     * @author Ian Czerkis
+     */
     @Test
     public void testTripsPerStop(){
-        Controller controller = new Controller();
-        ArrayList<File> listOfFiles = new ArrayList<>();
-        listOfFiles.add(new File("./GTFSFiles/routes.txt"));
-        listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
-        listOfFiles.add(new File("./GTFSFiles/stops.txt"));
-        listOfFiles.add(new File("./GTFSFiles/trips.txt"));
-        controller.importFiles(listOfFiles);
+        Assertions.assertEquals(58, controller.tripsPerStop("6712"));
+        Assertions.assertEquals(149, controller.tripsPerStop("4628"));
+        Assertions.assertEquals(80, controller.tripsPerStop("8298"));
+        Assertions.assertEquals(72, controller.tripsPerStop("1557"));
+        Assertions.assertEquals(98, controller.tripsPerStop("5224"));
+    }
 
-        System.out.println(controller.tripsPerStop("6712"));
-        System.out.println(controller.tripsPerStop("4628"));
-
+    /**
+     * Tests routesContainingStop method against known values
+     * @author Matthew Wehman
+     */
+    @Test
+    public void testRoutesContainingStop(){
+        String[] stops = new String[]{"1801","5006"};
+        ArrayList<String> firstRoutes = new ArrayList<String>(
+                List.of("67")
+        );
+        ArrayList<String> secRoutes = new ArrayList<String>(
+                List.of("50")
+        );
+        ArrayList<String> finalRoutes = new ArrayList<>(
+                List.of("57D","GRE","143")
+        );
+        ArrayList<String>[] routes = new ArrayList[]{firstRoutes,secRoutes,finalRoutes};
+        for(int i = 0; i < stops.length; i++){
+            ArrayList<String> found = controller.routesContainingStop(stops[i]);
+            Assertions.assertEquals(routes[i], found);
+        }
     }
 
 }
