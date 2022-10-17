@@ -89,6 +89,10 @@ public class ControllerTest {
 
     }
 
+    /**
+     * Tests trip header format
+     * @author Matthew Wehman
+     */
     @Test
     public void validateTripHeader(){
         String validHeader = "route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id";
@@ -96,6 +100,11 @@ public class ControllerTest {
         Assertions.assertTrue(Controller.validateTripHeader(validHeader));
         Assertions.assertFalse(Controller.validateTripHeader(invalidHeader));
     }
+
+    /**
+     * Tests trip body line format
+     * @author Matthew Wehman
+     */
     @Test
     public void validateTripBody(){
         String[] validBodies = new String[]{"64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23"
@@ -209,6 +218,10 @@ public class ControllerTest {
 
     }
 
+    /**
+     * Tests routesContainingStop method against known values
+     * @author Matthew Wehman
+     */
     @Test
     public void testRoutesContainingStop(){
         String[] stops = new String[]{"1801","5006"};
