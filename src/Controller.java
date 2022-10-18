@@ -188,11 +188,6 @@ public class Controller {
         return 0;
     }
 
-
-
-
-
-
     public void exportHelper(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Save Directory");
@@ -402,18 +397,19 @@ public class Controller {
             String firstLine = it.next();
             if (!validateTripHeader(firstLine)){
                 System.out.println("Unknown formatting encountered: Trips");
-            }
-            while (it.hasNext()) {
-                String tripLine = it.next();
-                Trip trip = validateTripLines(tripLine);
-                // Add trip to corresponding route
-                if(!Objects.equals(null, trip)) {
-                if(!routes.containsKey(trip.getRouteID())){
-                    System.out.println("Route " + trip.getRouteID()+ " was mentioned on line: "+ index + " but not found");
-                } else {
-                    routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
-                }
-                    trips.put(trip.getTripID(), trip);
+            } else {
+                while (it.hasNext()) {
+                    String tripLine = it.next();
+                    Trip trip = validateTripLines(tripLine);
+                    // Add trip to corresponding route
+                    if (!Objects.equals(null, trip)) {
+                        if (!routes.containsKey(trip.getRouteID())) {
+                            System.out.println("Route " + trip.getRouteID() + " was mentioned on line: " + index + " but not found");
+                        } else {
+                            routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
+                        }
+                        trips.put(trip.getTripID(), trip);
+                    }
                 }
             }
         } catch (IOException e){
