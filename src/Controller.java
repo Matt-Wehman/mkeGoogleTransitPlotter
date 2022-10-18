@@ -463,14 +463,15 @@ public class Controller {
             String firstLine = it.next();
             if (!validateStopHeader(firstLine)){
                 System.out.println("Unknown formatting encountered: Stops");
-            }
-            while (it.hasNext()){
-                String stopLine = it.next();
-                Stop stop = validateLinesInStop(stopLine);
-                if(!Objects.equals(null, stop)) {
-                    allStops.put(stop.getStopID(), stop);
-                }
+            } else {
+                while (it.hasNext()) {
+                    String stopLine = it.next();
+                    Stop stop = validateLinesInStop(stopLine);
+                    if (!Objects.equals(null, stop)) {
+                        allStops.put(stop.getStopID(), stop);
+                    }
 
+                }
             }
         } catch (IOException e){
             System.out.println("Error finding file, no Stops were imported");
