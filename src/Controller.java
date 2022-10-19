@@ -219,7 +219,7 @@ public class Controller {
             writer = new FileWriter(routeFile);
             writer.write("route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color");
             while(it.hasNext()) {
-                writer.write("\n" + it.next().toString());
+                writer.write("\n" + it.next().getValue().toString());
             }
             writer.close();
         } catch (IOException e) {
@@ -237,7 +237,7 @@ public class Controller {
             writer = new FileWriter(stopFile);
             writer.write("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
             while(it.hasNext()) {
-                writer.write("\n" + it.next().toString());
+                writer.write("\n" + it.next().getValue().toString());
             }
             writer.close();
         } catch (IOException e) {
@@ -256,7 +256,7 @@ public class Controller {
             writer = new FileWriter(tripFile);
             writer.write("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id");
             while(it.hasNext()) {
-                writer.write("\n" + it.next().toString());
+                writer.write("\n" + it.next().getValue().toString());
             }
             writer.close();
         } catch (IOException e) {
