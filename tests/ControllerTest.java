@@ -288,7 +288,7 @@ public class ControllerTest {
      */
     @Test
     public void testRoutesContainingStop(){
-        String[] stops = new String[]{"1801","5006"};
+        String[] stops = new String[]{"1801","5006", "1318"};
         ArrayList<String> firstRoutes = new ArrayList<String>(
                 List.of("67")
         );

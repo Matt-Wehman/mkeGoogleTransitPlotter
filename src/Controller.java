@@ -20,6 +20,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -66,6 +67,7 @@ public class Controller {
 
     StopController stopController;
 
+
     protected HashMap<String, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
@@ -99,7 +101,22 @@ public class Controller {
         String stopId = getId();
         stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
         stopController.setStopID(stopId);
+        stopController.setRoutesText(setRouteList(routesContainingStop(stopId)));
         stopDisplay.show();
+    }
+
+    /**
+     * Sets the routeList text field with all the route ID's containing that stop
+     * @param list the list of route ID's
+     * @return String of route ID's
+     * @author Christian B, Matt W :)
+     */
+    public String setRouteList(ArrayList<String> list) {
+        String rtn = "";
+        for(String s : list) {
+            rtn += s + ", ";
+        }
+        return rtn;
     }
     /**
      * Shows the route stage and sets all information inside it
@@ -193,11 +210,6 @@ public class Controller {
     public double displayDistance(int routeID) {
         return 0;
     }
-
-
-
-
-
 
     public void exportHelper(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
@@ -596,6 +608,19 @@ public class Controller {
             }
         }
         return incorrectLines;
+    }
+
+    /**
+     * displays an error message to the user
+     * @param header the header text of the error
+     * @param context the context of the error
+     */
+    private void error(String header, String context){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(header);
+        alert.setContentText(context);
+        alert.showAndWait();
     }
 
 
