@@ -59,11 +59,17 @@ public class ControllerTest {
      */
     @Test
     public void testNextTripAtStop(){
+        long startTime;
+        long endTime;
+        startTime = System.nanoTime();
         String stopID = "1661";
         Time currentTime = new Time(8, 37, 0);
         String nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
         Assertions.assertEquals("21794626_1570", nextTripAtStop);
         Assertions.assertNotEquals("6327465324_72947", nextTripAtStop);
+        endTime = System.nanoTime() - startTime;
+        System.out.println((endTime));
+
 
 //        stopID = "21850870_756";
 //        currentTime = new Time(18, 32, 0);

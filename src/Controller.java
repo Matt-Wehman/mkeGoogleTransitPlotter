@@ -635,37 +635,7 @@ public class Controller {
      * @param currentTime
      */
     public String nextTripAtStop(String stopID, Time currentTime) {
-        int counter = 0;
-        String ret = "";
 
-        Stack<String> nextTrips = new Stack<>();
-        try {
-            DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-            Time soonestTime = new Time(formatter.parse("23:59:59").getTime());
-
-            for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
-                Trip trip = mapEntry.getValue();
-                if (trip.getStopTimes().containsKey(stopID)) {
-                    StopTime stopTime = trip.getStopTimes().get(stopID);
-                    Time stopTimeArr = stopTime.getArrivalTime();
-                    System.out.println("stopTime:    " + stopTimeArr);
-                    System.out.println("SoonestTime: " + soonestTime);
-                    System.out.println("CurrentTime: " + currentTime);
-                    System.out.println();
-
-                    if (stopTimeArr.compareTo(soonestTime) == -1 &&
-                            stopTimeArr.compareTo(currentTime) == 1) {
-                        soonestTime = stopTimeArr;
-                        nextTrips.add(trip.getTripID());
-                    }
-
-
-                }
-            }
-        } catch (ParseException e) {
-            System.out.println("cidwf");
-        }
-        return nextTrips.pop();
     }
 
     /**
