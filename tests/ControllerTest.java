@@ -14,6 +14,11 @@ import java.util.List;
  */
 public class ControllerTest {
     Controller controller;
+
+    /**
+     * instantiates all objects in controllers
+     * @author Matthew Wehman
+     */
     @BeforeEach
     private void setUp(){
         controller = new Controller();
