@@ -603,8 +603,24 @@ public class Controller {
      * @param stopID
      * @param currentTime
      */
-    public LinkedList<Integer> nextTripAtStop(String stopID, Time currentTime) {
-        return null;
+    public LinkedList<String> nextTripAtStop(String stopID, Time currentTime) {
+        int counter = 0;
+
+        LinkedList<String> nextTrips = new LinkedList<>();
+        for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
+            Trip trip = mapEntry.getValue();
+            if (trip.getStopTimes().containsKey(stopID)){
+                StopTime stopTime = trip.getStopTimes().get(stopID);
+                Time stopTimeArr = stopTime.getArrivalTime();
+
+                Time soonestTime = Integer.MAX_VALUE;
+                if(stopTimeArr - currentTime < soonestTime){
+                    soonestTime
+                }
+
+            }
+        }
+        return counter;
     }
 
     /**
