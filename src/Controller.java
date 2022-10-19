@@ -603,24 +603,24 @@ public class Controller {
      * @param stopID
      * @param currentTime
      */
-    public LinkedList<String> nextTripAtStop(String stopID, Time currentTime) {
+    public String nextTripAtStop(String stopID, Time currentTime) {
         int counter = 0;
-
+        Map<Time, StopTime> map = new HashMap<>();
         LinkedList<String> nextTrips = new LinkedList<>();
         for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
             Trip trip = mapEntry.getValue();
             if (trip.getStopTimes().containsKey(stopID)){
                 StopTime stopTime = trip.getStopTimes().get(stopID);
                 Time stopTimeArr = stopTime.getArrivalTime();
-
-                Time soonestTime = Integer.MAX_VALUE;
-                if(stopTimeArr - currentTime < soonestTime){
-                    soonestTime
+                if(currentTime.compareTo(stopTimeArr) < 0) {
+                    map.put(stopTimeArr, stopTime);
                 }
-
             }
         }
-        return counter;
+        List<Time> sortedKeys = new ArrayList<>(map.keySet());
+        Collections.sort(sortedKeys);
+        System.out.println("Sorted: " + sortedKeys);
+        return map.get(sortedKeys.get(0)).getTripID();
     }
 
     /**

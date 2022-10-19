@@ -56,23 +56,23 @@ public class ControllerTest {
      */
     @Test
     public void testNextTripAtStop(){
-        String stopID = "21794626_1570";
+        String stopID = "1661";
         Time currentTime = new Time(8, 37, 0);
-        LinkedList<Integer> nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
-        Assertions.assertTrue(nextTripAtStop.contains(1661));
-        Assertions.assertFalse(nextTripAtStop.contains(1660));
+        String nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
+        Assertions.assertEquals("21794626_1570", nextTripAtStop);
+        Assertions.assertNotEquals("21794626_212123570" , nextTripAtStop);
 
-        stopID = "21850870_756";
+        stopID = "6037";
         currentTime = new Time(18, 32, 0);
         nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
-        Assertions.assertTrue(nextTripAtStop.contains(6037));
-        Assertions.assertFalse(nextTripAtStop.contains(6036));
+        Assertions.assertEquals("21850870_756", nextTripAtStop);
+        Assertions.assertNotEquals("21850870_75dsadsa6", nextTripAtStop);
 
-        stopID = "21794234_1711";
+        stopID = "3878";
         currentTime = new Time(13, 21, 0);
         nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
-        Assertions.assertTrue(nextTripAtStop.contains(3878));
-        Assertions.assertFalse(nextTripAtStop.contains(3877));
+        Assertions.assertEquals("21794234_1711", nextTripAtStop);
+        Assertions.assertNotEquals("21794234_1712", nextTripAtStop);
     }
 
     /**
