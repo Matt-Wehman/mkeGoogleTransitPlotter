@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -60,6 +61,7 @@ public class Controller {
 
     StopController stopController;
 
+
     protected HashMap<String, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
@@ -93,7 +95,17 @@ public class Controller {
         String stopId = getId();
         stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
         stopController.setStopID(stopId);
+        stopController.setRoutesText(setRouteList(routesContainingStop(stopId)));
         stopDisplay.show();
+    }
+
+
+    public String setRouteList(ArrayList<String> list) {
+        String rtn = "";
+        for(String s : list) {
+            rtn += s + ", ";
+        }
+        return rtn;
     }
     /**
      * Shows the route stage and sets all information inside it
