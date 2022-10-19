@@ -99,7 +99,12 @@ public class Controller {
         stopDisplay.show();
     }
 
-
+    /**
+     * Sets the routeList text field with all the route ID's containing that stop
+     * @param list the list of route ID's
+     * @return String of route ID's
+     * @author Christian B, Matt W :)
+     */
     public String setRouteList(ArrayList<String> list) {
         String rtn = "";
         for(String s : list) {
