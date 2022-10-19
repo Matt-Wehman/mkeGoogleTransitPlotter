@@ -13,6 +13,9 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -315,21 +318,23 @@ public class Controller {
 
         if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0){
             try {
-                Alert alert = infoAlert("Importing files", "All files are being imported...");
+                Stage loadingStage = importLoadingStage();
+                if (loadingStage != null) {
+                    loadingStage.show();
+                }
                 int incorrectLines = 0;
                 incorrectLines += importRoutes(routeFile.get(0));
                 incorrectLines += importStops(stopFile.get(0));
                 incorrectLines += importTrips(tripFile.get(0));
                 incorrectLines += importStopTimes(stopTimesFile.get(0));
 
+                if (loadingStage != null) {
+                    loadingStage.hide();
+                }
                 if (incorrectLines > 0) {
-                    alert.hide();
                     errorAlert("Incorrectly Formatted Lines",
                             "All files were imported successfully, but " + incorrectLines +
                                     " incorrectly formatted lines were skipped.");
-                } else {
-                    alert.setHeaderText("Success");
-                    alert.setContentText("All files have been successfully imported");
                 }
                 return true;
             } catch (InvalidHeaderException e){
@@ -342,6 +347,26 @@ public class Controller {
             errorAlert("All four files must be imported at the same time", "Accepted filenames: routes.txt, stops.txt, trips.txt, stop_times.txt");
         }
         return false;
+    }
+
+    private Stage importLoadingStage() {
+        Stage importStage = null;
+        try {
+            FXMLLoader importLoader = new FXMLLoader();
+
+            Parent importRoot = importLoader.load(getClass()
+                    .getResource("ImportingFilesDisplay.fxml").openStream());
+
+            //Create route stage (Instantiation)
+            importStage = new Stage();
+
+            //Route Stage/Window
+            importStage.setTitle("Importing...");
+            importStage.setScene(new Scene(importRoot));
+        } catch (IOException e){
+            errorAlert("No Import FXML File found", "Ensure ImportingFilesDisplay.fxml is in the root directory");
+        }
+        return importStage;
     }
 
     /**
@@ -431,7 +456,7 @@ public class Controller {
                 Trip trip = validateTripLines(tripLine);
                 // Add trip to corresponding route
                 if(!Objects.equals(null, trip)) {
-                    if (!routes.containsKey(trip.getRouteID())) {
+                    if (routes.containsKey(trip.getRouteID())) {
                         routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
                         trips.put(trip.getTripID(), trip);
                     } else {
@@ -624,7 +649,6 @@ public class Controller {
         ArrayList<File> files = new ArrayList<>();
         for(File file : f){
             files.add(file);
-            System.out.println(files);
         }
         importFiles(files);
         //epic
