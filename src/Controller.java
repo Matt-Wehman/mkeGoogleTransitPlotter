@@ -17,6 +17,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -63,6 +64,7 @@ public class Controller {
 
     StopController stopController;
 
+
     protected HashMap<String, Stop> allStops = new HashMap<>();
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
@@ -96,7 +98,22 @@ public class Controller {
         String stopId = getId();
         stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
         stopController.setStopID(stopId);
+        stopController.setRoutesText(setRouteList(routesContainingStop(stopId)));
         stopDisplay.show();
+    }
+
+    /**
+     * Sets the routeList text field with all the route ID's containing that stop
+     * @param list the list of route ID's
+     * @return String of route ID's
+     * @author Christian B, Matt W :)
+     */
+    public String setRouteList(ArrayList<String> list) {
+        String rtn = "";
+        for(String s : list) {
+            rtn += s + ", ";
+        }
+        return rtn;
     }
     /**
      * Shows the route stage and sets all information inside it
@@ -217,7 +234,7 @@ public class Controller {
             writer = new FileWriter(routeFile);
             writer.write("route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color");
             while(it.hasNext()) {
-                writer.write("\n" + it.next().toString());
+                writer.write("\n" + it.next().getValue().toString());
             }
             writer.close();
         } catch (IOException e) {
@@ -235,7 +252,7 @@ public class Controller {
             writer = new FileWriter(stopFile);
             writer.write("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
             while(it.hasNext()) {
-                writer.write("\n" + it.next().toString());
+                writer.write("\n" + it.next().getValue().toString());
             }
             writer.close();
         } catch (IOException e) {
@@ -254,7 +271,7 @@ public class Controller {
             writer = new FileWriter(tripFile);
             writer.write("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id");
             while(it.hasNext()) {
-                writer.write("\n" + it.next().toString());
+                writer.write("\n" + it.next().getValue().toString());
             }
             writer.close();
         } catch (IOException e) {
