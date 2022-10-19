@@ -1,4 +1,5 @@
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.ParseException;
 
 /**
@@ -21,9 +22,9 @@ public class StopTime {
         return arrivalTime;
     }
 
-    public void setArrivalTime(Time arrivalTime) {
-        this.arrivalTime = arrivalTime;
-    }
+//    public void setArrivalTime(Time arrivalTime) {
+//        this.arrivalTime = arrivalTime;
+//    }
 
     public Time getDepartureTime() {
         return departureTime;
