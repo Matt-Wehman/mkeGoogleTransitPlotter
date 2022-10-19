@@ -5,9 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.sql.Time;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,29 +56,23 @@ public class ControllerTest {
      */
     @Test
     public void testNextTripAtStop(){
-        long startTime;
-        long endTime;
-        startTime = System.nanoTime();
         String stopID = "1661";
         Time currentTime = new Time(8, 37, 0);
         String nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
         Assertions.assertEquals("21794626_1570", nextTripAtStop);
-        Assertions.assertNotEquals("6327465324_72947", nextTripAtStop);
-        endTime = System.nanoTime() - startTime;
-        System.out.println((endTime));
+        Assertions.assertNotEquals("21794626_212123570" , nextTripAtStop);
 
+        stopID = "6037";
+        currentTime = new Time(18, 32, 0);
+        nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
+        Assertions.assertEquals("21850870_756", nextTripAtStop);
+        Assertions.assertNotEquals("21850870_75dsadsa6", nextTripAtStop);
 
-//        stopID = "21850870_756";
-//        currentTime = new Time(18, 32, 0);
-//        nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
-//        Assertions.assertTrue(nextTripAtStop.contains(6037));
-//        Assertions.assertFalse(nextTripAtStop.contains(6036));
-//
-//        stopID = "21794234_1711";
-//        currentTime = new Time(13, 21, 0);
-//        nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
-//        Assertions.assertTrue(nextTripAtStop.contains(3878));
-//        Assertions.assertFalse(nextTripAtStop.contains(3877));
+        stopID = "3878";
+        currentTime = new Time(13, 21, 0);
+        nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
+        Assertions.assertEquals("21794234_1711", nextTripAtStop);
+        Assertions.assertNotEquals("21794234_1712", nextTripAtStop);
     }
 
     /**
@@ -224,8 +215,6 @@ public class ControllerTest {
                 "4361,PROSPECT & ALBION #4361,,0.000,-181", "4361,PROSPECT & ALBION #4361,,0.00,181"
         };
 
-
-
         for (String correctStopBody : correctStopBodies) {
             Assertions.assertNotNull(Controller.validateLinesInStop(correctStopBody));
         }
@@ -254,7 +243,6 @@ public class ControllerTest {
         Assertions.assertFalse(Controller.validateFirstStopTimeLine(correctFirstLine + ",test"));
     }
 
-
     /**
      * validates the first line in the StopTime file
      * @author Ian Czerkis
@@ -267,19 +255,6 @@ public class ControllerTest {
         String[] incorrectFormats = {"fail", "212340_34532,22:47:00",
                 "21849620_1284,22:47:00,22:47:00,874,52,0,0",
                 "21794282_2306,,11:24:00,10,48,,0,0"};
-
-        StopTime s = Controller.validateStopTimeLine(
-                "21736564_2535,08:51:00,08:51:00,9113,1,,0,0");
-        System.out.println(s.getArrivalTime());
-        try {
-            DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-            Time a = new Time(formatter.parse("08:51:00").getTime());
-            Time b = new Time(formatter.parse("08:52:00").getTime());
-            System.out.println(a.compareTo(b));
-        } catch (ParseException E){
-            System.out.println("cheese");
-        }
-
 
         for (String c: correctFormats){
             Assertions.assertNotNull(Controller.validateStopTimeLine(c));
