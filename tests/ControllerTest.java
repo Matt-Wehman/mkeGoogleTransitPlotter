@@ -62,6 +62,8 @@ public class ControllerTest {
         Assertions.assertEquals("21794626_1570", nextTripAtStop);
         Assertions.assertNotEquals("21794626_212123570" , nextTripAtStop);
 
+
+
         stopID = "6037";
         currentTime = new Time(18, 32, 0);
         nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);

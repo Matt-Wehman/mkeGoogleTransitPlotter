@@ -1,4 +1,6 @@
 import java.io.File;
+
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -602,11 +604,10 @@ public class Controller {
      * This method has not been implemented
      * @param stopID
      * @param currentTime
+      * @author Matt Wehman
      */
     public String nextTripAtStop(String stopID, Time currentTime) {
-        int counter = 0;
-        Map<Time, StopTime> map = new HashMap<>();
-        LinkedList<String> nextTrips = new LinkedList<>();
+        SortedMap<Time, StopTime> map = new TreeMap<>();
         for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
             Trip trip = mapEntry.getValue();
             if (trip.getStopTimes().containsKey(stopID)){
@@ -617,10 +618,7 @@ public class Controller {
                 }
             }
         }
-        List<Time> sortedKeys = new ArrayList<>(map.keySet());
-        Collections.sort(sortedKeys);
-        System.out.println("Sorted: " + sortedKeys);
-        return map.get(sortedKeys.get(0)).getTripID();
+        return map.get(map.firstKey()).getTripID();
     }
 
     /**
