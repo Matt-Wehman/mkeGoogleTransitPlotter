@@ -6,11 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Time;
 import java.text.ParseException;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
+
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -188,11 +191,6 @@ public class Controller {
         return 0;
     }
 
-
-
-
-
-
     public void exportHelper(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Save Directory");
@@ -296,41 +294,30 @@ public class Controller {
         List<File> routeFile = listOfFiles.stream()
                                           .filter(file -> file.getName().equals("routes.txt"))
                                           .toList();
-        if (routeFile.size() > 0){
-            importRoutes(routeFile.get(0));
-        } else {
-            System.out.println("No route file");
-        }
 
         List<File> stopFile = listOfFiles.stream()
                 .filter(file -> file.getName().equals("stops.txt"))
                 .toList();
-        if (stopFile.size() > 0){
-            importStops(stopFile.get(0));
-        } else {
-            System.out.println("No stop file");
-        }
 
         List<File> tripFile = listOfFiles.stream()
                 .filter(file -> file.getName().equals("trips.txt"))
                 .toList();
-        if (stopFile.size() > 0){
-            importTrips(tripFile.get(0));
-        } else {
-            System.out.println("No trip file");
-        }
 
         List<File> stopTimesFile = listOfFiles.stream()
                 .filter(file -> file.getName().equals("stop_times.txt"))
                 .toList();
-        if (stopFile.size() > 0){
-            importStopTimes(stopTimesFile.get(0));
-        } else {
-            System.out.println("No stop time file");
-        }
 
-        System.out.println("all valid files imported");
-        return true;
+
+        if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0){
+            importRoutes(routeFile.get(0));
+            importStops(stopFile.get(0));
+            importTrips(tripFile.get(0));
+            importStopTimes(stopTimesFile.get(0));
+            return true;
+        } else {
+            error("All four files must be imported at the same time", "Accepted filenames: routes.txt, stops.txt, trips.txt, stop_times.txt");
+            return false;
+        }
     }
 
     /**
@@ -402,18 +389,19 @@ public class Controller {
             String firstLine = it.next();
             if (!validateTripHeader(firstLine)){
                 System.out.println("Unknown formatting encountered: Trips");
-            }
-            while (it.hasNext()) {
-                String tripLine = it.next();
-                Trip trip = validateTripLines(tripLine);
-                // Add trip to corresponding route
-                if(!Objects.equals(null, trip)) {
-                if(!routes.containsKey(trip.getRouteID())){
-                    System.out.println("Route " + trip.getRouteID()+ " was mentioned on line: "+ index + " but not found");
-                } else {
-                    routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
-                }
-                    trips.put(trip.getTripID(), trip);
+            } else {
+                while (it.hasNext()) {
+                    String tripLine = it.next();
+                    Trip trip = validateTripLines(tripLine);
+                    // Add trip to corresponding route
+                    if (!Objects.equals(null, trip)) {
+                        if (!routes.containsKey(trip.getRouteID())) {
+                            System.out.println("Route " + trip.getRouteID() + " was mentioned on line: " + index + " but not found");
+                        } else {
+                            routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
+                        }
+                        trips.put(trip.getTripID(), trip);
+                    }
                 }
             }
         } catch (IOException e){
@@ -463,14 +451,15 @@ public class Controller {
             String firstLine = it.next();
             if (!validateStopHeader(firstLine)){
                 System.out.println("Unknown formatting encountered: Stops");
-            }
-            while (it.hasNext()){
-                String stopLine = it.next();
-                Stop stop = validateLinesInStop(stopLine);
-                if(!Objects.equals(null, stop)) {
-                    allStops.put(stop.getStopID(), stop);
-                }
+            } else {
+                while (it.hasNext()) {
+                    String stopLine = it.next();
+                    Stop stop = validateLinesInStop(stopLine);
+                    if (!Objects.equals(null, stop)) {
+                        allStops.put(stop.getStopID(), stop);
+                    }
 
+                }
             }
         } catch (IOException e){
             System.out.println("Error finding file, no Stops were imported");
@@ -503,7 +492,8 @@ public class Controller {
             String description = reader.next();
             double lat = reader.nextDouble();
             double lon = reader.nextDouble();
-            if(lat == -1 || lon == -1){
+            if(lat == -1 || lon == -1 || (lat < -90.00 || lat > 90.00) ||
+                    (lon < -180.00 || lon > 180.00)){
                 throw new NumberFormatException("empty");
             }
 
@@ -536,6 +526,19 @@ public class Controller {
             System.out.println("Error finding file, no Routes were imported");
         }
 
+    }
+
+    /**
+     * displays an error message to the user
+     * @param header the header text of the error
+     * @param context the context of the error
+     */
+    private void error(String header, String context){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(header);
+        alert.setContentText(context);
+        alert.showAndWait();
     }
 
 
@@ -582,6 +585,7 @@ public class Controller {
     public void importHelper(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
+        fileChooser.setInitialDirectory(Paths.get("./").toFile());
         File selectedFile;
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("GSTF Files", "*.txt"));
         List<File> f = fileChooser.showOpenMultipleDialog(null);

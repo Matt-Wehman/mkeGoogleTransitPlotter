@@ -14,6 +14,11 @@ import java.util.List;
  */
 public class ControllerTest {
     Controller controller;
+
+    /**
+     * instantiates all objects in controllers
+     * @author Matthew Wehman
+     */
     @BeforeEach
     private void setUp(){
         controller = new Controller();
@@ -25,9 +30,14 @@ public class ControllerTest {
         controller.importFiles(listOfFiles);
     }
 
+    /**
+     * Tests distance calculations for a trip (Feature 2)
+     * @author Christian B
+     */
+
     @Test
     public void testDistance() {
-        int correctDistance1 = 10;
+        int correctDistance1 = 100;
         int correctDistance2 = 100;
         int incorrectDistance1 = 99;
 
@@ -65,7 +75,10 @@ public class ControllerTest {
         Assertions.assertFalse(nextTripAtStop.contains(3877));
     }
 
-
+    /**
+     * This method tests the speed of a trip give the distance and time of a trip
+     * @author Patrick
+     */
     @Test
     public void testSpeed() {
         //Time for trips1 is 32, and for trip2 33 mins
@@ -192,29 +205,29 @@ public class ControllerTest {
      */
     @Test
     public void validateStopBodyLines(){
-        Stop correctStop1 = (Controller.validateLinesInStop(
-                "1801,S92 & ORCHARD #1801,,43.0138967,-87.8935061"));
-        Assertions.assertNotNull(correctStop1);
+        String correctStopBodies[] = {"1785,NATIONAL & S6 #1785,,43.0231768,-87.9184932",
+                "1801,S92 & ORCHARD #1801,,43.0138967,-87.8935061",
+                "1932,S13 & ABBOTT #1932,,42.9495066,-87.9292056"};
 
-        Stop correctStop2 = (Controller.validateLinesInStop(
-                "1785,NATIONAL & S6 #1785,,43.0231768,-87.9184932"));
-        Assertions.assertNotNull(correctStop2);
+        String incorrectStopBodies[] = {"4361,PROSPECT & ALBION #4361,,43.0498663",
+                "14361,,,43.0498663,", "PROSPECT & ALBION #4361,afdasd,43.0498663,",
+                "4361,PROSPECT & ALBION #4361,,-91,0.000", "4361,PROSPECT & ALBION #4361,,91,0.000",
+                "4361,PROSPECT & ALBION #4361,,0.000,-181", "4361,PROSPECT & ALBION #4361,,0.00,181"
+        };
 
-        Stop badStop1 = Controller.validateLinesInStop(
-                "4361,PROSPECT & ALBION #4361,,43.0498663,");
-        Assertions.assertNull(badStop1);
+        for (String correctStopBody : correctStopBodies) {
+            Assertions.assertNotNull(Controller.validateLinesInStop(correctStopBody));
+        }
+        for (String incorrectStopBody : incorrectStopBodies) {
+            Assertions.assertNull(Controller.validateLinesInStop(incorrectStopBody));
+        }
 
-
-        Stop badStop2 = Controller.validateLinesInStop(
-                "4361,,,43.0498663,");
-        Assertions.assertNull(badStop2);
-
-        Stop badStop3 = Controller.validateLinesInStop(
-                "PROSPECT & ALBION #4361,afdasd,43.0498663,");
-        Assertions.assertNull(badStop3);
-
-        Assertions.assertEquals(correctStop1.toString(), "1801,S92 & ORCHARD #1801,,43.0138967,-87.8935061");
-        Assertions.assertEquals(correctStop2.toString(), "1785,NATIONAL & S6 #1785,,43.0231768,-87.9184932");
+        Assertions.assertEquals(Controller.validateLinesInStop(correctStopBodies[0]).toString(),
+                "1785,NATIONAL & S6 #1785,,43.0231768,-87.9184932");
+        Assertions.assertEquals(Controller.validateLinesInStop(correctStopBodies[1]).toString(),
+                "1801,S92 & ORCHARD #1801,,43.0138967,-87.8935061");
+        Assertions.assertEquals(Controller.validateLinesInStop(correctStopBodies[2]).toString(),
+                "1932,S13 & ABBOTT #1932,,42.9495066,-87.9292056");
     }
 
     /**
