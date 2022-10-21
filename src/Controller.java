@@ -609,7 +609,6 @@ public class Controller {
     public String nextTripAtStop(String stopID, Time currentTime) {
         int counter = 0;
         SortedMap<Time, StopTime> map = new TreeMap<>();
-        LinkedList<String> nextTrips = new LinkedList<>();
         for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
             Trip trip = mapEntry.getValue();
             if (trip.getStopTimes().containsKey(stopID)){
