@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Time;
 import java.text.ParseException;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
@@ -96,6 +97,8 @@ public class Controller {
         String stopId = getId();
         stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
         stopController.setStopID(stopId);
+        Time currentTime = java.sql.Time.valueOf(LocalTime.now());
+        stopController.setNextTrip(nextTripAtStop(stopId, currentTime));
         stopDisplay.show();
     }
     /**
@@ -637,8 +640,23 @@ public class Controller {
      * @param stopID
      * @param currentTime
      */
-    public LinkedList<Integer> nextTripAtStop(String stopID, Time currentTime) {
-        return null;
+    public String nextTripAtStop(String stopID, Time currentTime) {
+        int counter = 0;
+        Map<Time, StopTime> map = new HashMap<>();
+        LinkedList<String> nextTrips = new LinkedList<>();
+        for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
+            Trip trip = mapEntry.getValue();
+            if (trip.getStopTimes().containsKey(stopID)){
+                StopTime stopTime = trip.getStopTimes().get(stopID);
+                Time stopTimeArr = stopTime.getArrivalTime();
+                if(currentTime.compareTo(stopTimeArr) < 0) {
+                    map.put(stopTimeArr, stopTime);
+                }
+            }
+        }
+        List<Time> sortedKeys = new ArrayList<>(map.keySet());
+        Collections.sort(sortedKeys);
+        return map.get(sortedKeys.get(0)).getTripID();
     }
 
     /**
