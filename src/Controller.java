@@ -608,7 +608,7 @@ public class Controller {
      */
     public String nextTripAtStop(String stopID, Time currentTime) {
         int counter = 0;
-        Map<Time, StopTime> map = new HashMap<>();
+        SortedMap<Time, StopTime> map = new TreeMap<>();
         LinkedList<String> nextTrips = new LinkedList<>();
         for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
             Trip trip = mapEntry.getValue();
@@ -620,9 +620,7 @@ public class Controller {
                 }
             }
         }
-        List<Time> sortedKeys = new ArrayList<>(map.keySet());
-        Collections.sort(sortedKeys);
-        return map.get(sortedKeys.get(0)).getTripID();
+        return map.get(map.firstKey()).getTripID();
     }
 
     /**
