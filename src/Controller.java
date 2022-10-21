@@ -619,7 +619,7 @@ public class Controller {
         }
         List<Time> sortedKeys = new ArrayList<>(map.keySet());
         Collections.sort(sortedKeys);
-        System.out.println("Sorted: " + sortedKeys);
+//        System.out.println("Sorted: " + sortedKeys);
         return map.get(sortedKeys.get(0)).getTripID();
     }
 
