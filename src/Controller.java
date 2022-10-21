@@ -343,10 +343,10 @@ public class Controller {
                 incorrectLines += importStops(stopFile.get(0));
                 incorrectLines += importTrips(tripFile.get(0));
                 incorrectLines += importStopTimes(stopTimesFile.get(0));
+                importStage.hide();
                 if (incorrectLines > 0) {
-                    errorAlert("Incorrectly Formatted Lines",
-                            "All files were imported successfully, but " + incorrectLines +
-                                    " incorrectly formatted lines were skipped.");
+                    errorAlert("Success, But Incorrectly Formatted Lines",
+                            incorrectLines + " incorrectly formatted lines were skipped.");
                 }
                 return true;
             } catch (InvalidHeaderException e){
