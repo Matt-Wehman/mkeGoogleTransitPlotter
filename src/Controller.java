@@ -317,20 +317,20 @@ public class Controller {
 
 
         if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0){
+            int incorrectLines = 0;
             try {
-                Stage loadingStage = importLoadingStage();
-                if (loadingStage != null) {
-                    loadingStage.show();
-                }
-                int incorrectLines = 0;
+                FXMLLoader importLoader = new FXMLLoader();
+                Parent importRoot = importLoader.load(Objects.requireNonNull(getClass()
+                        .getResource("ImportingFilesDisplay.fxml")).openStream());
+                Stage importStage = new Stage();
+                importStage.setTitle("Importing...");
+                importStage.setScene(new Scene(importRoot));
+                importStage.show();
+
                 incorrectLines += importRoutes(routeFile.get(0));
                 incorrectLines += importStops(stopFile.get(0));
                 incorrectLines += importTrips(tripFile.get(0));
                 incorrectLines += importStopTimes(stopTimesFile.get(0));
-
-                if (loadingStage != null) {
-                    loadingStage.hide();
-                }
                 if (incorrectLines > 0) {
                     errorAlert("Incorrectly Formatted Lines",
                             "All files were imported successfully, but " + incorrectLines +
@@ -340,8 +340,8 @@ public class Controller {
             } catch (InvalidHeaderException e){
                 errorAlert("Invalid Header", "The header for " + e.filename +
                         " is formatted incorrectly. No files were imported");
-            } catch (IOException e){
-                errorAlert("File Not Found", "A specified file was not found");
+            } catch (IOException e) {
+                errorAlert("File not found", "A required file was not found");
             }
         } else {
             errorAlert("All four files must be imported at the same time", "Accepted filenames: routes.txt, stops.txt, trips.txt, stop_times.txt");
@@ -354,8 +354,8 @@ public class Controller {
         try {
             FXMLLoader importLoader = new FXMLLoader();
 
-            Parent importRoot = importLoader.load(getClass()
-                    .getResource("ImportingFilesDisplay.fxml").openStream());
+            Parent importRoot = importLoader.load(Objects.requireNonNull(getClass()
+                    .getResource("ImportingFilesDisplay.fxml")).openStream());
 
             //Create route stage (Instantiation)
             importStage = new Stage();
@@ -363,6 +363,7 @@ public class Controller {
             //Route Stage/Window
             importStage.setTitle("Importing...");
             importStage.setScene(new Scene(importRoot));
+            importStage.show();
         } catch (IOException e){
             errorAlert("No Import FXML File found", "Ensure ImportingFilesDisplay.fxml is in the root directory");
         }
