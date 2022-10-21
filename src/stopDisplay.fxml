@@ -37,8 +37,8 @@
       </HBox>
       <HBox prefHeight="21.0" prefWidth="570.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Field One:" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Routes Containing this Stop:" />
+            <Text fx:id="routeList" strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
