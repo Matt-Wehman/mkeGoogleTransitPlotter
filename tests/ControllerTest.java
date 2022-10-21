@@ -67,6 +67,8 @@ public class ControllerTest {
         endTime = System.nanoTime() - startTime;
         System.out.println(endTime);
 
+
+
         stopID = "6037";
         currentTime = new Time(18, 32, 0);
         nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
