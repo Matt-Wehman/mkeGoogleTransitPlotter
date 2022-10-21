@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Time;
 import java.text.ParseException;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
@@ -93,6 +94,8 @@ public class Controller {
         String stopId = getId();
         stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
         stopController.setStopID(stopId);
+        Time currentTime = java.sql.Time.valueOf(LocalTime.now());
+        stopController.setNextTrip(nextTripAtStop(stopId, currentTime));
         stopDisplay.show();
     }
     /**
@@ -619,7 +622,6 @@ public class Controller {
         }
         List<Time> sortedKeys = new ArrayList<>(map.keySet());
         Collections.sort(sortedKeys);
-        System.out.println("Sorted: " + sortedKeys);
         return map.get(sortedKeys.get(0)).getTripID();
     }
 

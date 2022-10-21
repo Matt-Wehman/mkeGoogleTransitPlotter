@@ -16,6 +16,9 @@ public class StopController {
     @FXML
     Text stopID;
 
+    @FXML
+    Text nextTrip;
+
     public void setController(Controller controller){
         this.controller = controller;
     }
@@ -27,4 +30,10 @@ public class StopController {
     protected void setStopID(String string){
         stopID.setText(string);
     }
+
+    protected void setNextTrip(String string){
+        nextTrip.setText(string);
+    }
+
+
 }
