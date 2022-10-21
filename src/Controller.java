@@ -1,4 +1,13 @@
+/*
+ * Course: SE 2030 - 041
+ * Fall 22-23
+ * GTFS Project
+ * Created by: Christian Basso, Ian Czerkis, Matt Wehman, Patrick McDonald.
+ * Created on: 09/10/22
+ */
+
 import java.io.File;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
@@ -17,21 +26,16 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
  * This class handles the methods from the GUI
+ *
  * @author czerkisi
  * @version 1.0
- * @created 05-Oct-2022 12:59:52 PM
  */
 public class Controller {
-
-    @FXML
-    Button butt;
-
     @FXML
     Button importButton;
 
@@ -78,23 +82,25 @@ public class Controller {
 
     /**
      * gets the text from the search bar
+     *
      * @return String id
      */
     public String getId() {
         return searchBar.getText();
     }
 
-    public void setStopController(StopController stop){
+    public void setStopController(StopController stop) {
         stopController = stop;
     }
 
     /**
      * Show the stop stage and sets all information inside it
+     *
      * @param actionevent when button is clicked
      * @author Matt Wehman
      */
     @FXML
-    public void generateStopIdInterface(ActionEvent actionevent){
+    public void generateStopIdInterface(ActionEvent actionevent) {
         String stopId = getId();
         stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
         stopController.setStopID(stopId);
@@ -104,74 +110,84 @@ public class Controller {
 
     /**
      * Sets the routeList text field with all the route ID's containing that stop
+     *
      * @param list the list of route ID's
      * @return String of route ID's
      * @author Christian B, Matt W :)
      */
     public String setRouteList(ArrayList<String> list) {
-        String rtn = "";
-        for(String s : list) {
-            rtn += s + ", ";
+        StringBuilder rtn = new StringBuilder();
+        for (String s : list) {
+            rtn.append(s).append(", ");
         }
-        return rtn;
+        return rtn.toString();
     }
+
     /**
      * Shows the route stage and sets all information inside it
+     *
      * @param actionevent when button is clicked
      */
     @FXML
-    public void generateRouteIdInterface(ActionEvent actionevent){
+    public void generateRouteIdInterface(ActionEvent actionevent) {
         routeDisplay.show();
     }
+
     /**
      * Shows the trip stage and sets all information inside it
+     *
      * @param actionevent when button is clicked
      */
     @FXML
-    public void generateTripIdInterface(ActionEvent actionevent){
+    public void generateTripIdInterface(ActionEvent actionevent) {
         tripDisplay.show();
     }
 
     /**
      * Sets the route stage
+     *
      * @param stage stage to be set
      */
-    protected void setRouteStage(Stage stage){
+    protected void setRouteStage(Stage stage) {
         this.routeDisplay = stage;
     }
+
     /**
      * Sets the trip stage
+     *
      * @param stage stage to be set
      */
-    protected void setTripStage(Stage stage){
+    protected void setTripStage(Stage stage) {
         this.tripDisplay = stage;
     }
+
     /**
      * Sets the stop stage
+     *
      * @param stage stage to be set
      */
-    protected void setStopStage(Stage stage){
+    protected void setStopStage(Stage stage) {
         this.stopDisplay = stage;
     }
-
-
 
 
     /**
      * Gets all the stops in a route by searching the routeID
      * This method has not been implemented
-     * @param routeID
-     * @return ArrayList<Integer>
+     *
+     * @param routeID the route being traced
+     * @return ArrayList<String> an arraylist of all stopIDs
      */
-    public ArrayList<Integer> allStopsInRoute(int routeID) {
+    public ArrayList<String> allStopsInRoute(int routeID) {
         return null;
     }
 
     /**
      * Finds the average speed of a trip if given the tripID
      * This method has not been implemented
-     * @param tripID
-     * @return int
+     *
+     * @param tripID the trip being parsed
+     * @return int the time (in minutes) of a trip
      */
     public static int avgSpeed(String tripID) {
         return 0;
@@ -180,7 +196,8 @@ public class Controller {
     /**
      * Changes the time of a Stop's Arrival/Departure time
      * This method has not been implemented
-     * @return boolean
+     *
+     * @return boolean true if the change was successfully, false if not.
      */
     public boolean changeStopArrivalDeparture() {
         return false;
@@ -189,10 +206,11 @@ public class Controller {
     /**
      * Changes the location of a stop given stopID
      * This method has not been implemented
-     * @param latitude
-     * @param longitude
-     * @param stopID
-     * @return boolean
+     *
+     * @param latitude  new lat
+     * @param longitude old lat
+     * @param stopID    the stop being changed
+     * @return boolean true if the change was successfully, false if not.
      */
     public boolean changeStopLocation(int latitude, int longitude, int stopID) {
         return false;
@@ -201,13 +219,19 @@ public class Controller {
     /**
      * Displays the total distance of a route
      * This method has not been implemented
-     * @param routeID
-     * @return double
+     *
+     * @param routeID the specific route being parsed
+     * @return double the distance in miles, of a trip
      */
     public double displayDistance(int routeID) {
         return 0;
     }
 
+    /**
+     * Exports all gtfs files to computer
+     *
+     * @param actionEvent ignored
+     */
     public void exportHelper(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Save Directory");
@@ -223,6 +247,7 @@ public class Controller {
     /**
      * Exports the GTFS files to the desired place
      * This method has not been implemented
+     *
      * @return route gtfs file
      */
     public File exportRoutes(java.nio.file.Path path) {
@@ -232,8 +257,9 @@ public class Controller {
         Iterator<Map.Entry<String, Route>> it = routeSet.iterator();
         try {
             writer = new FileWriter(routeFile);
-            writer.write("route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color");
-            while(it.hasNext()) {
+            writer.write("route_id,agency_id,route_short_name,route_long_name," +
+                    "route_desc,route_type,route_url,route_color,route_text_color");
+            while (it.hasNext()) {
                 writer.write("\n" + it.next().getValue().toString());
             }
             writer.close();
@@ -243,6 +269,12 @@ public class Controller {
         return routeFile;
     }
 
+    /**
+     * Creates a file of each imported stop
+     *
+     * @param path the path of where to save the file
+     * @return file of all stops, in correct format.
+     */
     public File exportStops(java.nio.file.Path path) {
         File stopFile = new File(path + "/stops.txt");
         FileWriter writer = null;
@@ -251,7 +283,7 @@ public class Controller {
         try {
             writer = new FileWriter(stopFile);
             writer.write("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 writer.write("\n" + it.next().getValue().toString());
             }
             writer.close();
@@ -262,6 +294,12 @@ public class Controller {
         return stopFile;
     }
 
+    /**
+     * Creates a file of each imported Trip
+     *
+     * @param path the path of where to save the file
+     * @return file of all trips, in correct format.
+     */
     public File exportTrips(java.nio.file.Path path) {
         File tripFile = new File(path + "/trips.txt");
         FileWriter writer = null;
@@ -270,7 +308,7 @@ public class Controller {
         try {
             writer = new FileWriter(tripFile);
             writer.write("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id");
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 writer.write("\n" + it.next().getValue().toString());
             }
             writer.close();
@@ -281,15 +319,21 @@ public class Controller {
         return tripFile;
     }
 
+    /**
+     * Creates a file of each imported stopTime
+     *
+     * @param path the path of where to save the file
+     * @return file of all stopTimes, in correct format.
+     */
     public File exportStopTimes(Path path) {
         File stopTimeFile = new File(path + "/stop_times.txt");
         FileWriter writer = null;
         try {
             writer = new FileWriter(stopTimeFile);
             writer.write("trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type");
-            for(Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
+            for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
                 Trip trip = mapEntry.getValue();
-                for(Map.Entry<String, StopTime> mapEntry2 : trip.getStopTimes().entrySet()) {
+                for (Map.Entry<String, StopTime> mapEntry2 : trip.getStopTimes().entrySet()) {
                     StopTime stopTime = mapEntry2.getValue();
                     writer.write("\n" + stopTime.toString());
                 }
@@ -305,12 +349,13 @@ public class Controller {
 
     /**
      * Imports the GTFS files and calls helper methods to populate entity objects
+     *
      * @param listOfFiles directories of the files to import
      */
     public boolean importFiles(ArrayList<File> listOfFiles) {
         List<File> routeFile = listOfFiles.stream()
-                                          .filter(file -> file.getName().equals("routes.txt"))
-                                          .toList();
+                .filter(file -> file.getName().equals("routes.txt"))
+                .toList();
 
         List<File> stopFile = listOfFiles.stream()
                 .filter(file -> file.getName().equals("stops.txt"))
@@ -325,20 +370,22 @@ public class Controller {
                 .toList();
 
 
-        if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0){
+        if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0) {
             importRoutes(routeFile.get(0));
             importStops(stopFile.get(0));
             importTrips(tripFile.get(0));
             importStopTimes(stopTimesFile.get(0));
             return true;
         } else {
-            error("All four files must be imported at the same time", "Accepted filenames: routes.txt, stops.txt, trips.txt, stop_times.txt");
+            error("All four files must be imported at the same time",
+                    "Accepted filenames: routes.txt, stops.txt, trips.txt, stop_times.txt");
             return false;
         }
     }
 
     /**
      * Populates the StopTimes in each Trip
+     *
      * @param stopTimesFile the File to read from
      * @author Ian Czerkis
      */
@@ -355,13 +402,14 @@ public class Controller {
                     }
                 }
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Error finding Stop Time File");
         }
     }
 
     /**
      * creates a StopTime from a single line in the StopTime file
+     *
      * @param line the line to parse
      * @return the StopTime object if the file is valid or null if the file is invalid
      * @author Ian Czerkis
@@ -386,6 +434,7 @@ public class Controller {
 
     /**
      * validates the first line of the StopTime file
+     *
      * @param firstLine the line to parse
      * @return True if the line is valid False if it is invalid
      * @author Ian Czerkis
@@ -397,14 +446,15 @@ public class Controller {
 
     /**
      * Populates the Trips
-     * @param tripFile
+     *
+     * @param tripFile the file of trips
      */
     private void importTrips(File tripFile) {
         int index = 0;
-        try (Stream<String> lines = Files.lines(tripFile.toPath())){
+        try (Stream<String> lines = Files.lines(tripFile.toPath())) {
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!validateTripHeader(firstLine)){
+            if (!validateTripHeader(firstLine)) {
                 System.out.println("Unknown formatting encountered: Trips");
             } else {
                 while (it.hasNext()) {
@@ -421,38 +471,42 @@ public class Controller {
                     }
                 }
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Error finding file, no Trips were imported");
         }
     }
 
     /**
      * Checks if Trip header is valid against known valid header.
+     *
      * @param header trip header
      * @return boolean
-     * @Author Matt Wehman
+     * @author Matt Wehman
      */
-    public static boolean validateTripHeader(String header){
-        return header.equals("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id");
+    public static boolean validateTripHeader(String header) {
+        return header.equals("route_id,service_id,trip_id," +
+                "trip_headsign,direction_id,block_id,shape_id");
     }
 
     /**
      * Validates each line of trip file.
-     * @param tripLine
+     *
+     * @param tripLine a single trip file line
      * @return trip of no exceptions are thrown and null if line is invalid
-     * @Author Matthew Wehman
+     * @author Matthew Wehman
      */
     public static Trip validateTripLines(String tripLine) {
         try {
-        CSVReader reader = new CSVReader(tripLine);
-        Trip trip = new Trip(
-                reader.next(), reader.next(), reader.next(),
-                reader.next(), Integer.parseInt(reader.next()), Integer.parseInt(reader.next()),
-                reader.next());
-        reader.checkEndOfLine();
-        trip.checkRequired();
+            CSVReader reader = new CSVReader(tripLine);
+            Trip trip = new Trip(
+                    reader.next(), reader.next(), reader.next(),
+                    reader.next(), Integer.parseInt(reader.next()), Integer.parseInt(reader.next()),
+                    reader.next());
+            reader.checkEndOfLine();
+            trip.checkRequired();
             return trip;
-        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException | NumberFormatException e){
+        } catch (CSVReader.EndOfStringException |
+                 CSVReader.MissingRequiredFieldException | NumberFormatException e) {
             return null;
         }
     }
@@ -460,13 +514,13 @@ public class Controller {
 
     /**
      * Populates the Stops
-     * @param stopFile
+     * @param stopFile the file of all stops
      */
     private void importStops(File stopFile) {
-        try (Stream<String> lines = Files.lines(stopFile.toPath())){
+        try (Stream<String> lines = Files.lines(stopFile.toPath())) {
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!validateStopHeader(firstLine)){
+            if (!validateStopHeader(firstLine)) {
                 System.out.println("Unknown formatting encountered: Stops");
             } else {
                 while (it.hasNext()) {
@@ -478,26 +532,28 @@ public class Controller {
 
                 }
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Error finding file, no Stops were imported");
         }
     }
 
     /**
-     * This method validates the Stop headerline and makes sure it follows the correct syntax
-     * @param firstLine
-     * @return boolean
+     * This method validates the Stop header line and makes sure it follows the correct syntax
+     *
+     * @param firstLine the header of stops
+     * @return boolean true if valid, false if not.
      * @author Patrick McDonald
      */
-    public static boolean validateStopHeader(String firstLine){
+    public static boolean validateStopHeader(String firstLine) {
         return firstLine.equals("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
     }
 
     /**
      * This method validates each individual Stop and makes sure it is formatted correctly
      * or else it returns a null
-     * @param stopLine
-     * @return stop
+     *
+     * @param stopLine one line of a stop file
+     * @return stop the created stop object
      * @author Patrick McDonald
      */
     public static Stop validateLinesInStop(String stopLine) {
@@ -509,15 +565,16 @@ public class Controller {
             String description = reader.next();
             double lat = reader.nextDouble();
             double lon = reader.nextDouble();
-            if(lat == -1 || lon == -1 || (lat < -90.00 || lat > 90.00) ||
-                    (lon < -180.00 || lon > 180.00)){
+            if (lat == -1 || lon == -1 || (lat < -90.00 || lat > 90.00) ||
+                    (lon < -180.00 || lon > 180.00)) {
                 throw new NumberFormatException("empty");
             }
 
             stop = new Stop(stopId, name, description, lat, lon);
             reader.checkEndOfLine();
             stop.checkRequired();
-        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException | NumberFormatException e){
+        } catch (CSVReader.EndOfStringException
+                 | CSVReader.MissingRequiredFieldException | NumberFormatException e) {
             return null;
         }
         return stop;
@@ -525,21 +582,22 @@ public class Controller {
 
     /**
      * Populates the routes
+     *
      * @param routeFile the file that contains the route lines
      */
     private void importRoutes(File routeFile) {
-        try (Stream<String> lines = Files.lines(routeFile.toPath())){
+        try (Stream<String> lines = Files.lines(routeFile.toPath())) {
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if(validateRouteHeader(firstLine)){
-                while (it.hasNext()){
+            if (validateRouteHeader(firstLine)) {
+                while (it.hasNext()) {
                     Route route = validateRouteLine(it.next());
-                    if(!Objects.equals(route, null)){
+                    if (!Objects.equals(route, null)) {
                         routes.put(route.getRouteID(), route);
                     }
                 }
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Error finding file, no Routes were imported");
         }
 
@@ -547,10 +605,11 @@ public class Controller {
 
     /**
      * displays an error message to the user
-     * @param header the header text of the error
+     *
+     * @param header  the header text of the error
      * @param context the context of the error
      */
-    private void error(String header, String context){
+    private void error(String header, String context) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(header);
@@ -561,6 +620,7 @@ public class Controller {
 
     /**
      * validates that the header for the route file is formatted correctly
+     *
      * @param header string header
      * @return true if header is valid, false if not
      * @author Chrstian Basso
@@ -573,6 +633,7 @@ public class Controller {
 
     /**
      * Validates line that represents a route object
+     *
      * @param line string of parameters
      * @return the object created from the parameters, or null if an exception is thrown
      * @author Christian B
@@ -587,7 +648,8 @@ public class Controller {
                     reader.next(), reader.next(), reader.next());
             reader.checkEndOfLine();
             route.checkRequired();
-        } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException | NumberFormatException e){
+        } catch (CSVReader.EndOfStringException
+                 | CSVReader.MissingRequiredFieldException | NumberFormatException e) {
             return null;
         }
         return route;
@@ -596,18 +658,19 @@ public class Controller {
 
     /**
      * Allows user to select multiple files
-     * @param actionEvent
+     *
+     * @param actionEvent ignored
      */
     @FXML
     public void importHelper(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.setInitialDirectory(Paths.get("./").toFile());
-        File selectedFile;
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("GSTF Files", "*.txt"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                "GSTF Files", "*.txt"));
         List<File> f = fileChooser.showOpenMultipleDialog(null);
         ArrayList<File> files = new ArrayList<>();
-        for(File file : f){
+        for (File file : f) {
             files.add(file);
             System.out.println(files);
         }
@@ -616,11 +679,12 @@ public class Controller {
     }
 
 
-     /**
+    /**
      * Finds the next trip at a certain stop given the time
      * This method has not been implemented
-     * @param stopID
-     * @param currentTime
+     *
+     * @param stopID the stop being parsed
+     * @param currentTime the current time
      */
     public LinkedList<Integer> nextTripAtStop(String stopID, Time currentTime) {
         return null;
@@ -629,8 +693,9 @@ public class Controller {
     /**
      * Plots the current trajectory of the bus
      * This method has not been implemented
-     * @param tripID
-     * @return boolean
+     *
+     * @param tripID the trip being parsed
+     * @return boolean true if plot was successful, false if not
      */
     public boolean plotBus(int tripID) {
         return false;
@@ -639,7 +704,8 @@ public class Controller {
     /**
      * Plots the stops on a given route
      * This method has not been implemented
-     * @param routeID
+     *
+     * @param routeID the route being parsed
      * @return boolean
      */
     public boolean plotStops(int routeID) {
@@ -648,15 +714,16 @@ public class Controller {
 
     /**
      * searches all routes to see if they contain the specified stopID
+     *
      * @param stopID the stop ID to search
      * @return ArrayList<String> the list of routeID that contain
      */
     public ArrayList<String> routesContainingStop(String stopID) {
         ArrayList<String> routesContaining = new ArrayList<>();
-        for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
+        for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
             Trip trip = mapEntry.getValue();
-            if (trip.getStopTimes().containsKey(stopID)){
-                if(!routesContaining.contains(trip.getRouteID())) {
+            if (trip.getStopTimes().containsKey(stopID)) {
+                if (!routesContaining.contains(trip.getRouteID())) {
                     routesContaining.add(trip.getRouteID());
                 }
             }
@@ -667,6 +734,7 @@ public class Controller {
     /**
      * finds all the future trips given a routeID
      * This method has not been implemented
+     *
      * @param routeID
      * @return LinkedList<Integer>
      */
@@ -676,14 +744,15 @@ public class Controller {
 
     /**
      * Counts the number trips that use the specified stop
+     *
      * @param stopID the stopID to search for
      * @return the number of occurances of trips containing that stop
      */
     public int tripsPerStop(String stopID) {
         int counter = 0;
-        for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
+        for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
             Trip trip = mapEntry.getValue();
-            if (trip.getStopTimes().containsKey(stopID)){
+            if (trip.getStopTimes().containsKey(stopID)) {
                 counter++;
             }
         }
@@ -693,6 +762,7 @@ public class Controller {
     /**
      * Updates all stoptimes in a trip
      * This method has not been implemented
+     *
      * @param stopID
      * @return boolean
      */
@@ -703,6 +773,7 @@ public class Controller {
     /**
      * Updates a group of stoptimes
      * This method has not been implemented
+     *
      * @param stopTime
      * @param attribute
      * @param data
@@ -715,6 +786,7 @@ public class Controller {
     /**
      * Updates multiple stoptimes given an List of stoptimes
      * This method has not been implemented
+     *
      * @param stopTimes
      * @return boolean
      */
@@ -725,6 +797,7 @@ public class Controller {
     /**
      * Updates a route, certain attributes of the route may be different
      * This method has not been implemented
+     *
      * @param route
      * @return boolean
      */
@@ -735,6 +808,7 @@ public class Controller {
     /**
      * Updates a stop, certain attributes of the stops may be different
      * This method has not been implemented
+     *
      * @param stop
      * @return boolean
      */
@@ -745,6 +819,7 @@ public class Controller {
     /**
      * Updates a StopTime, certain attributes of the StopTime may be different
      * This method has not been implemented
+     *
      * @param stopTime
      * @return boolean
      */
@@ -755,6 +830,7 @@ public class Controller {
     /**
      * Updates a Trip, certain attributes of the Trip may be different
      * This method has not been implemented
+     *
      * @param trip
      * @return boolean
      */
