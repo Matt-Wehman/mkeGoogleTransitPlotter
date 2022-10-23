@@ -22,6 +22,9 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -370,26 +373,71 @@ public class Controller {
                 .toList();
 
 
-        if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0) {
-            importRoutes(routeFile.get(0));
-            importStops(stopFile.get(0));
-            importTrips(tripFile.get(0));
-            importStopTimes(stopTimesFile.get(0));
-            return true;
+        if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0){
+            int incorrectLines = 0;
+            try {
+                FXMLLoader importLoader = new FXMLLoader();
+                Parent importRoot = importLoader.load(Objects.requireNonNull(getClass()
+                        .getResource("ImportingFilesDisplay.fxml")).openStream());
+                Stage importStage = new Stage();
+                importStage.setTitle("Importing...");
+                importStage.setScene(new Scene(importRoot));
+                importStage.show();
+
+                incorrectLines += importRoutes(routeFile.get(0));
+                incorrectLines += importStops(stopFile.get(0));
+                incorrectLines += importTrips(tripFile.get(0));
+                incorrectLines += importStopTimes(stopTimesFile.get(0));
+                importStage.hide();
+                if (incorrectLines > 0) {
+                    errorAlert("Success, But Incorrectly Formatted Lines",
+                            incorrectLines + " incorrectly formatted lines were skipped.");
+                }
+                return true;
+            } catch (InvalidHeaderException e){
+                errorAlert("Invalid Header", "The header for " + e.filename +
+                        " is formatted incorrectly. No files were imported");
+            } catch (IOException e) {
+                errorAlert("File not found", "A required file was not found");
+            }
         } else {
-            error("All four files must be imported at the same time",
-                    "Accepted filenames: routes.txt, stops.txt, trips.txt, stop_times.txt");
-            return false;
+            errorAlert("All four files must be imported at the same time", "Accepted filenames: routes.txt, stops.txt, trips.txt, stop_times.txt");
         }
+        return false;
+    }
+
+    private Stage importLoadingStage() {
+        Stage importStage = null;
+        try {
+            FXMLLoader importLoader = new FXMLLoader();
+
+            Parent importRoot = importLoader.load(Objects.requireNonNull(getClass()
+                    .getResource("ImportingFilesDisplay.fxml")).openStream());
+
+            //Create route stage (Instantiation)
+            importStage = new Stage();
+
+            //Route Stage/Window
+            importStage.setTitle("Importing...");
+            importStage.setScene(new Scene(importRoot));
+            importStage.show();
+        } catch (IOException e){
+            errorAlert("No Import FXML File found", "Ensure ImportingFilesDisplay.fxml is in the root directory");
+        }
+        return importStage;
     }
 
     /**
      * Populates the StopTimes in each Trip
      *
      * @param stopTimesFile the File to read from
+     * @throws IOException if there is a problem reading the file
+     * @throws InvalidHeaderException if the header is not formatted correctly
+     * @return the number of incorrectly formatted lines
      * @author Ian Czerkis
      */
-    private void importStopTimes(File stopTimesFile) {
+    private int importStopTimes(File stopTimesFile) throws IOException, InvalidHeaderException{
+        int invalidLines = 0;
         try (Stream<String> lines = Files.lines(stopTimesFile.toPath())) {
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
@@ -398,13 +446,18 @@ public class Controller {
                     StopTime stopTime = validateStopTimeLine(it.next());
                     if (!Objects.equals(stopTime, null)) {
                         Trip trip = trips.get(stopTime.getTripID());
-                        trip.getStopTimes().put(stopTime.getStopID(), stopTime);
+                        if (trip != null) {
+                            trip.getStopTimes().put(stopTime.getStopID(), stopTime);
+                        }
+                    } else {
+                        invalidLines++;
                     }
                 }
+            } else {
+                throw new InvalidHeaderException("Invalid Header Encountered", "stop_times.txt");
             }
-        } catch (IOException e) {
-            System.out.println("Error finding Stop Time File");
         }
+        return invalidLines;
     }
 
     /**
@@ -446,34 +499,34 @@ public class Controller {
 
     /**
      * Populates the Trips
-     *
-     * @param tripFile the file of trips
+     * @param tripFile the file to import
+     * @throws IOException if there is a problem reading the file
+     * @throws InvalidHeaderException if the header is not formatted correctly
+     * @return the number of incorrectly formatted lines
      */
-    private void importTrips(File tripFile) {
-        int index = 0;
-        try (Stream<String> lines = Files.lines(tripFile.toPath())) {
+    private int importTrips(File tripFile) throws IOException, InvalidHeaderException{
+        int invalidLines = 0;
+        try (Stream<String> lines = Files.lines(tripFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!validateTripHeader(firstLine)) {
-                System.out.println("Unknown formatting encountered: Trips");
-            } else {
-                while (it.hasNext()) {
-                    String tripLine = it.next();
-                    Trip trip = validateTripLines(tripLine);
-                    // Add trip to corresponding route
-                    if (!Objects.equals(null, trip)) {
-                        if (!routes.containsKey(trip.getRouteID())) {
-                            System.out.println("Route " + trip.getRouteID() + " was mentioned on line: " + index + " but not found");
-                        } else {
-                            routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
-                        }
+            if (!validateTripHeader(firstLine)){
+                throw new InvalidHeaderException("Invalid header encountered", "trips.txt");
+            }
+            while (it.hasNext()) {
+                String tripLine = it.next();
+                Trip trip = validateTripLines(tripLine);
+                // Add trip to corresponding route
+                if(!Objects.equals(null, trip)) {
+                    if (routes.containsKey(trip.getRouteID())) {
+                        routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
                         trips.put(trip.getTripID(), trip);
+                    } else {
+                        invalidLines++;
                     }
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Error finding file, no Trips were imported");
         }
+        return invalidLines;
     }
 
     /**
@@ -514,27 +567,31 @@ public class Controller {
 
     /**
      * Populates the Stops
-     * @param stopFile the file of all stops
+     * @param stopFile the file to parse
+     * @throws IOException if there is a problem reading the file
+     * @throws InvalidHeaderException if the header is not formatted correctly
+     * @return the number of incorrectly formatted lines
      */
-    private void importStops(File stopFile) {
-        try (Stream<String> lines = Files.lines(stopFile.toPath())) {
+    private int importStops(File stopFile) throws IOException, InvalidHeaderException {
+        int invalidLines = 0;
+        try (Stream<String> lines = Files.lines(stopFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
-            if (!validateStopHeader(firstLine)) {
-                System.out.println("Unknown formatting encountered: Stops");
+            if (!validateStopHeader(firstLine)){
+                throw new InvalidHeaderException("Invalid header encountered", "stops.txt");
             } else {
                 while (it.hasNext()) {
                     String stopLine = it.next();
                     Stop stop = validateLinesInStop(stopLine);
                     if (!Objects.equals(null, stop)) {
                         allStops.put(stop.getStopID(), stop);
+                    } else {
+                        invalidLines++;
                     }
-
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Error finding file, no Stops were imported");
         }
+        return invalidLines;
     }
 
     /**
@@ -584,9 +641,14 @@ public class Controller {
      * Populates the routes
      *
      * @param routeFile the file that contains the route lines
+     * @throws IOException if there is a problem reading the file
+     * @throws InvalidHeaderException if the header is incorrectly formatted
+     * @return the number of incorrectly formatted lines
+     * @author Christian B
      */
-    private void importRoutes(File routeFile) {
-        try (Stream<String> lines = Files.lines(routeFile.toPath())) {
+    private int importRoutes(File routeFile) throws IOException, InvalidHeaderException {
+        int incorrectLines = 0;
+        try (Stream<String> lines = Files.lines(routeFile.toPath())){
             Iterator<String> it = lines.iterator();
             String firstLine = it.next();
             if (validateRouteHeader(firstLine)) {
@@ -594,13 +656,15 @@ public class Controller {
                     Route route = validateRouteLine(it.next());
                     if (!Objects.equals(route, null)) {
                         routes.put(route.getRouteID(), route);
+                    } else {
+                        incorrectLines++;
                     }
                 }
+            } else {
+                throw new InvalidHeaderException("Invalid header encountered", "routes.txt");
             }
-        } catch (IOException e) {
-            System.out.println("Error finding file, no Routes were imported");
         }
-
+        return incorrectLines;
     }
 
     /**
@@ -672,7 +736,6 @@ public class Controller {
         ArrayList<File> files = new ArrayList<>();
         for (File file : f) {
             files.add(file);
-            System.out.println(files);
         }
         importFiles(files);
         //epic
@@ -843,6 +906,39 @@ public class Controller {
      * @param stopId
      * @return Arraylist of routes
      */
+
+    /**
+     * an exception to be thrown if
+     */
+    public static class InvalidHeaderException extends Exception{
+        private final String filename;
+        InvalidHeaderException(String message, String filename){
+            super(message);
+            this.filename = filename;
+        }
+
+        public String getFilename(){
+            return filename;
+        }
+    }
+
+    private Alert errorAlert(String header, String context){
+        return alert(header, context, "Error", Alert.AlertType.ERROR);
+    }
+
+    private Alert infoAlert(String header, String context){
+        return alert(header, context, "Info", Alert.AlertType.WARNING);
+    }
+
+    private Alert alert(String header, String context, String title, Alert.AlertType alertType){
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(context);
+        alert.showAndWait();
+        return alert;
+    }
+
 
 
 }
