@@ -30,6 +30,7 @@ public class ControllerTest {
         controller.importFiles(listOfFiles);
     }
 
+
     /**
      * Tests distance calculations for a trip (Feature 2)
      * @author Christian B
@@ -144,6 +145,8 @@ public class ControllerTest {
         Assertions.assertEquals(validRoute1.toString(), "23D,MCTS,23,Fond du lac-National (17-SEP) - DETOUR,This Route is in Detour,3,,008345,");
         Assertions.assertEquals(validRoute2.toString(), "27,MCTS,27,27th Street,,3,,008345,");
         Assertions.assertEquals(validRoute3.toString(), "42U,,,,,,,008345,");
+
+        Assertions.assertNull(Controller.validateTripLines(validRouteLine1 + ","));
 
     }
 
