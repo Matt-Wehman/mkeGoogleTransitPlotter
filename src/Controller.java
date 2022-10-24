@@ -783,7 +783,11 @@ public class Controller {
                 }
             }
         }
-        return map.get(map.firstKey()).getTripID();
+        if(map.size()>0) {
+            return map.get(map.firstKey()).getTripID();
+        } else {
+            return "no more trips today";
+        }
 
 
     }
