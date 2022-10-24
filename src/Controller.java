@@ -121,15 +121,13 @@ public class Controller {
             }
             stopController.setRoutesText(routesString);
             stopDisplay.show();
+            stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
+            stopController.setStopID(stopId);
+            Time currentTime = java.sql.Time.valueOf(LocalTime.now());
+            stopController.setNextTrip(nextTripAtStop(stopId, currentTime));
         } else {
             error("Stop Not Found", "Ensure the GTFS files have been imported");
         }
-        stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
-        stopController.setStopID(stopId);
-        Time currentTime = java.sql.Time.valueOf(LocalTime.now());
-        stopController.setNextTrip(nextTripAtStop(stopId, currentTime));
-        stopDisplay.show();
-
     }
 
     /**
