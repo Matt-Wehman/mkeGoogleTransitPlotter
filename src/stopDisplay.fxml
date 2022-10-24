@@ -47,7 +47,7 @@
       </HBox>
       <HBox prefHeight="21.0" prefWidth="570.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="NextTripAtStop" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Next Trip At Stop:" />
             <Text fx:id="nextTrip" strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
                <HBox.margin>
                   <Insets left="10.0" />
