@@ -105,10 +105,24 @@ public class Controller {
     @FXML
     public void generateStopIdInterface(ActionEvent actionevent) {
         String stopId = getId();
-        stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
-        stopController.setStopID(stopId);
-        stopController.setRoutesText(setRouteList(routesContainingStop(stopId)));
-        stopDisplay.show();
+        if (allStops.containsKey(stopId)) {
+            stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
+            stopController.setStopID(allStops.get(stopId).getStopName());
+            ArrayList<String> routesContaining = routesContainingStop(stopId);
+            String routesString = "";
+            for (int i = 0; i < routesContaining.size() - 1; i++) {
+                routesString += routesContaining.get(i) + ", ";
+            }
+            if (routesContaining.size() > 0) {
+                routesString += routesContaining.get(routesContaining.size() - 1);
+            } else {
+                routesString = "No routes service this stop";
+            }
+            stopController.setRoutesText(routesString);
+            stopDisplay.show();
+        } else {
+            error("Stop Not Found", "Ensure the GTFS files have been imported");
+        }
     }
 
     /**

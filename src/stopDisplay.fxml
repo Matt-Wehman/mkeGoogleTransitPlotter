@@ -15,7 +15,7 @@
                   <Font size="40.0" />
                </font>
             </Text>
-            <Text fx:id="stopID" strokeType="OUTSIDE" strokeWidth="0.0" text="StopID" wrappingWidth="241.11589813232422">
+            <Text fx:id="stopID" strokeType="OUTSIDE" strokeWidth="0.0" text="StopID" wrappingWidth="461.78260040283203">
                <font>
                   <Font size="40.0" />
                </font>
