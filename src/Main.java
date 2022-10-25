@@ -33,7 +33,7 @@ public class Main extends Application {
 
         Parent root = primaryLoader.load(Objects.requireNonNull(getClass().getResource("MainDisplay.fxml")).openStream());
 
-        stage.setTitle("GTSF APP");
+        stage.setTitle("GTFS APP");
 
         stage.setScene(new Scene(root, SCENE_WIDTH, SCENE_HEIGHT));
 
