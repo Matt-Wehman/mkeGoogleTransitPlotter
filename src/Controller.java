@@ -770,7 +770,6 @@ public class Controller {
      * @author wehman
      */
     public String nextTripAtStop(String stopID, Time currentTime) {
-        int counter = 0;
         SortedMap<Time, StopTime> map = new TreeMap<>();
         for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
             Trip trip = mapEntry.getValue();
