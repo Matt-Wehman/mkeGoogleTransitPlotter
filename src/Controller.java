@@ -767,6 +767,7 @@ public class Controller {
      *
      * @param stopID the stop being parsed
      * @param currentTime the current time
+     * @author wehman
      */
     public String nextTripAtStop(String stopID, Time currentTime) {
         int counter = 0;
