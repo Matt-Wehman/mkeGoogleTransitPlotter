@@ -647,28 +647,25 @@ public class Controller {
     public void importHelper(ActionEvent actionEvent) {
         List<File> f;
         boolean isNull;
-        do {
-            isNull = false;
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open Resource File");
-            fileChooser.setInitialDirectory(Paths.get("./").toFile());
-            File selectedFile;
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("GSTF Files", "*.txt"));
-            f = fileChooser.showOpenMultipleDialog(null);
-            if(f == null) {
-                isNull = true;
-                Alert alert = errorAlert("Null File Entered", "Can't import" +
-                        "null file, only GTFS files are accepted. Please try again");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        fileChooser.setInitialDirectory(Paths.get("./").toFile());
+        File selectedFile;
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("GSTF Files", "*.txt"));
+        f = fileChooser.showOpenMultipleDialog(null);
+        if (f == null) {
+            isNull = true;
+            Alert alert = errorAlert("Null File Entered", "Can't import" +
+                    "null file, only GTFS files are accepted. Please try again");
+        } else {
+            ArrayList<File> files = new ArrayList<>();
+            for (File file : f) {
+                files.add(file);
+                System.out.println(files);
             }
-        } while(isNull);
 
-        ArrayList<File> files = new ArrayList<>();
-        for(File file :f){
-            files.add(file);
-            System.out.println(files);
+            importFiles(files);
         }
-
-        importFiles(files);
 
 
     }
@@ -855,21 +852,21 @@ public class Controller {
  * @return Arraylist of routes
  */
 
-/**
- * an exception to be thrown if
- */
-public static class InvalidHeaderException extends Exception {
-    private final String filename;
+    /**
+     * an exception to be thrown if
+     */
+    public static class InvalidHeaderException extends Exception {
+        private final String filename;
 
-    InvalidHeaderException(String message, String filename) {
-        super(message);
-        this.filename = filename;
-    }
+        InvalidHeaderException(String message, String filename) {
+            super(message);
+            this.filename = filename;
+        }
 
-    public String getFilename() {
-        return filename;
+        public String getFilename() {
+            return filename;
+        }
     }
-}
 
     private Alert errorAlert(String header, String context) {
         return alert(header, context, "Error", Alert.AlertType.ERROR);
