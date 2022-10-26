@@ -15,7 +15,7 @@
                   <Font size="40.0" />
                </font>
             </Text>
-            <Text fx:id="stopID" strokeType="OUTSIDE" strokeWidth="0.0" text="StopID" wrappingWidth="461.78260040283203">
+            <Text fx:id="stopID" strokeType="OUTSIDE" strokeWidth="0.0" text="StopID" wrappingWidth="241.11589813232422">
                <font>
                   <Font size="40.0" />
                </font>
@@ -37,8 +37,8 @@
       </HBox>
       <HBox prefHeight="21.0" prefWidth="570.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Routes Containing this Stop:" />
-            <Text fx:id="routeList" strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Field One:" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
@@ -47,7 +47,7 @@
       </HBox>
       <HBox prefHeight="21.0" prefWidth="570.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Next Trip At Stop:" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="nextTripAtStop:" />
             <Text fx:id="nextTrip" strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
                <HBox.margin>
                   <Insets left="10.0" />
