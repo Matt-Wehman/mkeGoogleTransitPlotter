@@ -403,10 +403,8 @@ public class Controller {
                 importStage.setScene(new Scene(importRoot));
                 importStage.show();
 
-                incorrectLines += importRoutes(routeFile.get(0));
-                incorrectLines += importStops(stopFile.get(0));
-                incorrectLines += importTrips(tripFile.get(0));
-                incorrectLines += importStopTimes(stopTimesFile.get(0));
+                incorrectLines += importFilesNoStage(listOfFiles);
+
                 importStage.hide();
                 if (incorrectLines > 0) {
                     errorAlert("Success, But Incorrectly Formatted Lines",
@@ -423,6 +421,25 @@ public class Controller {
             errorAlert("All four files must be imported at the same time", "Accepted filenames: routes.txt, stops.txt, trips.txt, stop_times.txt");
         }
         return false;
+    }
+
+    public int importFilesNoStage(ArrayList<File> listOfFiles) throws IOException, InvalidHeaderException {
+        int ret = 0;
+
+        ret += importRoutes(listOfFiles.stream()
+                .filter(file -> file.getName().equals("routes.txt"))
+                .toList().get(0));
+        ret += importStops(listOfFiles.stream()
+                .filter(file -> file.getName().equals("stops.txt"))
+                .toList().get(0));
+        ret += importTrips(listOfFiles.stream()
+                .filter(file -> file.getName().equals("trips.txt"))
+                .toList().get(0));
+        ret += importStopTimes(listOfFiles.stream()
+                .filter(file -> file.getName().equals("stop_times.txt"))
+                .toList().get(0));
+
+        return ret;
     }
 
     private Stage importLoadingStage() {
@@ -767,9 +784,9 @@ public class Controller {
      *
      * @param stopID the stop being parsed
      * @param currentTime the current time
-     * @author wehman
      */
     public String nextTripAtStop(String stopID, Time currentTime) {
+        int counter = 0;
         SortedMap<Time, StopTime> map = new TreeMap<>();
         for(Map.Entry<String, Trip> mapEntry: trips.entrySet()){
             Trip trip = mapEntry.getValue();
