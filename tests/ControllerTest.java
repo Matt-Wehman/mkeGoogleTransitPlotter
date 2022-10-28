@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -33,7 +34,6 @@ public class ControllerTest {
         listOfFiles.add(new File("./GTFSFiles/trips.txt"));
         controller.importFilesNoStage(listOfFiles);
     }
-
 
     /**
      * Tests distance calculations for a trip (Feature 2)
@@ -88,7 +88,6 @@ public class ControllerTest {
         nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
         Assertions.assertEquals("21794234_1711", nextTripAtStop);
         Assertions.assertNotEquals("21794234_1712", nextTripAtStop);
-
     }
 
     /**
@@ -160,8 +159,6 @@ public class ControllerTest {
         Assertions.assertEquals(validRoute1.toString(), "23D,MCTS,23,Fond du lac-National (17-SEP) - DETOUR,This Route is in Detour,3,,008345,");
         Assertions.assertEquals(validRoute2.toString(), "27,MCTS,27,27th Street,,3,,008345,");
         Assertions.assertEquals(validRoute3.toString(), "42U,,,,,,,008345,");
-
-        Assertions.assertNull(Controller.validateTripLines(validRouteLine1 + ","));
 
     }
 
@@ -306,7 +303,7 @@ public class ControllerTest {
      */
     @Test
     public void testRoutesContainingStop(){
-        String[] stops = new String[]{"1801","5006", "1318"};
+        String[] stops = new String[]{"1801","5006"};
         ArrayList<String> firstRoutes = new ArrayList<String>(
                 List.of("67")
         );
