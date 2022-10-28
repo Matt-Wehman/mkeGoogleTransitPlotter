@@ -406,7 +406,7 @@ public class Controller {
         try {
             CSVReader reader = new CSVReader(line);
             stopTime = new StopTime(
-                    reader.next(), reader.nextTime(), reader.nextTime(),
+                    reader.next(), reader.next(), reader.next(),
                     reader.next(), reader.next(), reader.next(),
                     reader.next(), reader.next());
 
@@ -678,8 +678,8 @@ public class Controller {
      * Finds the next trip at a certain stop given the time
      * This method has not been implemented
      *
-     * @param stopID
-     * @param currentTime
+     * @param stopID the stop being parsed
+     * @param currentTime the current time
      */
     public String nextTripAtStop(String stopID, Time currentTime) {
         int counter = 0;

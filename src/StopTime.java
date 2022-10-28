@@ -11,6 +11,8 @@ public class StopTime {
 
     private Time arrivalTime;
     private Time departureTime;
+    private String arrivalTimeString;
+    private String departureTimeString;
     private String dropOffType;
     private String pickupType;
     private String stopHeadSign;
@@ -85,28 +87,30 @@ public class StopTime {
     /**
      * Creates an instance of a StopTime Object
      * @param tripID
-     * @param arrivalTime
-     * @param departureTime
+     * @param arrivalTimeString
+     * @param departureTimeString
      * @param stopID
      * @param stopSequence
      * @param stopHeadSign
      * @param pickupType
      * @param dropOffType
      */
-    public StopTime(String tripID, Time arrivalTime, Time departureTime, String stopID, String stopSequence, String stopHeadSign, String pickupType, String dropOffType) {
+    public StopTime(String tripID, String arrivalTimeString, String departureTimeString, String stopID, String stopSequence, String stopHeadSign, String pickupType, String dropOffType) throws CSVReader.EndOfStringException, ParseException {
         this.tripID = tripID;
-        this.arrivalTime = arrivalTime;
-        this.departureTime = departureTime;
+        this.arrivalTimeString = arrivalTimeString;
+        this.departureTimeString = departureTimeString;
         this.stopID = stopID;
         this.stopSequence = stopSequence;
         this.stopHeadSign = stopHeadSign;
         this.pickupType = pickupType;
         this.dropOffType = dropOffType;
+        this.arrivalTime = new CSVReader(arrivalTimeString).nextTime();
+        this.departureTime = new CSVReader(departureTimeString).nextTime();
     }
 
     @Override
     public String toString(){
-        return tripID + ',' + arrivalTime + ',' + departureTime + ','
+        return tripID + ',' + arrivalTimeString + ',' + departureTimeString + ','
                 + stopID + ',' + stopSequence + ',' + stopHeadSign  + ','
                 + pickupType  + ',' + dropOffType;
     }
