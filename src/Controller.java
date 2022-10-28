@@ -406,9 +406,15 @@ public class Controller {
                 incorrectLines += importFilesNoStage(listOfFiles);
 
                 importStage.hide();
+
+
                 if (incorrectLines > 0) {
                     errorAlert("Success, But Incorrectly Formatted Lines",
                             incorrectLines + " incorrectly formatted lines were skipped.");
+                } else {
+                    Alert importInfo = infoAlert("Files have been processed.", "All files have been processed and are being verified");
+                    importInfo.setTitle("Import Successful");
+
                 }
                 return true;
             } catch (InvalidHeaderException e){
@@ -981,7 +987,11 @@ public class Controller {
     }
 
     private Alert infoAlert(String header, String context){
-        return alert(header, context, "Info", Alert.AlertType.WARNING);
+        return alert(header, context, "Info", Alert.AlertType.INFORMATION);
+    }
+
+    private Alert conformationAlert(String header, String context){
+        return alert(header, context, "Info", Alert.AlertType.CONFIRMATION);
     }
 
     private Alert alert(String header, String context, String title, Alert.AlertType alertType){
