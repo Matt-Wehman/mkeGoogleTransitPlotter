@@ -257,6 +257,26 @@ public class Controller {
      * @param actionEvent ignored
      */
     public void exportHelper(ActionEvent actionEvent) {
+        if(routes.size() > 0 && allStops.size() > 0) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Save Directory");
+            File file = fileChooser.showSaveDialog(null);
+            boolean bool = file.mkdir();
+            File routeExport = exportRoutes(file.toPath());
+            File stopExport = exportStops(file.toPath());
+            File tripExport = exportTrips(file.toPath());
+            File stopTimeExport = exportStopTimes(file.toPath());
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            Image image = new Image("https://img.icons8.com/fluency/48/000000/checked.png");
+            ImageView imageView = new ImageView(image);
+            alert.setGraphic(imageView);
+            alert.setTitle("Successful Export");
+            alert.setHeaderText("Export Successful");
+            alert.setContentText("All files were exported successfully");
+            alert.showAndWait();
+        } else {
+            error("No files", "Please import files before trying to export files");
+        }
 
     }
 
