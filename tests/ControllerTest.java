@@ -4,10 +4,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * tests methods in the controller class
@@ -20,14 +24,14 @@ public class ControllerTest {
      * @author Matthew Wehman
      */
     @BeforeEach
-    private void setUp(){
+    private void setUp() throws IOException, Controller.InvalidHeaderException {
         controller = new Controller();
         ArrayList<File> listOfFiles = new ArrayList<>();
         listOfFiles.add(new File("./GTFSFiles/routes.txt"));
         listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
         listOfFiles.add(new File("./GTFSFiles/stops.txt"));
         listOfFiles.add(new File("./GTFSFiles/trips.txt"));
-        controller.importFiles(listOfFiles);
+        controller.importFilesNoStage(listOfFiles);
     }
 
 
@@ -317,6 +321,26 @@ public class ControllerTest {
             ArrayList<String> found = controller.routesContainingStop(stops[i]);
             Assertions.assertEquals(routes[i], found);
         }
+    }
+
+    @Test
+    public void assertAllLinesEqual() throws IOException {
+        System.out.println("start");
+        String[] types = {"stops", "trips", "routes", "stop_times"};
+        for (String type: types){
+            File firstFile = new File("./GTFSFiles/" + type + ".txt");
+            File checkFile = new File("./export2/" + type + ".txt");
+            List<String> checkLines = Files.lines(checkFile.toPath()).toList();
+            List<String> firstLines = Files.lines(firstFile.toPath()).toList();
+            HashSet<String> set = new HashSet<>(checkLines);
+            for (String line: firstLines){
+                if (!set.contains(line)){
+                    System.out.println("Expected: " + line + ", Not found");
+                }
+            }
+            System.out.println("Type: " + type + " tested");
+        }
+
     }
 
 }

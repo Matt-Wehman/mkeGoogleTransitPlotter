@@ -508,7 +508,7 @@ public class Controller {
         try {
             CSVReader reader = new CSVReader(line);
             stopTime = new StopTime(
-                    reader.next(), reader.nextTime(), reader.nextTime(),
+                    reader.next(), reader.next(), reader.next(),
                     reader.next(), reader.next(), reader.next(),
                     reader.next(), reader.next());
 
