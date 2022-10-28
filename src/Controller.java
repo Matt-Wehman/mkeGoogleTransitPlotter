@@ -452,7 +452,7 @@ public class Controller {
                 Trip trip = validateTripLines(tripLine);
                 // Add trip to corresponding route
                 if (!Objects.equals(null, trip)) {
-                    if (!routes.containsKey(trip.getRouteID())) {
+                    if (routes.containsKey(trip.getRouteID())) {
                         routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
                         trips.put(trip.getTripID(), trip);
                     } else {
