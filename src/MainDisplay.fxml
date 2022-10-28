@@ -9,7 +9,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
-      <VBox prefHeight="393.0" prefWidth="389.0">
+      <VBox prefHeight="393.0" prefWidth="389.0" fx:id = "vbox">
          <children>
             <Label fx:id="searchBarLabel" prefHeight="17.0" prefWidth="154.0" text="Search Bar" />
             <TextField fx:id="searchBar" onAction="#getId" prefHeight="25.0" prefWidth="209.0" />
@@ -22,7 +22,7 @@
             </HBox>
          </children>
       </VBox>
-      <VBox layoutX="476.0" prefHeight="400.0" prefWidth="124.0">
+      <VBox layoutX="476.0" prefHeight="400.0" prefWidth="124.0" fx:id = "importBox">
          <children>
             <Button fx:id="importButton" mnemonicParsing="false" onAction="#importHelper" prefHeight="41.0" prefWidth="122.0" text="Import" />
             <Button fx:id="exportButton" mnemonicParsing="false" onAction="#exportHelper" prefHeight="41.0" prefWidth="122.0" text="Export" />

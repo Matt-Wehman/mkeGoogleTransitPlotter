@@ -1,0 +1,17 @@
+.root{
+      -fx-width: 100%;
+      -fx-height: 100;
+      -fx-margin: 0;
+      -fx-background-color: rgb(36,76,150);
+}
+#tripIdButton{
+     -fx-background-color: blue;
+     -fx-border-width: 3;
+     -fx-border-color: rgba(195, 202, 214,.5);
+     -fx-border-style: solid;
+     -fx-color:rgb(255,0,0);
+     }
+#tripIdButton:hover{
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding:5px;
+}

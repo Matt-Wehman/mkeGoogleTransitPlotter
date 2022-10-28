@@ -34,9 +34,9 @@ public class Main extends Application {
         Parent root = primaryLoader.load(Objects.requireNonNull(getClass().getResource("MainDisplay.fxml")).openStream());
 
         stage.setTitle("GTFS APP");
-
-        stage.setScene(new Scene(root, SCENE_WIDTH, SCENE_HEIGHT));
-
+        Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+        stage.setScene(scene);
+        scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
         stage.show();
 
         FXMLLoader routeLoader = new FXMLLoader();
