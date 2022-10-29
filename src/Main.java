@@ -22,7 +22,7 @@ public class Main extends Application {
     /**
      * Height for JavaFX Scene
      */
-    public static final int SCENE_HEIGHT = 400;
+    public static final int SCENE_HEIGHT = 395;
     public static void main(String[] args) {
         launch(args);
     }
