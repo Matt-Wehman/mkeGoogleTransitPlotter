@@ -4,10 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * tests methods in the controller class
@@ -17,22 +17,29 @@ public class ControllerTest {
 
     /**
      * instantiates all objects in controllers
+     *
      * @author Matthew Wehman
      */
     @BeforeEach
-    private void setUp(){
+    private void setUp() {
         controller = new Controller();
         ArrayList<File> listOfFiles = new ArrayList<>();
         listOfFiles.add(new File("./GTFSFiles/routes.txt"));
         listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
         listOfFiles.add(new File("./GTFSFiles/stops.txt"));
         listOfFiles.add(new File("./GTFSFiles/trips.txt"));
-        controller.importFiles(listOfFiles);
+        try {
+            controller.importFilesNoStage(listOfFiles);
+        } catch (IOException | Controller.InvalidHeaderException e) {
+            System.out.println("error");
+        }
+
     }
 
 
     /**
      * Tests distance calculations for a trip (Feature 2)
+     *
      * @author Christian B
      */
 
@@ -53,10 +60,11 @@ public class ControllerTest {
 
     /**
      * feature 8 tests
+     *
      * @author Ian Czerkis
      */
     @Test
-    public void testNextTripAtStop(){
+    public void testNextTripAtStop() {
         long startTime;
         long endTime;
         startTime = System.nanoTime();
@@ -67,10 +75,9 @@ public class ControllerTest {
         //Time currentTime = java.sql.Time.valueOf(LocalTime.now());
         String nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
         Assertions.assertEquals("21794626_1570", nextTripAtStop);
-        Assertions.assertNotEquals("21794626_212123570" , nextTripAtStop);
+        Assertions.assertNotEquals("21794626_212123570", nextTripAtStop);
         endTime = System.nanoTime() - startTime;
         System.out.println(endTime);
-
 
 
         stopID = "6037";
@@ -89,14 +96,15 @@ public class ControllerTest {
 
     /**
      * This method tests the speed of a trip give the distance and time of a trip
+     *
      * @author Patrick
      */
     @Test
     public void testSpeed() {
         //Time for trips1 is 32, and for trip2 33 mins
-        int correctSpeed1 = 100/32;
-        int correctSpeed2 = 100/33;
-        int incorrectSpeed1 = 100/50;
+        int correctSpeed1 = 100 / 32;
+        int correctSpeed2 = 100 / 33;
+        int incorrectSpeed1 = 100 / 50;
 
         Trip testTrip1 = Controller.validateTripLines("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23");
         Trip testTrip2 = Controller.validateTripLines("64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19");
@@ -110,6 +118,7 @@ public class ControllerTest {
 
     /**
      * Tests route header validation
+     *
      * @author Christian Basso
      */
     @Test
@@ -124,6 +133,7 @@ public class ControllerTest {
 
     /**
      * Tests route header lines
+     *
      * @author Christian Basso
      */
 
@@ -137,7 +147,7 @@ public class ControllerTest {
         String invalidRouteLine2 = "33,MCTS,33,Vliet Street,,3,,,";
         String invalidRouteLine3 = ",MCTS,33,Vliet Street,,3,,008345,";
 
-        Route validRoute = new Route("23D", "MCTS", "23", "Fond du lac-National (17-SEP) - DETOUR", "This Route is in Detour", "3", "", "008345","");
+        Route validRoute = new Route("23D", "MCTS", "23", "Fond du lac-National (17-SEP) - DETOUR", "This Route is in Detour", "3", "", "008345", "");
 
         Assertions.assertTrue(validRoute.equals(Controller.validateRouteLine(validRouteLine1)));
 
@@ -163,28 +173,30 @@ public class ControllerTest {
 
     /**
      * Tests trip header format
+     *
      * @author Matthew Wehman
      */
     @Test
-    public void validateTripHeader(){
+    public void validateTripHeader() {
         String validHeader = "route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id";
-        String invalidHeader =  "route_id,se,block_id,shape_id";
+        String invalidHeader = "route_id,se,block_id,shape_id";
         Assertions.assertTrue(Controller.validateTripHeader(validHeader));
         Assertions.assertFalse(Controller.validateTripHeader(invalidHeader));
     }
 
     /**
      * Tests trip body line format
+     *
      * @author Matthew Wehman
      */
     @Test
-    public void validateTripBody(){
+    public void validateTripBody() {
         String[] validBodies = new String[]{"64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23"
-                ,"64,17-SEP_SUN,21736569_2545,60TH-VLIET,0,64102,17-SEP_64_0_23",
+                , "64,17-SEP_SUN,21736569_2545,60TH-VLIET,0,64102,17-SEP_64_0_23",
                 "64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19"};
 
         String[] invalidBodies = new String[]{"64,17-SEP_SUN,21736567_2541," +
-                "60TH-VLIET,0,64102,17-SEP_64_0_23,dsoad,dsao,poi", "19", "64,17-SEP_SUN,21736567_2541" };
+                "60TH-VLIET,0,64102,17-SEP_64_0_23,dsoad,dsao,poi", "19", "64,17-SEP_SUN,21736567_2541"};
 
         for (String validBody : validBodies) {
             Assertions.assertNotNull(Controller.validateTripLines(validBody));
@@ -199,26 +211,28 @@ public class ControllerTest {
         Assertions.assertEquals("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23", trip.toString());
 
 
-        for(String i: invalidBodies){
+        for (String i : invalidBodies) {
             Assertions.assertNull(Controller.validateTripLines(i));
         }
     }
 
     /**
      * Tests Stop Header Lines
+     *
      * @author Patrick McDonald
      */
     @Test
-    public void validateStopHeaderLines(){
+    public void validateStopHeaderLines() {
         Assertions.assertTrue(Controller.validateStopHeader("stop_id,stop_name,stop_desc,stop_lat,stop_lon"));
     }
 
     /**
      * Validates individual Stop Lines
+     *
      * @author Patrick McDonald
      */
     @Test
-    public void validateStopBodyLines(){
+    public void validateStopBodyLines() {
         String correctStopBodies[] = {"1785,NATIONAL & S6 #1785,,43.0231768,-87.9184932",
                 "1801,S92 & ORCHARD #1801,,43.0138967,-87.8935061",
                 "1932,S13 & ABBOTT #1932,,42.9495066,-87.9292056"};
@@ -246,6 +260,7 @@ public class ControllerTest {
 
     /**
      * Validates a line in the StopTime file
+     *
      * @author Ian Czerkis
      */
     @Test
@@ -259,6 +274,7 @@ public class ControllerTest {
 
     /**
      * validates the first line in the StopTime file
+     *
      * @author Ian Czerkis
      */
     @Test
@@ -270,14 +286,14 @@ public class ControllerTest {
                 "21849620_1284,22:47:00,22:47:00,874,52,0,0",
                 "21794282_2306,,11:24:00,10,48,,0,0"};
 
-        for (String c: correctFormats){
+        for (String c : correctFormats) {
             Assertions.assertNotNull(Controller.validateStopTimeLine(c));
         }
-        for (String i: incorrectFormats){
+        for (String i : incorrectFormats) {
             Assertions.assertNull(Controller.validateStopTimeLine(i));
         }
 
-        for (String c: correctFormats){
+        for (String c : correctFormats) {
             StopTime test = Controller.validateStopTimeLine(c);
             Assertions.assertEquals(c, test.toString());
         }
@@ -285,10 +301,11 @@ public class ControllerTest {
 
     /**
      * tests the trip per stop method
+     *
      * @author Ian Czerkis
      */
     @Test
-    public void testTripsPerStop(){
+    public void testTripsPerStop() {
         Assertions.assertEquals(58, controller.tripsPerStop("6712"));
         Assertions.assertEquals(149, controller.tripsPerStop("4628"));
         Assertions.assertEquals(80, controller.tripsPerStop("8298"));
@@ -298,11 +315,12 @@ public class ControllerTest {
 
     /**
      * Tests routesContainingStop method against known values
+     *
      * @author Matthew Wehman
      */
     @Test
-    public void testRoutesContainingStop(){
-        String[] stops = new String[]{"1801","5006", "1318"};
+    public void testRoutesContainingStop() {
+        String[] stops = new String[]{"1801", "5006", "1318"};
         ArrayList<String> firstRoutes = new ArrayList<String>(
                 List.of("67")
         );
@@ -310,13 +328,42 @@ public class ControllerTest {
                 List.of("50")
         );
         ArrayList<String> finalRoutes = new ArrayList<>(
-                List.of("57D","GRE","143")
+                List.of("57D", "GRE", "143")
         );
-        ArrayList<String>[] routes = new ArrayList[]{firstRoutes,secRoutes,finalRoutes};
-        for(int i = 0; i < stops.length; i++){
+        ArrayList<String>[] routes = new ArrayList[]{firstRoutes, secRoutes, finalRoutes};
+        for (int i = 0; i < stops.length; i++) {
             ArrayList<String> found = controller.routesContainingStop(stops[i]);
             Assertions.assertEquals(routes[i], found);
         }
     }
 
+
+    @Test
+    public void assertAllLinesEqual() throws IOException {
+        System.out.println("start");
+        String[] types = {"stops", "trips", "routes", "stop_times"};
+        for (String type : types) {
+            File importFile = new File("./GTFSFiles/" + type + ".txt");
+            File exportFile = new File("./export/" + type + ".txt");
+            List<String> importLines = Files.lines(importFile.toPath()).toList();
+
+            List<String> exportLines = Files.lines(exportFile.toPath()).toList();
+            HashSet<String> set = new HashSet<>(exportLines);
+            int i = 0;
+            for (String line : importLines) {
+                if (!set.contains(line)) {
+                    //System.out.println("Expected: " + line + "---Not found");
+                    if(i<10){
+                        System.out.println(line);
+                    }
+                    i++;
+                }
+            }
+            System.out.println(i);
+
+            System.out.println("Type: " + type + " tested");
+        }
+
+
+    }
 }
