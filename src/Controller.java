@@ -419,7 +419,6 @@ public class Controller {
                 } else {
                     Alert importInfo = infoAlert("Files have been processed.", "All files have been processed and are being verified");
                     importInfo.setTitle("Import Successful");
-
                 }
                 return true;
             } catch (InvalidHeaderException e){
