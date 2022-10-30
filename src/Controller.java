@@ -1,3 +1,12 @@
+/*
+ * Course: SE 2030 - 041
+ * Fall 22-23 test
+ * GTFS Project
+ * Created by: Christian Basso, Ian Czerkis, Matt Wehman, Patrick McDonald.
+ * Created on: 09/10/22
+ */
+
+import java.awt.*;
 import java.io.File;
 
 import javafx.event.ActionEvent;
@@ -70,12 +79,19 @@ public class Controller {
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
 
+
     /**
      * Creates Controller instance
      */
     public Controller() {
 
     }
+
+    public HashMap<String, Trip> getT(){
+        return trips;
+    }
+
+
 
     /**
      * gets the text from the search bar
@@ -233,6 +249,7 @@ public class Controller {
         File routeFile = new File(path + "/routes.txt");
         FileWriter writer = null;
         Set<Map.Entry<String, Route>> routeSet = routes.entrySet();
+
         Iterator<Map.Entry<String, Route>> it = routeSet.iterator();
         try {
             writer = new FileWriter(routeFile);
@@ -247,6 +264,18 @@ public class Controller {
         return routeFile;
     }
 
+
+
+
+
+
+
+    /**
+     * Creates a file of each imported stop
+     *
+     * @param path the path of where to save the file
+     * @return file of all stops, in correct format.
+     */
     public File exportStops(java.nio.file.Path path) {
         File stopFile = new File(path + "/stops.txt");
         FileWriter writer = null;
@@ -287,21 +316,64 @@ public class Controller {
 
     public File exportStopTimes(Path path) {
         File stopTimeFile = new File(path + "/stop_times.txt");
-        FileWriter writer = null;
-        try {
-            writer = new FileWriter(stopTimeFile);
+//        Collection<Trip> tripCol = trips.values();
+//        int x = 0;
+//        for (Trip trip : tripCol) {
+//            x += trip.getStopTimes().size();
+//        }
+        int i = 1;
+        try (FileWriter writer = new FileWriter(stopTimeFile)) {
             writer.write("trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type");
-            for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
-                Trip trip = mapEntry.getValue();
-                for (Map.Entry<String, StopTime> mapEntry2 : trip.getStopTimes().entrySet()) {
-                    StopTime stopTime = mapEntry2.getValue();
-                    writer.write("\n" + stopTime.toString());
+            Set<String> keys = trips.keySet();
+            for (String key : keys) {
+                Trip trip = trips.get(key);
+                for(Map.Entry<String, ArrayList<StopTime>> stoppers: trip.getTestTimes().entrySet()){
+                    ArrayList<StopTime> stopList = stoppers.getValue();
+                    for(StopTime stop: stopList){
+                        writer.write("\n" + stop.toString());
+                        i++;
+                    }
+
                 }
+
+
+//                HashMap<String, StopTime> stopTimes = trip.getStopTimes();
+//                Set<String> stopKeys = stopTimes.keySet();
+//                for (String stopKey : stopKeys) {
+//                    StopTime stop = stopTimes.get(stopKey);
+//                    writer.write("\n" + stop.toString());
+//                    i++;
+//                }
             }
-            writer.close();
+
         } catch (IOException e) {
-            System.out.println("stopTime file could not be found");
+            System.out.println("IO");
         }
+        System.out.println("i: " + i);
+
+
+
+
+//        File stopTimeFile = new File(path + "/stop_times.txt");
+//        FileWriter writer = null;
+//        try {
+//            writer = new FileWriter(stopTimeFile);
+//            writer.write("trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type");
+//            System.out.println(trips.size());
+//
+//            for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
+//                Trip trip = mapEntry.getValue();
+//
+//                for (Map.Entry<String, StopTime> mapEntry2 : trip.getStopTimes().entrySet()) {
+//                    StopTime stopTime = mapEntry2.getValue();
+//                    writer.write("\n" + stopTime.toString());
+//                }
+//            }
+//            writer.close();
+//
+//        } catch (IOException e) {
+//            System.out.println("stopTime file could not be found");
+//        }
 
 
         return stopTimeFile;
@@ -382,6 +454,8 @@ public class Controller {
                         Trip trip = trips.get(stopTime.getTripID());
                         if (trip != null) {
                             trip.getStopTimes().put(stopTime.getStopID(), stopTime);
+                            //Test code, delete if you don't know why its here
+                            trip.addStopTime(stopTime.getStopID(), stopTime);
                         }
                     } else {
                         invalidLines++;

@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This is the Trip class. Most notably, it has a HashMap of StopTimes.
@@ -16,6 +18,16 @@ public class Trip {
     private final HashMap<String, StopTime> stopTimes = new HashMap<>();
     private String tripHeadSign;
     private String tripID;
+    private HashMap<String, ArrayList<StopTime>> test = new HashMap<>();
+
+    public void addStopTime(String key, StopTime val){
+        if (test.containsKey(key)){
+            test.get(key).add(val);
+        } else {
+            test.put(key, new ArrayList<>());
+            test.get(key).add(val);
+        }
+    }
 
     public void setBlockID(int blockID) {
         this.blockID = blockID;
@@ -67,6 +79,10 @@ public class Trip {
 
     public HashMap<String, StopTime> getStopTimes() {
         return stopTimes;
+    }
+
+    public HashMap<String, ArrayList<StopTime>> getTestTimes() {
+        return test;
     }
 
     public String getTripHeadSign() {
