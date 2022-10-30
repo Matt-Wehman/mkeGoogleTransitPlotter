@@ -1,4 +1,5 @@
 import java.sql.Time;
+import java.text.DateFormat;
 import java.text.ParseException;
 
 /**
@@ -10,20 +11,23 @@ public class StopTime {
 
     private Time arrivalTime;
     private Time departureTime;
+    private String arrivalTimeString;
+    private String departureTimeString;
     private String dropOffType;
     private String pickupType;
     private String stopHeadSign;
     private String stopID;
     private String stopSequence;
     private String tripID;
+    private boolean isNextDay;
 
     public Time getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(Time arrivalTime) {
-        this.arrivalTime = arrivalTime;
-    }
+//    public void setArrivalTime(Time arrivalTime) {
+//        this.arrivalTime = arrivalTime;
+//    }
 
     public Time getDepartureTime() {
         return departureTime;
@@ -84,28 +88,33 @@ public class StopTime {
     /**
      * Creates an instance of a StopTime Object
      * @param tripID
-     * @param arrivalTime
-     * @param departureTime
+     * @param arrivalTimeString
+     * @param departureTimeString
      * @param stopID
      * @param stopSequence
      * @param stopHeadSign
      * @param pickupType
      * @param dropOffType
      */
-    public StopTime(String tripID, Time arrivalTime, Time departureTime, String stopID, String stopSequence, String stopHeadSign, String pickupType, String dropOffType) {
+    public StopTime(String tripID, String arrivalTimeString, String departureTimeString, String stopID, String stopSequence, String stopHeadSign, String pickupType, String dropOffType) throws CSVReader.EndOfStringException, ParseException {
         this.tripID = tripID;
-        this.arrivalTime = arrivalTime;
-        this.departureTime = departureTime;
+        this.arrivalTimeString = arrivalTimeString;
+        this.departureTimeString = departureTimeString;
         this.stopID = stopID;
         this.stopSequence = stopSequence;
         this.stopHeadSign = stopHeadSign;
         this.pickupType = pickupType;
         this.dropOffType = dropOffType;
+        this.arrivalTime = new CSVReader(arrivalTimeString).nextTime();
+        this.departureTime = new CSVReader(departureTimeString).nextTime();
+        if(Integer.parseInt(arrivalTimeString.substring(0, 2)) > 24) {
+            isNextDay = true;
+        }
     }
 
     @Override
     public String toString(){
-        return tripID + ',' + arrivalTime + ',' + departureTime + ','
+        return tripID + ',' + arrivalTimeString + ',' + departureTimeString + ','
                 + stopID + ',' + stopSequence + ',' + stopHeadSign  + ','
                 + pickupType  + ',' + dropOffType;
     }
@@ -117,6 +126,10 @@ public class StopTime {
      */
     public boolean update(StopTime newStopTime) {
         return false;
+    }
+
+    public boolean getIsNextDay() {
+        return isNextDay;
     }
 
 
