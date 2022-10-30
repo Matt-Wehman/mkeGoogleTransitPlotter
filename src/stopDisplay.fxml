@@ -37,7 +37,7 @@
       </HBox>
       <HBox prefHeight="21.0" prefWidth="570.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="RouteId's Containing this Stop:" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Route IDs Containing This Stop:" />
             <Text fx:id="routeList" strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
                <HBox.margin>
                   <Insets left="10.0" />
@@ -47,7 +47,7 @@
       </HBox>
       <HBox prefHeight="21.0" prefWidth="570.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="nextTripAtStop:" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Next Trip at Stop:" />
             <Text fx:id="nextTrip" strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
                <HBox.margin>
                   <Insets left="10.0" />
