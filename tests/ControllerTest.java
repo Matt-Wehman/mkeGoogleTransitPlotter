@@ -7,7 +7,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.Time;
-import java.util.*;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * tests methods in the controller class
@@ -21,21 +26,15 @@ public class ControllerTest {
      * @author Matthew Wehman
      */
     @BeforeEach
-    private void setUp() {
+    private void setUp() throws IOException, Controller.InvalidHeaderException {
         controller = new Controller();
         ArrayList<File> listOfFiles = new ArrayList<>();
         listOfFiles.add(new File("./GTFSFiles/routes.txt"));
         listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
         listOfFiles.add(new File("./GTFSFiles/stops.txt"));
         listOfFiles.add(new File("./GTFSFiles/trips.txt"));
-        try {
-            controller.importFilesNoStage(listOfFiles);
-        } catch (IOException | Controller.InvalidHeaderException e) {
-            System.out.println("error");
-        }
-
+        controller.importFilesNoStage(listOfFiles);
     }
-
 
     /**
      * Tests distance calculations for a trip (Feature 2)
@@ -91,7 +90,6 @@ public class ControllerTest {
         nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
         Assertions.assertEquals("21794234_1711", nextTripAtStop);
         Assertions.assertNotEquals("21794234_1712", nextTripAtStop);
-
     }
 
     /**
@@ -166,8 +164,6 @@ public class ControllerTest {
         Assertions.assertEquals(validRoute1.toString(), "23D,MCTS,23,Fond du lac-National (17-SEP) - DETOUR,This Route is in Detour,3,,008345,");
         Assertions.assertEquals(validRoute2.toString(), "27,MCTS,27,27th Street,,3,,008345,");
         Assertions.assertEquals(validRoute3.toString(), "42U,,,,,,,008345,");
-
-        Assertions.assertNull(Controller.validateTripLines(validRouteLine1 + ","));
 
     }
 
@@ -319,8 +315,8 @@ public class ControllerTest {
      * @author Matthew Wehman
      */
     @Test
-    public void testRoutesContainingStop() {
-        String[] stops = new String[]{"1801", "5006", "1318"};
+    public void testRoutesContainingStop(){
+        String[] stops = new String[]{"1801","5006"};
         ArrayList<String> firstRoutes = new ArrayList<String>(
                 List.of("67")
         );
@@ -337,33 +333,24 @@ public class ControllerTest {
         }
     }
 
-
     @Test
     public void assertAllLinesEqual() throws IOException {
         System.out.println("start");
         String[] types = {"stops", "trips", "routes", "stop_times"};
-        for (String type : types) {
-            File importFile = new File("./GTFSFiles/" + type + ".txt");
-            File exportFile = new File("./export/" + type + ".txt");
-            List<String> importLines = Files.lines(importFile.toPath()).toList();
-
-            List<String> exportLines = Files.lines(exportFile.toPath()).toList();
-            HashSet<String> set = new HashSet<>(exportLines);
-            int i = 0;
-            for (String line : importLines) {
-                if (!set.contains(line)) {
-                    //System.out.println("Expected: " + line + "---Not found");
-                    if(i<10){
-                        System.out.println(line);
-                    }
-                    i++;
+        for (String type: types){
+            File firstFile = new File("./GTFSFiles/" + type + ".txt");
+            File checkFile = new File("./export2/" + type + ".txt");
+            List<String> checkLines = Files.lines(checkFile.toPath()).toList();
+            List<String> firstLines = Files.lines(firstFile.toPath()).toList();
+            HashSet<String> set = new HashSet<>(checkLines);
+            for (String line: firstLines){
+                if (!set.contains(line)){
+                    System.out.println("Expected: " + line + ", Not found");
                 }
             }
-            System.out.println(i);
-
             System.out.println("Type: " + type + " tested");
         }
 
-
     }
+
 }
