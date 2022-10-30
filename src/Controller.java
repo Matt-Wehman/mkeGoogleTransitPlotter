@@ -24,6 +24,9 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -360,30 +363,36 @@ public class Controller {
                 .toList();
 
 
-        if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0) {
+        if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0){
+            int incorrectLines = 0;
             try {
-                Alert alert = infoAlert("Importing files", "All files are being imported...");
-                int incorrectLines = 0;
-                incorrectLines += importRoutes(routeFile.get(0));
-                incorrectLines += importStops(stopFile.get(0));
-                incorrectLines += importTrips(tripFile.get(0));
-                incorrectLines += importStopTimes(stopTimesFile.get(0));
+                FXMLLoader importLoader = new FXMLLoader();
+                Parent importRoot = importLoader.load(Objects.requireNonNull(getClass()
+                        .getResource("ImportingFilesDisplay.fxml")).openStream());
+                Stage importStage = new Stage();
+                importStage.setTitle("Importing...");
+                importStage.setScene(new Scene(importRoot));
+                importStage.show();
+
+                incorrectLines += importFilesNoStage(listOfFiles);
+
+                importStage.hide();
+
 
                 if (incorrectLines > 0) {
-                    alert.hide();
-                    errorAlert("Incorrectly Formatted Lines",
-                            "All files were imported successfully, but " + incorrectLines +
-                                    " incorrectly formatted lines were skipped.");
+                    errorAlert("Success, But Incorrectly Formatted Lines",
+                            incorrectLines + " incorrectly formatted lines were skipped.");
                 } else {
-                    alert.setHeaderText("Success");
-                    alert.setContentText("All files have been successfully imported");
+                    Alert importInfo = infoAlert("Files have been processed.", "All files have been processed and are being verified");
+                    importInfo.setTitle("Import Successful");
+
                 }
                 return true;
-            } catch (InvalidHeaderException e) {
+            } catch (InvalidHeaderException e){
                 errorAlert("Invalid Header", "The header for " + e.filename +
                         " is formatted incorrectly. No files were imported");
             } catch (IOException e) {
-                errorAlert("File Not Found", "A specified file was not found");
+                errorAlert("File not found", "A required file was not found");
             }
         } else {
             errorAlert("All four files must be imported at the same time", "Accepted filenames: routes.txt, stops.txt, trips.txt, stop_times.txt");
