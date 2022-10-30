@@ -417,8 +417,14 @@ public class Controller {
                     errorAlert("Success, But Incorrectly Formatted Lines",
                             incorrectLines + " incorrectly formatted lines were skipped.");
                 } else {
-                    Alert importInfo = infoAlert("Files have been processed.", "All files have been processed and are being verified");
-                    importInfo.setTitle("Import Successful");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    Image image = new Image("https://img.icons8.com/fluency/48/000000/checked.png");
+                    ImageView imageView = new ImageView(image);
+                    alert.setGraphic(imageView);
+                    alert.setTitle("Successful Import");
+                    alert.setHeaderText("Import Successful");
+                    alert.setContentText("All files were imported successfully");
+                    alert.showAndWait();
                 }
                 return true;
             } catch (InvalidHeaderException e){
