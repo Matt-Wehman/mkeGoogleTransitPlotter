@@ -1,3 +1,12 @@
+/*
+ * Course: SE 2030 - 041
+ * Fall 22-23 test
+ * GTFS Project
+ * Created by: Christian Basso, Ian Czerkis, Matt Wehman, Patrick McDonald.
+ * Created on: 09/10/22
+ */
+
+import java.awt.*;
 import java.io.File;
 
 import javafx.event.ActionEvent;
@@ -72,12 +81,19 @@ public class Controller {
     protected HashMap<String, Route> routes = new HashMap<>();
     protected HashMap<String, Trip> trips = new HashMap<>();
 
+
     /**
      * Creates Controller instance
      */
     public Controller() {
 
     }
+
+    public HashMap<String, Trip> getT(){
+        return trips;
+    }
+
+
 
     /**
      * gets the text from the search bar
@@ -248,6 +264,7 @@ public class Controller {
         File routeFile = new File(path + "/routes.txt");
         FileWriter writer = null;
         Set<Map.Entry<String, Route>> routeSet = routes.entrySet();
+
         Iterator<Map.Entry<String, Route>> it = routeSet.iterator();
         try {
             writer = new FileWriter(routeFile);
@@ -262,6 +279,18 @@ public class Controller {
         return routeFile;
     }
 
+
+
+
+
+
+
+    /**
+     * Creates a file of each imported stop
+     *
+     * @param path the path of where to save the file
+     * @return file of all stops, in correct format.
+     */
     public File exportStops(java.nio.file.Path path) {
         File stopFile = new File(path + "/stops.txt");
         FileWriter writer = null;
@@ -302,23 +331,24 @@ public class Controller {
 
     public File exportStopTimes(Path path) {
         File stopTimeFile = new File(path + "/stop_times.txt");
-        FileWriter writer = null;
-        try {
-            writer = new FileWriter(stopTimeFile);
+        try (FileWriter writer = new FileWriter(stopTimeFile)) {
             writer.write("trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type");
-            for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
-                Trip trip = mapEntry.getValue();
-                for (Map.Entry<String, StopTime> mapEntry2 : trip.getStopTimes().entrySet()) {
-                    StopTime stopTime = mapEntry2.getValue();
-                    writer.write("\n" + stopTime.toString());
+            Set<String> keys = trips.keySet();
+            for (String key : keys) {
+                Trip trip = trips.get(key);
+                for(Map.Entry<String, ArrayList<StopTime>> stoppers: trip.getStopTimes().entrySet()){
+                    ArrayList<StopTime> stopList = stoppers.getValue();
+                    for(StopTime stop: stopList){
+                        writer.write("\n" + stop.toString());
+                    }
+
                 }
+
             }
-            writer.close();
+
         } catch (IOException e) {
             System.out.println("stopTime file could not be found");
         }
-
-
         return stopTimeFile;
     }
 
@@ -396,7 +426,7 @@ public class Controller {
                     if (!Objects.equals(stopTime, null)) {
                         Trip trip = trips.get(stopTime.getTripID());
                         if (trip != null) {
-                            trip.getStopTimes().put(stopTime.getStopID(), stopTime);
+                            trip.addStopTime(stopTime.getStopID(), stopTime);
                         }
                     } else {
                         invalidLines++;
@@ -467,7 +497,7 @@ public class Controller {
                 Trip trip = validateTripLines(tripLine);
                 // Add trip to corresponding route
                 if (!Objects.equals(null, trip)) {
-                    if (!routes.containsKey(trip.getRouteID())) {
+                    if (routes.containsKey(trip.getRouteID())) {
                         routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
                         trips.put(trip.getTripID(), trip);
                     } else {
@@ -478,6 +508,26 @@ public class Controller {
         }
         return invalidLines;
     }
+
+    public int importFilesNoStage(ArrayList<File> listOfFiles) throws IOException, InvalidHeaderException {
+        int ret = 0;
+
+        ret += importRoutes(listOfFiles.stream()
+                .filter(file -> file.getName().equals("routes.txt"))
+                .toList().get(0));
+        ret += importStops(listOfFiles.stream()
+                .filter(file -> file.getName().equals("stops.txt"))
+                .toList().get(0));
+        ret += importTrips(listOfFiles.stream()
+                .filter(file -> file.getName().equals("trips.txt"))
+                .toList().get(0));
+        ret += importStopTimes(listOfFiles.stream()
+                .filter(file -> file.getName().equals("stop_times.txt"))
+                .toList().get(0));
+
+        return ret;
+    }
+
 
     /**
      * Checks if Trip header is valid against known valid header.
@@ -702,10 +752,12 @@ public class Controller {
         for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
             Trip trip = mapEntry.getValue();
             if (trip.getStopTimes().containsKey(stopID)) {
-                StopTime stopTime = trip.getStopTimes().get(stopID);
-                Time stopTimeArr = stopTime.getArrivalTime();
-                if (currentTime.compareTo(stopTimeArr) < 0) {
-                    map.put(stopTimeArr, stopTime);
+                ArrayList<StopTime> stopTimes = trip.getStopTimes().get(stopID);
+                for (StopTime stopTime: stopTimes){
+                    Time stopTimeArr = stopTime.getArrivalTime();
+                    if (currentTime.compareTo(stopTimeArr) < 0) {
+                        map.put(stopTimeArr, stopTime);
+                    }
                 }
             }
         }
