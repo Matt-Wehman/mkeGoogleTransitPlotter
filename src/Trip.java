@@ -15,17 +15,16 @@ public class Trip {
     private String routeID;
     private String serviceID;
     private String shapeID;
-    private final HashMap<String, StopTime> stopTimes = new HashMap<>();
     private String tripHeadSign;
     private String tripID;
-    private HashMap<String, ArrayList<StopTime>> test = new HashMap<>();
+    private final HashMap<String, ArrayList<StopTime>> stopTimes = new HashMap<>();
 
     public void addStopTime(String key, StopTime val){
-        if (test.containsKey(key)){
-            test.get(key).add(val);
+        if (stopTimes.containsKey(key)){
+            stopTimes.get(key).add(val);
         } else {
-            test.put(key, new ArrayList<>());
-            test.get(key).add(val);
+            stopTimes.put(key, new ArrayList<>());
+            stopTimes.get(key).add(val);
         }
     }
 
@@ -77,12 +76,8 @@ public class Trip {
         return shapeID;
     }
 
-    public HashMap<String, StopTime> getStopTimes() {
+    public HashMap<String, ArrayList<StopTime>> getStopTimes() {
         return stopTimes;
-    }
-
-    public HashMap<String, ArrayList<StopTime>> getTestTimes() {
-        return test;
     }
 
     public String getTripHeadSign() {

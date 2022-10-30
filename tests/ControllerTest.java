@@ -64,20 +64,13 @@ public class ControllerTest {
      */
     @Test
     public void testNextTripAtStop() {
-        long startTime;
-        long endTime;
-        startTime = System.nanoTime();
         String stopID = "1661";
 
 
         Time currentTime = new Time(8, 37, 0);
-        //Time currentTime = java.sql.Time.valueOf(LocalTime.now());
         String nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
         Assertions.assertEquals("21794626_1570", nextTripAtStop);
         Assertions.assertNotEquals("21794626_212123570", nextTripAtStop);
-        endTime = System.nanoTime() - startTime;
-        System.out.println(endTime);
-
 
         stopID = "6037";
         currentTime = new Time(18, 32, 0);
@@ -339,7 +332,7 @@ public class ControllerTest {
         String[] types = {"stops", "trips", "routes", "stop_times"};
         for (String type: types){
             File firstFile = new File("./GTFSFiles/" + type + ".txt");
-            File checkFile = new File("./export2/" + type + ".txt");
+            File checkFile = new File("./export/" + type + ".txt");
             List<String> checkLines = Files.lines(checkFile.toPath()).toList();
             List<String> firstLines = Files.lines(firstFile.toPath()).toList();
             HashSet<String> set = new HashSet<>(checkLines);
