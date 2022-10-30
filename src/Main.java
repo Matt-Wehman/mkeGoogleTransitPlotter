@@ -4,9 +4,14 @@
  * @created 05-Oct-2022 12:59:52 PM
  */
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.util.Objects;
@@ -28,16 +33,17 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
-        FXMLLoader primaryLoader = new FXMLLoader();
-
-        Parent root = primaryLoader.load(Objects.requireNonNull(getClass().getResource("MainDisplay.fxml")).openStream());
-
+    public void start(final Stage stage) throws Exception {
+        FXMLLoader primaryLoader = new FXMLLoader(getClass().getResource("MainDisplay.fxml"));
+        Pane rootPane = (Pane) primaryLoader.load();
         stage.setTitle("GTFS APP");
-        Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
-        stage.setScene(scene);
-        scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+        Scene mainScene = new Scene(new Group(rootPane));
+        stage.setScene(mainScene);
+        stage.setMinWidth(SCENE_WIDTH + 5);
+        stage.setMinHeight(SCENE_HEIGHT + 32.8);
+        mainScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
         stage.show();
+        letterbox(mainScene, rootPane);
 
         FXMLLoader routeLoader = new FXMLLoader();
 
@@ -93,5 +99,52 @@ public class Main extends Application {
         stopController.setController(primaryController);
 
         primaryController.setStopController(stopController);
+    }
+    private void letterbox(final Scene scene, final Pane contentPane) {
+        final double initWidth  = scene.getWidth();
+        final double initHeight = scene.getHeight();
+        final double ratio  = initWidth / initHeight;
+
+        SceneSizeChangeListener sizeListener = new SceneSizeChangeListener(scene, ratio, initHeight, initWidth, contentPane);
+        scene.widthProperty().addListener(sizeListener);
+        scene.heightProperty().addListener(sizeListener);
+    }
+    static class SceneSizeChangeListener implements ChangeListener<Number> {
+        private final Scene scene;
+        private final double ratio;
+        private final double initHeight;
+        private final double initWidth;
+        private final Pane contentPane;
+
+        public SceneSizeChangeListener(Scene scene, double ratio, double initHeight, double initWidth, Pane contentPane) {
+            this.scene = scene;
+            this.ratio = ratio;
+            this.initHeight = initHeight;
+            this.initWidth = initWidth;
+            this.contentPane = contentPane;
+        }
+
+        public void changed(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue) {
+            final double newWidth  = scene.getWidth();
+            final double newHeight = scene.getHeight();
+
+            double scaleFactor =
+                    newWidth / newHeight > ratio
+                            ? newHeight / initHeight
+                            : newWidth / initWidth;
+
+            if (scaleFactor >= 1) {
+                Scale scale = new Scale(scaleFactor, scaleFactor);
+                scale.setPivotX(0);
+                scale.setPivotY(0);
+                scene.getRoot().getTransforms().setAll(scale);
+
+                contentPane.setPrefWidth (newWidth  / scaleFactor);
+                contentPane.setPrefHeight(newHeight / scaleFactor);
+            } else {
+                contentPane.setPrefWidth (Math.max(initWidth,  newWidth));
+                contentPane.setPrefHeight(Math.max(initHeight, newHeight));
+            }
+        }
     }
 }
