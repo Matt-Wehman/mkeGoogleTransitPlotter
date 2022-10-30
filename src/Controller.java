@@ -116,14 +116,33 @@ public class Controller {
      * @param actionevent when button is clicked
      * @author Matt Wehman
      */
+
     @FXML
     public void generateStopIdInterface(ActionEvent actionevent) {
         String stopId = getId();
-        stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
-        stopController.setStopID(stopId);
-        Time currentTime = java.sql.Time.valueOf(LocalTime.now());
-        stopController.setNextTrip(nextTripAtStop(stopId, currentTime));
-        stopDisplay.show();
+        if (allStops.containsKey(stopId)) {
+            stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
+            stopController.setStopID(allStops.get(stopId).getStopName());
+            ArrayList<String> routesContaining = routesContainingStop(stopId);
+            String routesString = "";
+            for (int i = 0; i < routesContaining.size() - 1; i++) {
+                routesString += routesContaining.get(i) + ", ";
+            }
+            if (routesContaining.size() > 0) {
+                routesString += routesContaining.get(routesContaining.size() - 1);
+            } else {
+                routesString = "No routes service this stop";
+            }
+            stopController.setRoutesText(routesString);
+            stopDisplay.show();
+            stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
+            stopController.setStopID(stopId);
+            Time currentTime = java.sql.Time.valueOf(LocalTime.now());
+            stopController.setNextTrip(nextTripAtStop(stopId, currentTime));
+        } else {
+            errorAlert("Stop Not Found", "Ensure the GTFS files have been imported");
+        }
+
     }
 
     /**
@@ -394,7 +413,6 @@ public class Controller {
                 } else {
                     Alert importInfo = infoAlert("Files have been processed.", "All files have been imported");
                     importInfo.setTitle("Import Successful");
-
                 }
                 return true;
             } catch (InvalidHeaderException e) {
@@ -514,7 +532,6 @@ public class Controller {
 
     public int importFilesNoStage(ArrayList<File> listOfFiles) throws IOException, InvalidHeaderException {
         int ret = 0;
-
         ret += importRoutes(listOfFiles.stream()
                 .filter(file -> file.getName().equals("routes.txt"))
                 .toList().get(0));
