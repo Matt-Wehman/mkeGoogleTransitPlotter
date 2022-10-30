@@ -92,10 +92,9 @@ public class Controller {
 
     }
 
-    public HashMap<String, Trip> getT(){
+    public HashMap<String, Trip> getT() {
         return trips;
     }
-
 
 
     /**
@@ -252,7 +251,7 @@ public class Controller {
 
 
     public void exportHelper(ActionEvent actionEvent) {
-        if(routes.size() > 0 && allStops.size() > 0) {
+        if (routes.size() > 0 && allStops.size() > 0) {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Save Directory");
             File file = fileChooser.showSaveDialog(null);
@@ -300,11 +299,6 @@ public class Controller {
         }
         return routeFile;
     }
-
-
-
-
-
 
 
     /**
@@ -358,9 +352,9 @@ public class Controller {
             Set<String> keys = trips.keySet();
             for (String key : keys) {
                 Trip trip = trips.get(key);
-                for(Map.Entry<String, ArrayList<StopTime>> stoppers: trip.getStopTimes().entrySet()){
+                for (Map.Entry<String, ArrayList<StopTime>> stoppers : trip.getStopTimes().entrySet()) {
                     ArrayList<StopTime> stopList = stoppers.getValue();
-                    for(StopTime stop: stopList){
+                    for (StopTime stop : stopList) {
                         writer.write("\n" + stop.toString());
                     }
 
@@ -397,7 +391,7 @@ public class Controller {
                 .toList();
 
 
-        if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0){
+        if (routeFile.size() > 0 && stopFile.size() > 0 && tripFile.size() > 0 && stopTimesFile.size() > 0) {
             int incorrectLines = 0;
             try {
                 FXMLLoader importLoader = new FXMLLoader();
@@ -427,7 +421,7 @@ public class Controller {
                     alert.showAndWait();
                 }
                 return true;
-            } catch (InvalidHeaderException e){
+            } catch (InvalidHeaderException e) {
                 errorAlert("Invalid Header", "The header for " + e.filename +
                         " is formatted incorrectly. No files were imported");
             } catch (IOException e) {
@@ -491,7 +485,7 @@ public class Controller {
             reader.checkEndOfLine();
             stopTime.checkRequired();
         } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
-                | NumberFormatException | ParseException e) {
+                 | NumberFormatException | ParseException e) {
             return null;
         }
         return stopTime;
@@ -775,25 +769,38 @@ public class Controller {
      * Finds the next trip at a certain stop given the time
      * This method has not been implemented
      *
-     * @param stopID the stop being parsed
+     * @param stopID      the stop being parsed
      * @param currentTime the current time
      */
     public String nextTripAtStop(String stopID, Time currentTime) {
-        int counter = 0;
+        String ret = "";
         SortedMap<Time, StopTime> map = new TreeMap<>();
+        TreeMap<Time, StopTime> nextDayTimes = new TreeMap<>();
         for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
             Trip trip = mapEntry.getValue();
             if (trip.getStopTimes().containsKey(stopID)) {
                 ArrayList<StopTime> stopTimes = trip.getStopTimes().get(stopID);
-                for (StopTime stopTime: stopTimes){
-                    Time stopTimeArr = stopTime.getArrivalTime();
-                    if (currentTime.compareTo(stopTimeArr) < 0) {
-                        map.put(stopTimeArr, stopTime);
+                for (StopTime stopTime : stopTimes) {
+                    Time stopTimeArr = null;
+                    if (!stopTime.getIsNextDay()) {
+                        stopTimeArr = stopTime.getArrivalTime();
+                        if (currentTime.compareTo(stopTimeArr) < 0) {
+                            map.put(stopTimeArr, stopTime);
+                        }
+                    } else{
+                        nextDayTimes.put(stopTime.getArrivalTime(), stopTime);
                     }
                 }
+
+                if (!map.isEmpty()) {
+                    ret = map.get(map.firstKey()).getTripID();
+                } else if (!nextDayTimes.isEmpty()){
+                    ret = nextDayTimes.get(nextDayTimes.firstKey()).getTripID();
+                }
+
             }
         }
-        return map.get(map.firstKey()).getTripID();
+        return ret;
     }
 
     /**

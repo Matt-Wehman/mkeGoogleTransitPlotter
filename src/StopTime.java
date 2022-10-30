@@ -19,6 +19,7 @@ public class StopTime {
     private String stopID;
     private String stopSequence;
     private String tripID;
+    private boolean isNextDay;
 
     public Time getArrivalTime() {
         return arrivalTime;
@@ -106,6 +107,9 @@ public class StopTime {
         this.dropOffType = dropOffType;
         this.arrivalTime = new CSVReader(arrivalTimeString).nextTime();
         this.departureTime = new CSVReader(departureTimeString).nextTime();
+        if(Integer.parseInt(arrivalTimeString.substring(0, 2)) > 24) {
+            isNextDay = true;
+        }
     }
 
     @Override
@@ -122,6 +126,10 @@ public class StopTime {
      */
     public boolean update(StopTime newStopTime) {
         return false;
+    }
+
+    public boolean getIsNextDay() {
+        return isNextDay;
     }
 
 
