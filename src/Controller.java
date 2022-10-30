@@ -538,7 +538,6 @@ public class Controller {
 
     public int importFilesNoStage(ArrayList<File> listOfFiles) throws IOException, InvalidHeaderException {
         int ret = 0;
-
         ret += importRoutes(listOfFiles.stream()
                 .filter(file -> file.getName().equals("routes.txt"))
                 .toList().get(0));
