@@ -464,6 +464,26 @@ public class Controller {
         return invalidLines;
     }
 
+    public int importFilesNoStage(ArrayList<File> listOfFiles) throws IOException, InvalidHeaderException {
+        int ret = 0;
+
+        ret += importRoutes(listOfFiles.stream()
+                .filter(file -> file.getName().equals("routes.txt"))
+                .toList().get(0));
+        ret += importStops(listOfFiles.stream()
+                .filter(file -> file.getName().equals("stops.txt"))
+                .toList().get(0));
+        ret += importTrips(listOfFiles.stream()
+                .filter(file -> file.getName().equals("trips.txt"))
+                .toList().get(0));
+        ret += importStopTimes(listOfFiles.stream()
+                .filter(file -> file.getName().equals("stop_times.txt"))
+                .toList().get(0));
+
+        return ret;
+    }
+
+
     /**
      * Checks if Trip header is valid against known valid header.
      *
