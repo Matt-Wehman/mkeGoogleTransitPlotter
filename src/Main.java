@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import java.util.Objects;
 
 /**
- * Starts the GUI
+ * Starts the GUI 2
  */
 public class Main extends Application {
     /**
