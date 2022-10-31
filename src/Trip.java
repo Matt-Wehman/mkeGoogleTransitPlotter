@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * This is the Trip class. Most notably, it has a HashMap of StopTimes.
+ *
  * @author czerkisi
  * @version 1.0
  * @created 05-Oct-2022 12:59:53 PM
@@ -19,14 +20,6 @@ public class Trip {
     private String tripID;
     private final HashMap<String, ArrayList<StopTime>> stopTimes = new HashMap<>();
 
-    public void addStopTime(String key, StopTime val){
-        if (stopTimes.containsKey(key)){
-            stopTimes.get(key).add(val);
-        } else {
-            stopTimes.put(key, new ArrayList<>());
-            stopTimes.get(key).add(val);
-        }
-    }
 
     public void setBlockID(int blockID) {
         this.blockID = blockID;
@@ -93,7 +86,25 @@ public class Trip {
     }
 
     /**
+     * This adds StopTimes to an arrayList. This method will handle the chaining for the
+     * stop_times
+     *
+     * @param key
+     * @param val
+     * @author Patrick
+     */
+    public void addStopTime(String key, StopTime val) {
+        if (stopTimes.containsKey(key)) {
+            stopTimes.get(key).add(val);
+        } else {
+            stopTimes.put(key, new ArrayList<>());
+            stopTimes.get(key).add(val);
+        }
+    }
+
+    /**
      * Creates an instance of Trip Object
+     *
      * @param routeID
      * @param serviceID
      * @param tripID
@@ -115,6 +126,7 @@ public class Trip {
     /**
      * Takes in a new trip object and updates the old one
      * This method has not been implemented yet
+     *
      * @param newTrip
      * @return boolean
      */
@@ -124,21 +136,23 @@ public class Trip {
 
     /**
      * checks that all required fields are filled
+     *
      * @throws CSVReader.MissingRequiredFieldException if a required field is empty
      */
     public void checkRequired() throws CSVReader.MissingRequiredFieldException {
-        if (routeID.isEmpty() | serviceID.isEmpty() | tripID.isEmpty()){
+        if (routeID.isEmpty() | serviceID.isEmpty() | tripID.isEmpty()) {
             throw new CSVReader.MissingRequiredFieldException("A required field is empty");
         }
     }
 
     /**
      * Makes trip into a string using trip's variables
+     *
      * @return string
      * @author wehman
      */
-    public String toString(){
-        String string = routeID + "," + serviceID + "," + tripID + "," + tripHeadSign + "," + directionID + "," + blockID + ","+ shapeID;
+    public String toString() {
+        String string = routeID + "," + serviceID + "," + tripID + "," + tripHeadSign + "," + directionID + "," + blockID + "," + shapeID;
         return string;
     }
 

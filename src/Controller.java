@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -77,9 +78,12 @@ public class Controller {
 
     StopController stopController;
 
-    protected HashMap<String, Stop> allStops = new HashMap<>();
-    protected HashMap<String, Route> routes = new HashMap<>();
+    //Will delete trips eventually, just need it so the program will run
     protected HashMap<String, Trip> trips = new HashMap<>();
+
+    protected HashMap<String, ArrayList<Stop>> allStopsList = new HashMap<>();
+    protected HashMap<String, ArrayList<Trip>> tripsList = new HashMap<>();
+    protected HashMap<String, ArrayList<Route>> routesList = new HashMap<>();
 
 
     /**
@@ -89,10 +93,66 @@ public class Controller {
 
     }
 
-    public HashMap<String, Trip> getT(){
-        return trips;
+//    public void testTripsInRoutes() {
+//        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
+//
+//        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
+//
+//        while (it.hasNext()) {
+//            Map.Entry<String, ArrayList<Route>> routess = it.next();
+//            for (Route r : routess.getValue()) {
+//                System.out.println(r.getStopsList());
+//            }
+//        }
+//    }
+
+    /**
+     * This adds Trips to an arrayList. This method will handle the chaining for the
+     * Trips in tripList
+     * @param key
+     * @param val
+     * @author Patrick
+     */
+    public void addTrip(String key, Trip val) {
+        if (tripsList.containsKey(key)) {
+            tripsList.get(key).add(val);
+        } else {
+            tripsList.put(key, new ArrayList<>());
+            tripsList.get(key).add(val);
+        }
     }
 
+    /**
+     * This adds Routes to an arrayList. This method will handle the chaining for the
+     * Routes in RouteList
+     * @param key
+     * @param val
+     * @author Patrick
+     */
+    public void addRoute(String key, Route val) {
+        if (routesList.containsKey(key)) {
+            routesList.get(key).add(val);
+        } else {
+            routesList.put(key, new ArrayList<>());
+            routesList.get(key).add(val);
+        }
+    }
+
+    /**
+     * This adds Stops to an arrayList. This method will handle the chaining for the
+     * stops in allStopsList
+     * @param key
+     * @param val
+     * @author Patrick
+     */
+    public void addStops(String key, Stop val) {
+        if (allStopsList.containsKey(key)) {
+            allStopsList.get(key).add(val);
+        } else {
+            allStopsList.put(key, new ArrayList<>());
+            allStopsList.get(key).add(val);
+        }
+    }
 
 
     /**
@@ -230,7 +290,7 @@ public class Controller {
 
 
     public void exportHelper(ActionEvent actionEvent) {
-        if(routes.size() > 0 && allStops.size() > 0) {
+        if (routesList.size() > 0 && allStopsList.size() > 0) {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open Save Directory");
             File file = fileChooser.showSaveDialog(null);
@@ -263,14 +323,17 @@ public class Controller {
     public File exportRoutes(java.nio.file.Path path) {
         File routeFile = new File(path + "/routes.txt");
         FileWriter writer = null;
-        Set<Map.Entry<String, Route>> routeSet = routes.entrySet();
+        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
 
-        Iterator<Map.Entry<String, Route>> it = routeSet.iterator();
+        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
         try {
             writer = new FileWriter(routeFile);
             writer.write("route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color");
             while (it.hasNext()) {
-                writer.write("\n" + it.next().getValue().toString());
+                Map.Entry<String, ArrayList<Route>> routes = it.next();
+                for (Route r : routes.getValue()) {
+                    writer.write("\n" + r.toString());
+                }
             }
             writer.close();
         } catch (IOException e) {
@@ -278,11 +341,6 @@ public class Controller {
         }
         return routeFile;
     }
-
-
-
-
-
 
 
     /**
@@ -294,13 +352,17 @@ public class Controller {
     public File exportStops(java.nio.file.Path path) {
         File stopFile = new File(path + "/stops.txt");
         FileWriter writer = null;
-        Set<Map.Entry<String, Stop>> stopSet = allStops.entrySet();
-        Iterator<Map.Entry<String, Stop>> it = stopSet.iterator();
+        Set<Map.Entry<String, ArrayList<Stop>>> stopSet = allStopsList.entrySet();
+        Iterator<Map.Entry<String, ArrayList<Stop>>> it = stopSet.iterator();
         try {
             writer = new FileWriter(stopFile);
             writer.write("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
             while (it.hasNext()) {
-                writer.write("\n" + it.next().getValue().toString());
+                Map.Entry<String, ArrayList<Stop>> stops = it.next();
+                for (Stop s : stops.getValue()) {
+                    writer.write("\n" + s.toString());
+                }
+
             }
             writer.close();
         } catch (IOException e) {
@@ -310,16 +372,21 @@ public class Controller {
         return stopFile;
     }
 
+
     public File exportTrips(java.nio.file.Path path) {
         File tripFile = new File(path + "/trips.txt");
         FileWriter writer = null;
-        Set<Map.Entry<String, Trip>> tripSet = trips.entrySet();
-        Iterator<Map.Entry<String, Trip>> it = tripSet.iterator();
+        Set<Map.Entry<String, ArrayList<Trip>>> tripSet = tripsList.entrySet();
+        Iterator<Map.Entry<String, ArrayList<Trip>>> it = tripSet.iterator();
         try {
             writer = new FileWriter(tripFile);
             writer.write("route_id,service_id,trip_id,trip_headsign,direction_id,block_id,shape_id");
             while (it.hasNext()) {
-                writer.write("\n" + it.next().getValue().toString());
+                Map.Entry<String, ArrayList<Trip>> tripss = it.next();
+                for (Trip t : tripss.getValue()) {
+                    writer.write("\n" + t.toString());
+                }
+
             }
             writer.close();
         } catch (IOException e) {
@@ -333,15 +400,17 @@ public class Controller {
         File stopTimeFile = new File(path + "/stop_times.txt");
         try (FileWriter writer = new FileWriter(stopTimeFile)) {
             writer.write("trip_id,arrival_time,departure_time,stop_id,stop_sequence,stop_headsign,pickup_type,drop_off_type");
-            Set<String> keys = trips.keySet();
+            Set<String> keys = tripsList.keySet();
             for (String key : keys) {
-                Trip trip = trips.get(key);
-                for(Map.Entry<String, ArrayList<StopTime>> stoppers: trip.getStopTimes().entrySet()){
-                    ArrayList<StopTime> stopList = stoppers.getValue();
-                    for(StopTime stop: stopList){
-                        writer.write("\n" + stop.toString());
-                    }
+                ArrayList<Trip> tripss = tripsList.get(key);
+                for (Trip t : tripss) {
+                    for (Map.Entry<String, ArrayList<StopTime>> stops : t.getStopTimes().entrySet()) {
+                        ArrayList<StopTime> stopList = stops.getValue();
+                        for (StopTime stop : stopList) {
+                            writer.write("\n" + stop.toString());
+                        }
 
+                    }
                 }
 
             }
@@ -424,10 +493,15 @@ public class Controller {
                 while (it.hasNext()) {
                     StopTime stopTime = validateStopTimeLine(it.next());
                     if (!Objects.equals(stopTime, null)) {
-                        Trip trip = trips.get(stopTime.getTripID());
-                        if (trip != null) {
-                            trip.addStopTime(stopTime.getStopID(), stopTime);
+                        ArrayList<Trip> tripss = tripsList.get(stopTime.getTripID());
+                        if (tripss != null) {
+                            for (Trip t : tripss) {
+                                if (t.getTripID().equals(stopTime.getTripID())) {
+                                    t.addStopTime(stopTime.getStopID(), stopTime);
+                                }
+                            }
                         }
+
                     } else {
                         invalidLines++;
                     }
@@ -497,9 +571,16 @@ public class Controller {
                 Trip trip = validateTripLines(tripLine);
                 // Add trip to corresponding route
                 if (!Objects.equals(null, trip)) {
-                    if (routes.containsKey(trip.getRouteID())) {
-                        routes.get(trip.getRouteID()).getTrips().put(trip.getTripID(), trip);
-                        trips.put(trip.getTripID(), trip);
+                    if (routesList.containsKey(trip.getRouteID())) {
+                        ArrayList<Route> routes = routesList.get(trip.getRouteID());
+                        for (Route r : routes) {
+                            if (r.getRouteID().equals(trip.getRouteID())) {
+                                r.addTrip(trip.getTripID(), trip);
+                            }
+                        }
+                        addTrip(trip.getTripID(), trip);
+
+
                     } else {
                         invalidLines++;
                     }
@@ -583,7 +664,7 @@ public class Controller {
                     String stopLine = it.next();
                     Stop stop = validateLinesInStop(stopLine);
                     if (!Objects.equals(null, stop)) {
-                        allStops.put(stop.getStopID(), stop);
+                        addStops(stop.getStopID(), stop);
                     } else {
                         invalidLines++;
                     }
@@ -653,7 +734,7 @@ public class Controller {
                 while (it.hasNext()) {
                     Route route = validateRouteLine(it.next());
                     if (!Objects.equals(route, null)) {
-                        routes.put(route.getRouteID(), route);
+                        addRoute(route.getRouteID(), route);
                     } else {
                         incorrectLines++;
                     }
@@ -743,7 +824,7 @@ public class Controller {
      * Finds the next trip at a certain stop given the time
      * This method has not been implemented
      *
-     * @param stopID the stop being parsed
+     * @param stopID      the stop being parsed
      * @param currentTime the current time
      */
     public String nextTripAtStop(String stopID, Time currentTime) {
@@ -753,7 +834,7 @@ public class Controller {
             Trip trip = mapEntry.getValue();
             if (trip.getStopTimes().containsKey(stopID)) {
                 ArrayList<StopTime> stopTimes = trip.getStopTimes().get(stopID);
-                for (StopTime stopTime: stopTimes){
+                for (StopTime stopTime : stopTimes) {
                     Time stopTimeArr = stopTime.getArrivalTime();
                     if (currentTime.compareTo(stopTimeArr) < 0) {
                         map.put(stopTimeArr, stopTime);

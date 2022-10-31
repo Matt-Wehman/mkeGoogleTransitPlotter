@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -19,6 +20,9 @@ public class Route {
     private String routeURL;
     private HashMap<Integer, Stop> stops = new HashMap<>();
     private HashMap<String, Trip> trips = new HashMap<>();
+    //Testing
+    private HashMap<String, ArrayList<Stop>> allStopsList = new HashMap<>();
+    private HashMap<String, ArrayList<Trip>> tripsList = new HashMap<>();
 
     /**
      * Creates an instance of a Route
@@ -128,6 +132,14 @@ public class Route {
         return trips;
     }
 
+    public HashMap<String, ArrayList<Stop>> getStopsList() {
+        return allStopsList;
+    }
+
+    public HashMap<String, ArrayList<Trip>> getTripsList() {
+        return tripsList;
+    }
+
     private int displayDist() {
         return 0;
     }
@@ -140,6 +152,38 @@ public class Route {
      */
     public boolean update(Route newRoute) {
         return false;
+    }
+
+    /**
+     * This adds Trips to an arrayList. This method will handle the chaining for the
+     * Trips in tripList
+     * @param key
+     * @param val
+     * @author Patrick
+     */
+    public void addTrip(String key, Trip val){
+        if (tripsList.containsKey(key)){
+            tripsList.get(key).add(val);
+        } else {
+            tripsList.put(key, new ArrayList<>());
+            tripsList.get(key).add(val);
+        }
+    }
+
+    /**
+     * This adds Stops to an arrayList. This method will handle the chaining for the
+     * stops in allStopsList
+     * @param key
+     * @param val
+     * @author Patrick
+     */
+    public void addStops(String key, Stop val){
+        if (allStopsList.containsKey(key)){
+            allStopsList.get(key).add(val);
+        } else {
+            allStopsList.put(key, new ArrayList<>());
+            allStopsList.get(key).add(val);
+        }
     }
 
     /**
