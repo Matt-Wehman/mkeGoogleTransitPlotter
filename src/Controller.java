@@ -81,9 +81,6 @@ public class Controller {
 
     StopController stopController;
 
-    //Will delete trips eventually, just need it so the program will run
-    protected HashMap<String, Trip> trips = new HashMap<>();
-
     protected HashMap<String, ArrayList<Stop>> allStopsList = new HashMap<>();
     protected HashMap<String, ArrayList<Trip>> tripsList = new HashMap<>();
     protected HashMap<String, ArrayList<Route>> routesList = new HashMap<>();
@@ -874,30 +871,33 @@ public class Controller {
         String ret = "";
         SortedMap<Time, StopTime> map = new TreeMap<>();
         TreeMap<Time, StopTime> nextDayTimes = new TreeMap<>();
-        for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
-            Trip trip = mapEntry.getValue();
-            if (trip.getStopTimes().containsKey(stopID)) {
-                ArrayList<StopTime> stopTimes = trip.getStopTimes().get(stopID);
-                for (StopTime stopTime : stopTimes) {
-                    Time stopTimeArr = null;
-                    if (!stopTime.getIsNextDay()) {
-                        stopTimeArr = stopTime.getArrivalTime();
-                        if (currentTime.compareTo(stopTimeArr) < 0) {
-                            map.put(stopTimeArr, stopTime);
+        for (Map.Entry<String, ArrayList<Trip>> mapEntry : tripsList.entrySet()) {
+            ArrayList<Trip> trips = mapEntry.getValue();
+            for(Trip trip: trips) {
+                if (trip.getStopTimes().containsKey(stopID)) {
+                    ArrayList<StopTime> stopTimes = trip.getStopTimes().get(stopID);
+                    for (StopTime stopTime : stopTimes) {
+                        Time stopTimeArr = null;
+                        if (!stopTime.getIsNextDay()) {
+                            stopTimeArr = stopTime.getArrivalTime();
+                            if (currentTime.compareTo(stopTimeArr) < 0) {
+                                map.put(stopTimeArr, stopTime);
+                            }
+                        } else {
+                            nextDayTimes.put(stopTime.getArrivalTime(), stopTime);
                         }
-                    } else{
-                        nextDayTimes.put(stopTime.getArrivalTime(), stopTime);
                     }
-                }
 
-                if (!map.isEmpty()) {
-                    ret = map.get(map.firstKey()).getTripID();
-                } else if (!nextDayTimes.isEmpty()){
-                    ret = nextDayTimes.get(nextDayTimes.firstKey()).getTripID();
-                }
+                    if (!map.isEmpty()) {
+                        ret = map.get(map.firstKey()).getTripID();
+                    } else if (!nextDayTimes.isEmpty()) {
+                        ret = nextDayTimes.get(nextDayTimes.firstKey()).getTripID();
+                    }
 
+                }
             }
         }
+        System.out.println("--" + ret + "--");
         return ret;
     }
 
@@ -931,11 +931,13 @@ public class Controller {
      */
     public ArrayList<String> routesContainingStop(String stopID) {
         ArrayList<String> routesContaining = new ArrayList<>();
-        for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
-            Trip trip = mapEntry.getValue();
-            if (trip.getStopTimes().containsKey(stopID)) {
-                if (!routesContaining.contains(trip.getRouteID())) {
-                    routesContaining.add(trip.getRouteID());
+        for (Map.Entry<String, ArrayList<Trip>> mapEntry : tripsList.entrySet()) {
+            ArrayList<Trip> trips = mapEntry.getValue();
+            for(Trip trip: trips) {
+                if (trip.getStopTimes().containsKey(stopID)) {
+                    if (!routesContaining.contains(trip.getRouteID())) {
+                        routesContaining.add(trip.getRouteID());
+                    }
                 }
             }
         }
@@ -961,10 +963,12 @@ public class Controller {
      */
     public int tripsPerStop(String stopID) {
         int counter = 0;
-        for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
-            Trip trip = mapEntry.getValue();
-            if (trip.getStopTimes().containsKey(stopID)) {
-                counter++;
+        for (Map.Entry<String, ArrayList<Trip>> mapEntry : tripsList.entrySet()) {
+            ArrayList<Trip> trips = mapEntry.getValue();
+            for(Trip trip: trips) {
+                if (trip.getStopTimes().containsKey(stopID)) {
+                    counter++;
+                }
             }
         }
         return counter;
