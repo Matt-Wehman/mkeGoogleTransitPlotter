@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.time.LocalTime;
 import java.util.*;
@@ -234,7 +235,7 @@ public class Controller {
                 }
             }
             tripDisplay.show();
-            tripController.setTripDistance(displayDistance(tripId));
+            tripController.setTripDistance(displayCumulativeDistance(tripId));
         } else {
             errorAlert("Stop Not Found", "Ensure the GTFS files have been imported");
         }
@@ -250,7 +251,6 @@ public class Controller {
     public void generateRouteIdInterface(ActionEvent actionevent) {
         routeDisplay.show();
     }
-
 
 
     /**
@@ -330,8 +330,95 @@ public class Controller {
      * Displays the total distance of a route
      * This method has not been implemented
      *
-     * @param routeID
      * @return double
+     * @author Patrick
+     */
+    public String displayCumulativeDistance(String tripId) {
+        ArrayList<Trip> trips = tripsList.get(tripId);
+        double cuDist = 0;
+
+        for (Trip trip : trips) {
+            if (trip.getTripID().equals(tripId)) {
+                int minStopSeq = 0;
+                int startSeq = 1;
+
+                double lat1 = 0;
+                double lon1 = 0;
+                double lat2 = 0;
+                double lon2 = 0;
+                String startStopId = "";
+                String endStopId = "";
+                boolean startChanged = false;
+                boolean endChanged = false;
+                double distance = 0;
+
+                for(int i = 0; i < trip.getStopTimes().size(); i++) {
+                    for (Map.Entry<String, ArrayList<StopTime>> stopTimesMap : trip.getStopTimes().entrySet()) {
+                        ArrayList<StopTime> stopTimesList = stopTimesMap.getValue();
+
+                        for (StopTime stopTime : stopTimesList) {
+                            if (stopTime.getStopSequence().equals("" + startSeq)) {
+                                startStopId = stopTime.getStopID();
+                            } else if (stopTime.getStopSequence().equals("" + (startSeq + 1))) {
+                                endStopId = stopTime.getStopID();
+                            }
+                        }
+                    }
+                    startSeq++;
+
+                    System.out.println("start" + startStopId);
+                    System.out.println("end" + endStopId);
+                    Set<Map.Entry<String, ArrayList<Stop>>> stopSet = allStopsList.entrySet();
+                    Iterator<Map.Entry<String, ArrayList<Stop>>> it = stopSet.iterator();
+                    while (it.hasNext()) {
+                        Map.Entry<String, ArrayList<Stop>> stops = it.next();
+                        for (Stop s : stops.getValue()) {
+                            if (s.getStopID().equals(startStopId)) {
+                                lat1 = s.getStopLat();
+                                lon1 = s.getStopLong();
+                                startChanged = true;
+                            } else if (s.getStopID().equals(endStopId)) {
+                                lat2 = s.getStopLat();
+                                lon2 = s.getStopLong();
+                                endChanged = true;
+                            }
+                        }
+                    }
+                    if (!startChanged || !endChanged) {
+                        System.out.println("throw exception");
+                    } else if(!startStopId.equals(endStopId)) {
+                        double latDistance = Math.toRadians(lat2 - lat1);
+                        double lonDistance = Math.toRadians(lon2 - lon1);
+                        lat1 = Math.toRadians(lat1);
+                        lat2 = Math.toRadians(lat2);
+                        double a = Math.pow(Math.sin(latDistance / 2), 2) +
+                                Math.pow(Math.sin(lonDistance / 2), 2) *
+                                        Math.cos(lat1) *
+                                        Math.cos(lat2);
+                        double rad = 6371;
+                        double c = 2 * Math.asin(Math.sqrt(a));
+                        distance = rad * c;
+                        cuDist += distance;
+                        System.out.println("------------" + distance);
+
+                    }
+                }
+            }
+
+
+        }
+
+        DecimalFormat df = new DecimalFormat("#.###");
+        System.out.println(cuDist);
+        return df.format(cuDist);
+    }
+
+    /**
+     * Displays the total distance of a route
+     * This method has not been implemented
+     *
+     * @return double
+     * @author Patrick
      */
     public String displayDistance(String tripId) {
         ArrayList<Trip> trips = tripsList.get(tripId);
@@ -344,50 +431,51 @@ public class Controller {
         boolean startChanged = false;
         boolean endChanged = false;
         String distance = "";
+        System.out.println(tripId);
 
 
         for (Trip trip : trips) {
             if (trip.getTripID().equals(tripId)) {
+                int minStopSeq = 0;
                 for (Map.Entry<String, ArrayList<StopTime>> stopTimesMap : trip.getStopTimes().entrySet()) {
                     ArrayList<StopTime> stopTimesList = stopTimesMap.getValue();
-                    int minStopSeq = 0;
                     for (StopTime stopTime : stopTimesList) {
                         if (stopTime.getStopSequence().equals("1")) {
                             startStopId = stopTime.getStopID();
 
                         }
-                        if (Integer.parseInt(stopTime.getStopID()) < minStopSeq) {
+                        if (Integer.parseInt(stopTime.getStopSequence()) > minStopSeq) {
                             minStopSeq = Integer.parseInt(stopTime.getStopSequence());
                             endStopId = stopTime.getStopID();
                         }
                     }
                 }
+                System.out.println(minStopSeq);
             }
         }
+        System.out.println("start" + startStopId);
+        System.out.println("end" + endStopId);
+        System.out.println();
         Set<Map.Entry<String, ArrayList<Stop>>> stopSet = allStopsList.entrySet();
         Iterator<Map.Entry<String, ArrayList<Stop>>> it = stopSet.iterator();
         while (it.hasNext()) {
             Map.Entry<String, ArrayList<Stop>> stops = it.next();
             for (Stop s : stops.getValue()) {
-                if(s.getStopID().equals(startStopId)){
+                if (s.getStopID().equals(startStopId)) {
                     lat1 = s.getStopLat();
                     lon1 = s.getStopLong();
                     startChanged = true;
-                } else if(s.getStopID().equals(endStopId)){
+                } else if (s.getStopID().equals(endStopId)) {
                     lat2 = s.getStopLat();
                     lon2 = s.getStopLong();
                     endChanged = true;
                 }
             }
         }
-        if(!startChanged || !endChanged){
+        if (!startChanged || !endChanged) {
             System.out.println("throw exception");
-        } else if (lat1 == -1 || lon1 == -1 || lat1 < -90.00 || lat1 > 90.00 ||
-                lon1 < -180.00 || lon1 > 180.00 || lat2 == -1 || lon2 == -1 ||
-                lat2 < -90.00 || lat2 > 90.00 || lon2 < -180.00 || lon2 > 180.00) {
-            throw new NumberFormatException("empty");
-            //actually probably dont need this else if statement
         } else {
+
             double latDistance = Math.toRadians(lat2 - lat1);
             double lonDistance = Math.toRadians(lon2 - lon1);
             lat1 = Math.toRadians(lat1);
@@ -398,9 +486,11 @@ public class Controller {
                             Math.cos(lat2);
             double rad = 6371;
             double c = 2 * Math.asin(Math.sqrt(a));
-            distance = "" + rad * c;
+            DecimalFormat df = new DecimalFormat("#.###");
+            distance = "" + df.format(rad * c);
 
         }
+        System.out.println(distance);
         return distance;
     }
 
@@ -1162,6 +1252,7 @@ public class Controller {
         public String getFilename() {
             return filename;
         }
+
     }
 
     private Alert errorAlert(String header, String context) {
