@@ -180,9 +180,14 @@ public class Controller {
     @FXML
     public void generateStopIdInterface(ActionEvent actionevent) {
         String stopId = getId();
-        if (allStops.containsKey(stopId)) {
+        if (allStopsList.containsKey(stopId)) {
             stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
-            stopController.setStopID(allStops.get(stopId).getStopName());
+            ArrayList<Stop> selectedStopId = allStopsList.get(stopId);
+            for(Stop s: selectedStopId){
+                if(s.getStopID().equals(stopId)){
+                    stopController.setStopID(s.getStopName());
+                }
+            }
             ArrayList<String> routesContaining = routesContainingStop(stopId);
             String routesString = "";
             for (int i = 0; i < routesContaining.size() - 1; i++) {
@@ -344,20 +349,24 @@ public class Controller {
     public File exportRoutes(java.nio.file.Path path) {
         File routeFile = new File(path + "/routes.txt");
         FileWriter writer = null;
-        Set<Map.Entry<String, Route>> routeSet = routes.entrySet();
+        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
 
-        Iterator<Map.Entry<String, Route>> it = routeSet.iterator();
+        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
         try {
             writer = new FileWriter(routeFile);
             writer.write("route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color");
             while (it.hasNext()) {
-                writer.write("\n" + it.next().getValue().toString());
+                Map.Entry<String, ArrayList<Route>> routes = it.next();
+                for (Route r : routes.getValue()) {
+                    writer.write("\n" + r.toString());
+                }
             }
             writer.close();
         } catch (IOException e) {
             System.out.println("Route file could not be found");
         }
         return routeFile;
+
     }
 
 
@@ -375,13 +384,17 @@ public class Controller {
     public File exportStops(java.nio.file.Path path) {
         File stopFile = new File(path + "/stops.txt");
         FileWriter writer = null;
-        Set<Map.Entry<String, Stop>> stopSet = allStops.entrySet();
-        Iterator<Map.Entry<String, Stop>> it = stopSet.iterator();
+        Set<Map.Entry<String, ArrayList<Stop>>> stopSet = allStopsList.entrySet();
+        Iterator<Map.Entry<String, ArrayList<Stop>>> it = stopSet.iterator();
         try {
             writer = new FileWriter(stopFile);
             writer.write("stop_id,stop_name,stop_desc,stop_lat,stop_lon");
             while (it.hasNext()) {
-                writer.write("\n" + it.next().getValue().toString());
+                Map.Entry<String, ArrayList<Stop>> stops = it.next();
+                for (Stop s : stops.getValue()) {
+                    writer.write("\n" + s.toString());
+                }
+
             }
             writer.close();
         } catch (IOException e) {
@@ -389,6 +402,7 @@ public class Controller {
         }
 
         return stopFile;
+
     }
 
     public File exportTrips(java.nio.file.Path path) {
