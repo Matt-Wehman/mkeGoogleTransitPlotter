@@ -36,6 +36,8 @@ public class ControllerTest {
         controller.importFilesNoStage(listOfFiles);
     }
 
+
+
     /**
      * Tests distance calculations for a trip (Feature 2)
      *
@@ -84,6 +86,7 @@ public class ControllerTest {
         Assertions.assertEquals("21794234_1711", nextTripAtStop);
         Assertions.assertNotEquals("21794234_1712", nextTripAtStop);
     }
+
 
     /**
      * This method tests the speed of a trip give the distance and time of a trip
@@ -330,6 +333,7 @@ public class ControllerTest {
     public void assertAllLinesEqual() throws IOException {
         System.out.println("start");
         String[] types = {"stops", "trips", "routes", "stop_times"};
+        boolean correctExportFiles = true;
         for (String type: types){
             File firstFile = new File("./GTFSFiles/" + type + ".txt");
             File checkFile = new File("./export/" + type + ".txt");
@@ -339,10 +343,12 @@ public class ControllerTest {
             for (String line: firstLines){
                 if (!set.contains(line)){
                     System.out.println("Expected: " + line + ", Not found");
+                    correctExportFiles = false;
                 }
             }
             System.out.println("Type: " + type + " tested");
         }
+        Assertions.assertTrue(correctExportFiles);
 
     }
 
