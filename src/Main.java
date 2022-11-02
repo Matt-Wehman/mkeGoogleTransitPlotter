@@ -90,6 +90,8 @@ public class Main extends Application {
 
         StopController stopController = stopLoader.getController();
 
+        TripController tripController = tripLoader.getController();
+
         primaryController.setRouteStage(routeStage);
 
         primaryController.setTripStage(tripStage);
@@ -99,6 +101,10 @@ public class Main extends Application {
         stopController.setController(primaryController);
 
         primaryController.setStopController(stopController);
+
+        tripController.setController(primaryController);
+
+        primaryController.setTripController(tripController);
     }
     private void letterbox(final Scene scene, final Pane contentPane) {
         final double initWidth  = scene.getWidth();
