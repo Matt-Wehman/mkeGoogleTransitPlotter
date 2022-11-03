@@ -34,6 +34,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -80,6 +82,12 @@ public class Controller {
     Stage stopDisplay;
 
     StopController stopController;
+
+    @FXML
+    Button webButton;
+
+    @FXML
+    WebView webView;
 
     //Will delete trips eventually, just need it so the program will run
     protected HashMap<String, Trip> trips = new HashMap<>();
@@ -267,6 +275,7 @@ public class Controller {
      */
     public ArrayList<Integer> allStopsInRoute(int routeID) {
         return null;
+
     }
 
     /**
@@ -1090,4 +1099,30 @@ public class Controller {
     }
 
 
+    @FXML
+    public void setWebView(ActionEvent actionEvent) {
+        WebEngine engine = webView.getEngine();
+        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
+        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
+        engine.load(getMapURL(it.next().getValue().get(0)));
+        //Routes file not filled with stops
+    }
+
+    private String getMapURL(Route route) {
+        String url = "https://maps.googleapis.com/maps/api/staticmap?center=Milwaukee,wi&zoom=13&size=600x300&maptype=roadmap\n";
+        HashMap<String, ArrayList<Stop>> stops = route.getStopsList();
+        Set<Map.Entry<String, ArrayList<Stop>>> stopSet = stops.entrySet();
+        Iterator<Map.Entry<String, ArrayList<Stop>>> it = stopSet.iterator();
+
+        while(it.hasNext()) {
+            Stop cur = it.next().getValue().get(0);
+            url += makeMarker(cur.getStopLat(), cur.getStopLong(), "red", "A");
+        }
+        url +="&key=AIzaSyAvMUBHz0Ny9mZ9gzSrexxQuvyBF7e3mk4";
+        return url;
+    }
+
+    private String makeMarker(double lat, double longi, String color, String letter) {
+        return "&markers=color:" + color + "%7Clabel:" + letter + "%7C" + lat + longi + "\n";
+    }
 }
