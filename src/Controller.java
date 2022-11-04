@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -1101,10 +1102,12 @@ public class Controller {
 
     @FXML
     public void setWebView(ActionEvent actionEvent) {
+        URL url = this.getClass().getResource("googlemap.html");
         WebEngine engine = webView.getEngine();
-        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
-        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
-        engine.load(getMapURL(it.next().getValue().get(0)));
+////        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
+////        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
+//        engine.load(getMapURL(it.next().getValue().get(0)));
+        engine.load(url.toString());
         //Routes file not filled with stops
     }
 
