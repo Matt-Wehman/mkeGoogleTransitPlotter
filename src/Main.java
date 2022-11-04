@@ -3,6 +3,7 @@
  * @version 1.0
  * @created 05-Oct-2022 12:59:52 PM
  */
+import com.sothawo.mapjfx.Projection;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -44,6 +45,10 @@ public class Main extends Application {
         mainScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
         stage.show();
         letterbox(mainScene, rootPane);
+        final Projection projection = getParameters().getUnnamed().contains("wgs84")
+                ? Projection.WGS_84 : Projection.WEB_MERCATOR;
+        final Controller controller = primaryLoader.getController();
+        controller.initMapAndControls(projection);
 
         FXMLLoader routeLoader = new FXMLLoader();
 
