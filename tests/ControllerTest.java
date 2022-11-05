@@ -28,36 +28,15 @@ public class ControllerTest {
      */
     @BeforeEach
     private void setUp() throws IOException, Controller.InvalidHeaderException {
-//        controller = new Controller();
-//        ArrayList<File> listOfFiles = new ArrayList<>();
-//        listOfFiles.add(new File("./GTFSFiles/routes.txt"));
-//        listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
-//        listOfFiles.add(new File("./GTFSFiles/stops.txt"));
-//        listOfFiles.add(new File("./GTFSFiles/trips.txt"));
-//        controller.importFilesNoStage(listOfFiles);
+        controller = new Controller();
+        ArrayList<File> listOfFiles = new ArrayList<>();
+        listOfFiles.add(new File("./GTFSFiles/routes.txt"));
+        listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
+        listOfFiles.add(new File("./GTFSFiles/stops.txt"));
+        listOfFiles.add(new File("./GTFSFiles/trips.txt"));
+        controller.importFilesNoStage(listOfFiles);
     }
 
-
-    /**
-     * Tests distance calculations for a trip (Feature 2)
-     *
-     * @author Christian B
-     */
-
-    @Test
-    public void testDistance() {
-        int correctDistance1 = 100;
-        int correctDistance2 = 100;
-        int incorrectDistance1 = 99;
-
-        Trip testTrip1 = Controller.validateTripLines("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23");
-        Trip testTrip2 = Controller.validateTripLines("64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19");
-
-        Assertions.assertEquals(correctDistance1, testTrip1.distance());
-        Assertions.assertEquals(correctDistance2, testTrip2.distance());
-        Assertions.assertNotEquals(incorrectDistance1, testTrip1.distance());
-
-    }
 
     /**
      * feature 8 tests
@@ -87,90 +66,98 @@ public class ControllerTest {
         Assertions.assertNotEquals("21794234_1712", nextTripAtStop);
     }
 
+    /**
+     * Tests distance calculations for a trip (Feature 2)
+     *
+     * @author Christian B
+     */
+
+    @Test
+    public void testDistance() {
+        ArrayList<String> tripIds = new ArrayList<>();
+        tripIds.add("21801111_2331");
+        tripIds.add("21738595_2458");
+        tripIds.add("21736580_581");
+        tripIds.add("21736590_553");
+        final double potError = 0.027;
+
+        for(String trip: tripIds){
+            if(trip.equals("21801111_2331")){
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip)) < 8.8284+(12*potError) &&
+                        Double.parseDouble(controller.displayCumulativeDistance(trip)) >
+                                8.8284-(12*potError));
+
+            } else if(trip.equals("21738595_2458")){
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip)) < 13.5681+(100*potError) &&
+                        Double.parseDouble(controller.displayCumulativeDistance(trip)) >
+                                13.5681-(100*potError));
+            } else if(trip.equals("21736580_581")){
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip)) < 10.0106+(55*potError) &&
+                        Double.parseDouble(controller.displayCumulativeDistance(trip)) >
+                                10.0106-(55*potError));
+            } else {
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip)) < 10.0106+(55*potError) &&
+                        Double.parseDouble(controller.displayCumulativeDistance(trip)) >
+                                10.0106-(55*potError));
+            }
+
+        }
+
+
+    }
 
     /**
-     * This method tests the speed of a trip give the distance and time of a trip
+     * This method tests the speed of a trip given a tripId
      *
      * @author Patrick
      */
     @Test
     public void testSpeed() {
-        //Time for trips1 is 32, and for trip2 33 mins
-//        int correctSpeed1 = 100 / 32;
-//        int correctSpeed2 = 100 / 33;
-//        int incorrectSpeed1 = 100 / 50;
-//
-//        Trip testTrip1 = Controller.validateTripLines("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23");
-//        Trip testTrip2 = Controller.validateTripLines("64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19");
-//
-//        Assertions.assertEquals(correctSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
-//        Assertions.assertEquals(correctSpeed2, Controller.avgSpeed(testTrip2.getTripID()));
-//        Assertions.assertNotEquals(incorrectSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
+        ArrayList<String> tripIds = new ArrayList<>();
+        tripIds.add("21801111_2331");
+        tripIds.add("21738595_2458");
+        tripIds.add("21736580_581");
+        tripIds.add("21736590_553");
+        final double potError = 0.027;
 
-        //        String time1 = "16:00:00";
-//        String time2 = "19:42:00";
+        for(String trip: tripIds){
+            if(trip.equals("21801111_2331")){
+                int correctTime = 21;
+                double maxSpeed = (8.8284+(12*potError))/correctTime;
+                double minSpeed = (8.8284-(12*potError))/correctTime;
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip))/correctTime < maxSpeed && Double.parseDouble(
+                        controller.displayCumulativeDistance(trip))/correctTime > minSpeed);
+            } else if(trip.equals("21738595_2458")){
+                int correctTime = 58;
+                double maxSpeed = (13.5681+(100*potError))/correctTime;
+                double minSpeed = (13.5681-(100*potError))/correctTime;
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip))/correctTime < maxSpeed && Double.parseDouble(
+                        controller.displayCumulativeDistance(trip))/correctTime > minSpeed);
 
-        StopTime time1 = Controller.validateStopTimeLine("21736779_31,10:00:00,10:00:00,279,36,,0,0");
-        StopTime time2 = Controller.validateStopTimeLine("21736779_31,20:13:00,20:13:00,279,36,,0,0");
-        StopTime time3 = Controller.validateStopTimeLine("21736779_31,16:00:00,16:00:00,279,36,,0,0");
-        StopTime time4 = Controller.validateStopTimeLine("21736779_31,24:15:00,24:15:00,279,36,,0,0");
-
-        ArrayList<StopTime> times = new ArrayList<>();
-        times.add(time2);
-        times.add(time3);
-        times.add(time4);
-
-
-
-        String start = "12:00:00";
-        String end = "02:05:00";
-
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-
-
-        //System.out.println("wefewf: " + time4.getArrivalTime().toString());
-        long seconds = 0;
-
-        for(StopTime time: times){
-            if(!time.getIsNextDay() && !time1.getIsNextDay()){
-                seconds = Math.abs(Duration.between(LocalTime.parse(time.getArrivalTime().toString()),
-                        LocalTime.parse(time1.getArrivalTime().toString())).getSeconds());
-            } else if(!time.getIsNextDay() && time1.getIsNextDay()){
-                seconds = Math.abs(Duration.between(LocalTime.parse(time.getArrivalTime().toString()),
-                        LocalTime.parse("23:59:59")).getSeconds()) + 1;
-                seconds = seconds + Math.abs(Duration.between(LocalTime.parse(time1.getArrivalTime().toString()),
-                        LocalTime.parse("00:00:00")).getSeconds());
-            } else if(time.getIsNextDay() && !time1.getIsNextDay()){
-                seconds = Math.abs(Duration.between(LocalTime.parse(time1.getArrivalTime().toString()),
-                        LocalTime.parse("23:59:59")).getSeconds()) + 1;
-                seconds = seconds + Math.abs(Duration.between(LocalTime.parse(time.getArrivalTime().toString()),
-                        LocalTime.parse("00:00:00")).getSeconds());
+            } else if(trip.equals("21736580_581")){
+                int correctTime = 33;
+                double maxSpeed = (10.0106+(55*potError))/correctTime;
+                double minSpeed = (10.0106-(55*potError))/correctTime;
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip))/correctTime < maxSpeed && Double.parseDouble(
+                        controller.displayCumulativeDistance(trip))/correctTime > minSpeed);
+            } else {
+                int correctTime = 33;
+                double maxSpeed = (10.0106+(55*potError))/correctTime;
+                double minSpeed = (10.0106-(55*potError))/correctTime;
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip))/correctTime < maxSpeed && Double.parseDouble(
+                        controller.displayCumulativeDistance(trip))/correctTime > minSpeed);
             }
-            int secondsInt = (int)seconds;
-            int hours = secondsInt / 3600;
-            secondsInt = secondsInt % 3600;
-            int minutes = secondsInt/60;
-            System.out.println("--------------");
-            System.out.println("time: " + time.toString());
-            System.out.println("hours: " + hours);
-            System.out.println("minuets: " + minutes);
-            System.out.println("--------------");
-            System.out.println();
-
 
         }
 
-
-        System.out.println(seconds);
-
-
-        int secondsInt = (int)seconds;
-        int hours = secondsInt / 3600;
-        secondsInt = secondsInt % 3600;
-        int minutes = secondsInt/60;
-
-        System.out.println("hours: " + hours);
-        System.out.println("minuets: " + minutes);
 
 
 
