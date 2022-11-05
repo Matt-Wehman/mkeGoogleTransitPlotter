@@ -508,6 +508,7 @@ public class Controller {
                     alert.setContentText("All files were imported successfully");
                     alert.showAndWait();
                 }
+                importAllStopsToAllRoutes();
                 return true;
             } catch (InvalidHeaderException e) {
                 errorAlert("Invalid Header", "The header for " + e.filename +
@@ -789,6 +790,7 @@ public class Controller {
                 throw new InvalidHeaderException("Invalid header encountered", "routes.txt");
             }
         }
+
         return incorrectLines;
     }
 
@@ -855,7 +857,6 @@ public class Controller {
                 files.add(file);
                 System.out.println(files);
             }
-
             importFiles(files);
         }
 
@@ -1120,7 +1121,6 @@ public class Controller {
         String routeid = searchBar.getText();
         ArrayList<Route> route = routesList.get(routeid);
         getMapURL(route.get(0));
-
     }
     URL url = this.getClass().getResource("mapmarkerflat_106000.png");
     private void getMapURL(Route route) {
@@ -1135,7 +1135,7 @@ public class Controller {
             Stop cur = it.next().getValue().get(0);
             Coordinate coordinate = new Coordinate(cur.getStopLat(), cur.getStopLong());
             coordinates.add(coordinate);
-            Marker marker = new Marker(this.url, -10, 10).setPosition(coordinate).setVisible(true);
+            Marker marker = new Marker(this.url, -24, -40).setPosition(coordinate).setVisible(true);
             markers.add(marker);
             mapView.addMarker(marker);
         }
@@ -1143,20 +1143,25 @@ public class Controller {
         mapView.setExtent(extent);
     }
 
-    @FXML
-    public void setMarker(ActionEvent event){
-        URL url = getClass().getResource("ksc.png");
-        assert url != null;
-        Coordinate coord = new Coordinate(43.0453675,-87.9109152);
-        Coordinate coord2 = new Coordinate(43.1045379,-87.9397422);
-        List<Coordinate> coords = List.of(coord, coord2);
-
-        Marker marker = new Marker(url).setPosition(coord).setVisible(true);
-        markers.add(marker);
-        Extent extent = Extent.forCoordinates(coords);
-        mapView.setExtent(extent);
-        mapView.setCenter(coord);
-        mapView.addMarker(marker);
+    public void addStopsToRoute(Route route){
+        Set<Map.Entry<String, ArrayList<Trip>>> tripSet = tripsList.entrySet();
+        Iterator<Map.Entry<String, ArrayList<Trip>>> it = tripSet.iterator();
+        Trip currentTrip = it.next().getValue().get(0);
+        while(it.hasNext() && !Objects.equals(currentTrip.getRouteID(), route.getRouteID())) {
+            currentTrip = it.next().getValue().get(0);
+        }
+        Set<Map.Entry<String, ArrayList<StopTime>>> stopSet = currentTrip.getStopTimes().entrySet();
+        Iterator<Map.Entry<String, ArrayList<StopTime>>> dumbIt = stopSet.iterator();
+        for(int i = 0; i < currentTrip.getStopTimes().size(); i++) {
+            route.addStop(allStopsList.get(dumbIt.next().getValue().get(0).getStopID()).get(0));
+        }
+    }
+    public void importAllStopsToAllRoutes() {
+        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
+        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
+        for(int i = 0; i < routesList.size(); i++) {
+            addStopsToRoute(it.next().getValue().get(0));
+        }
     }
 
     private String makeMarker(double lat, double longi, String color, String letter) {

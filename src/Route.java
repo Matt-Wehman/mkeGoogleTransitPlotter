@@ -18,7 +18,7 @@ public class Route {
     private String routeTextColor;
     private String routeType;
     private String routeURL;
-    private HashMap<Integer, Stop> stops = new HashMap<>();
+    private HashMap<String, Stop> stops = new HashMap<>();
     private HashMap<String, Trip> trips = new HashMap<>();
     //Testing
     private HashMap<String, ArrayList<Stop>> allStopsList = new HashMap<>();
@@ -124,7 +124,7 @@ public class Route {
         return routeURL;
     }
 
-    public HashMap<Integer, Stop> getStops() {
+    public HashMap<String, Stop> getStops() {
         return stops;
     }
 
@@ -142,6 +142,12 @@ public class Route {
 
     private int displayDist() {
         return 0;
+    }
+
+    public void addStop(Stop stop){
+        ArrayList<Stop> stops1 = new ArrayList<>();
+        stops1.add(stop);
+        allStopsList.put(stop.getStopID(), stops1);
     }
 
     /**
