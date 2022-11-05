@@ -37,6 +37,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  * This class handles the methods from the GUI
@@ -342,17 +344,17 @@ public class Controller {
                 int minStopSeq = 0;
                 int startSeq = 1;
 
-                double lat1 = 0;
-                double lon1 = 0;
-                double lat2 = 0;
-                double lon2 = 0;
+
                 String startStopId = "";
                 String endStopId = "";
                 boolean startChanged = false;
                 boolean endChanged = false;
                 double distance = 0;
+                HashSet<String> lat1Set = new HashSet<>();
+                HashSet<String> lat2Set = new HashSet<>();
 
                 for(int i = 0; i < trip.getStopTimes().size(); i++) {
+
                     for (Map.Entry<String, ArrayList<StopTime>> stopTimesMap : trip.getStopTimes().entrySet()) {
                         ArrayList<StopTime> stopTimesList = stopTimesMap.getValue();
 
@@ -365,28 +367,47 @@ public class Controller {
                         }
                     }
                     startSeq++;
+                    double lat1 = 0;
+                    double lon1 = 0;
+                    double lat2 = 0;
+                    double lon2 = 0;
 
                     System.out.println("start" + startStopId);
                     System.out.println("end" + endStopId);
                     Set<Map.Entry<String, ArrayList<Stop>>> stopSet = allStopsList.entrySet();
-                    Iterator<Map.Entry<String, ArrayList<Stop>>> it = stopSet.iterator();
-                    while (it.hasNext()) {
-                        Map.Entry<String, ArrayList<Stop>> stops = it.next();
+                    for (Map.Entry<String, ArrayList<Stop>> stops : stopSet) {
                         for (Stop s : stops.getValue()) {
                             if (s.getStopID().equals(startStopId)) {
+                                System.out.println("Start: " + s.getStopID());
                                 lat1 = s.getStopLat();
                                 lon1 = s.getStopLong();
                                 startChanged = true;
                             } else if (s.getStopID().equals(endStopId)) {
+                                System.out.println("End: " + s.getStopID());
                                 lat2 = s.getStopLat();
                                 lon2 = s.getStopLong();
                                 endChanged = true;
                             }
                         }
                     }
+
+
+                    System.out.println("lat1: " + lat1 + "lon1: " + lon1);
+                    System.out.println("lat2: " + lat2 + "lon2: " + lon2);
                     if (!startChanged || !endChanged) {
                         System.out.println("throw exception");
                     } else if(!startStopId.equals(endStopId)) {
+                        if(!lat1Set.contains("" + lat1)) {
+                            lat1Set.add("" + lat1);
+                        } else {
+                            System.out.println("+++++++++++++++++++++++++++++++++++already containes set 1");
+                        }
+                        if(!lat2Set.contains("" + lat2)) {
+                            lat2Set.add("" + lat2);
+                        } else {
+                            System.out.println("+++++++++++++++++++++++++++++++++++already containes set 2");
+                        }
+
                         double latDistance = Math.toRadians(lat2 - lat1);
                         double lonDistance = Math.toRadians(lon2 - lon1);
                         lat1 = Math.toRadians(lat1);
@@ -401,16 +422,19 @@ public class Controller {
                         cuDist += distance;
                         System.out.println("------------" + distance);
 
+
                     }
                 }
+                System.out.println(lat1Set);
+                System.out.println(lat2Set);
             }
-
 
         }
 
         DecimalFormat df = new DecimalFormat("#.###");
         System.out.println(cuDist);
-        return df.format(cuDist);
+        double distMile = cuDist* 0.621;
+        return df.format(distMile);
     }
 
     /**
@@ -420,78 +444,55 @@ public class Controller {
      * @return double
      * @author Patrick
      */
-    public String displayDistance(String tripId) {
+    public String speedOfTrip(String tripId) {
         ArrayList<Trip> trips = tripsList.get(tripId);
-        double lat1 = 0;
-        double lon1 = 0;
-        double lat2 = 0;
-        double lon2 = 0;
-        String startStopId = "";
-        String endStopId = "";
-        boolean startChanged = false;
-        boolean endChanged = false;
-        String distance = "";
-        System.out.println(tripId);
 
 
         for (Trip trip : trips) {
             if (trip.getTripID().equals(tripId)) {
                 int minStopSeq = 0;
-                for (Map.Entry<String, ArrayList<StopTime>> stopTimesMap : trip.getStopTimes().entrySet()) {
-                    ArrayList<StopTime> stopTimesList = stopTimesMap.getValue();
-                    for (StopTime stopTime : stopTimesList) {
-                        if (stopTime.getStopSequence().equals("1")) {
-                            startStopId = stopTime.getStopID();
+                int startSeq = 1;
 
-                        }
-                        if (Integer.parseInt(stopTime.getStopSequence()) > minStopSeq) {
-                            minStopSeq = Integer.parseInt(stopTime.getStopSequence());
-                            endStopId = stopTime.getStopID();
+
+                String startStopId = "";
+                String endStopId = "";
+                boolean startChanged = false;
+                boolean endChanged = false;
+                double distance = 0;
+                HashSet<String> lat1Set = new HashSet<>();
+                HashSet<String> lat2Set = new HashSet<>();
+                Time startTime1 = Time.valueOf("00:00:00");
+                Time startTime2 = Time.valueOf("00:00:00");
+
+                for(int i = 0; i < trip.getStopTimes().size(); i++) {
+
+                    for (Map.Entry<String, ArrayList<StopTime>> stopTimesMap : trip.getStopTimes().entrySet()) {
+                        ArrayList<StopTime> stopTimesList = stopTimesMap.getValue();
+
+                        for (StopTime stopTime : stopTimesList) {
+                            if (stopTime.getStopSequence().equals("" + startSeq)) {
+                                startStopId = stopTime.getStopID();
+                                startTime1 = stopTime.getArrivalTime();
+                            } else if (stopTime.getStopSequence().equals("" + (startSeq + 1))) {
+                                startTime2 = stopTime.getArrivalTime();
+                                endStopId = stopTime.getStopID();
+                            }
                         }
                     }
-                }
-                System.out.println(minStopSeq);
-            }
-        }
-        System.out.println("start" + startStopId);
-        System.out.println("end" + endStopId);
-        System.out.println();
-        Set<Map.Entry<String, ArrayList<Stop>>> stopSet = allStopsList.entrySet();
-        Iterator<Map.Entry<String, ArrayList<Stop>>> it = stopSet.iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, ArrayList<Stop>> stops = it.next();
-            for (Stop s : stops.getValue()) {
-                if (s.getStopID().equals(startStopId)) {
-                    lat1 = s.getStopLat();
-                    lon1 = s.getStopLong();
-                    startChanged = true;
-                } else if (s.getStopID().equals(endStopId)) {
-                    lat2 = s.getStopLat();
-                    lon2 = s.getStopLong();
-                    endChanged = true;
-                }
-            }
-        }
-        if (!startChanged || !endChanged) {
-            System.out.println("throw exception");
-        } else {
+                    startSeq++;
+//                    Instant instant = new Instant(startTime1);
+//                    Duration.between(startTime1, startTime2);
 
-            double latDistance = Math.toRadians(lat2 - lat1);
-            double lonDistance = Math.toRadians(lon2 - lon1);
-            lat1 = Math.toRadians(lat1);
-            lat2 = Math.toRadians(lat2);
-            double a = Math.pow(Math.sin(latDistance / 2), 2) +
-                    Math.pow(Math.sin(lonDistance / 2), 2) *
-                            Math.cos(lat1) *
-                            Math.cos(lat2);
-            double rad = 6371;
-            double c = 2 * Math.asin(Math.sqrt(a));
-            DecimalFormat df = new DecimalFormat("#.###");
-            distance = "" + df.format(rad * c);
+                    System.out.println("start" + startStopId);
+                    System.out.println("end" + endStopId);
+
+                }
+                System.out.println(lat1Set);
+                System.out.println(lat2Set);
+            }
 
         }
-        System.out.println(distance);
-        return distance;
+        return "l";
     }
 
 

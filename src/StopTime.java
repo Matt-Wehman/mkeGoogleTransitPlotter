@@ -107,8 +107,10 @@ public class StopTime {
         this.dropOffType = dropOffType;
         this.arrivalTime = new CSVReader(arrivalTimeString).nextTime();
         this.departureTime = new CSVReader(departureTimeString).nextTime();
-        if(Integer.parseInt(arrivalTimeString.substring(0, 2)) > 24) {
+        if(Integer.parseInt(arrivalTimeString.substring(0, 2)) >= 24) {
             isNextDay = true;
+        } else {
+            isNextDay = false;
         }
     }
 

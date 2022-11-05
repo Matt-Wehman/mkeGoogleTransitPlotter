@@ -7,11 +7,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 /**
@@ -27,15 +28,14 @@ public class ControllerTest {
      */
     @BeforeEach
     private void setUp() throws IOException, Controller.InvalidHeaderException {
-        controller = new Controller();
-        ArrayList<File> listOfFiles = new ArrayList<>();
-        listOfFiles.add(new File("./GTFSFiles/routes.txt"));
-        listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
-        listOfFiles.add(new File("./GTFSFiles/stops.txt"));
-        listOfFiles.add(new File("./GTFSFiles/trips.txt"));
-        controller.importFilesNoStage(listOfFiles);
+//        controller = new Controller();
+//        ArrayList<File> listOfFiles = new ArrayList<>();
+//        listOfFiles.add(new File("./GTFSFiles/routes.txt"));
+//        listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
+//        listOfFiles.add(new File("./GTFSFiles/stops.txt"));
+//        listOfFiles.add(new File("./GTFSFiles/trips.txt"));
+//        controller.importFilesNoStage(listOfFiles);
     }
-
 
 
     /**
@@ -96,16 +96,83 @@ public class ControllerTest {
     @Test
     public void testSpeed() {
         //Time for trips1 is 32, and for trip2 33 mins
-        int correctSpeed1 = 100 / 32;
-        int correctSpeed2 = 100 / 33;
-        int incorrectSpeed1 = 100 / 50;
+//        int correctSpeed1 = 100 / 32;
+//        int correctSpeed2 = 100 / 33;
+//        int incorrectSpeed1 = 100 / 50;
+//
+//        Trip testTrip1 = Controller.validateTripLines("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23");
+//        Trip testTrip2 = Controller.validateTripLines("64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19");
+//
+//        Assertions.assertEquals(correctSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
+//        Assertions.assertEquals(correctSpeed2, Controller.avgSpeed(testTrip2.getTripID()));
+//        Assertions.assertNotEquals(incorrectSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
 
-        Trip testTrip1 = Controller.validateTripLines("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23");
-        Trip testTrip2 = Controller.validateTripLines("64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19");
+        //        String time1 = "16:00:00";
+//        String time2 = "19:42:00";
 
-        Assertions.assertEquals(correctSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
-        Assertions.assertEquals(correctSpeed2, Controller.avgSpeed(testTrip2.getTripID()));
-        Assertions.assertNotEquals(incorrectSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
+        StopTime time1 = Controller.validateStopTimeLine("21736779_31,10:00:00,10:00:00,279,36,,0,0");
+        StopTime time2 = Controller.validateStopTimeLine("21736779_31,20:13:00,20:13:00,279,36,,0,0");
+        StopTime time3 = Controller.validateStopTimeLine("21736779_31,16:00:00,16:00:00,279,36,,0,0");
+        StopTime time4 = Controller.validateStopTimeLine("21736779_31,24:15:00,24:15:00,279,36,,0,0");
+
+        ArrayList<StopTime> times = new ArrayList<>();
+        times.add(time2);
+        times.add(time3);
+        times.add(time4);
+
+
+
+        String start = "12:00:00";
+        String end = "02:05:00";
+
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+
+
+        //System.out.println("wefewf: " + time4.getArrivalTime().toString());
+        long seconds = 0;
+
+        for(StopTime time: times){
+            if(!time.getIsNextDay() && !time1.getIsNextDay()){
+                seconds = Math.abs(Duration.between(LocalTime.parse(time.getArrivalTime().toString()),
+                        LocalTime.parse(time1.getArrivalTime().toString())).getSeconds());
+            } else if(!time.getIsNextDay() && time1.getIsNextDay()){
+                seconds = Math.abs(Duration.between(LocalTime.parse(time.getArrivalTime().toString()),
+                        LocalTime.parse("23:59:59")).getSeconds()) + 1;
+                seconds = seconds + Math.abs(Duration.between(LocalTime.parse(time1.getArrivalTime().toString()),
+                        LocalTime.parse("00:00:00")).getSeconds());
+            } else if(time.getIsNextDay() && !time1.getIsNextDay()){
+                seconds = Math.abs(Duration.between(LocalTime.parse(time1.getArrivalTime().toString()),
+                        LocalTime.parse("23:59:59")).getSeconds()) + 1;
+                seconds = seconds + Math.abs(Duration.between(LocalTime.parse(time.getArrivalTime().toString()),
+                        LocalTime.parse("00:00:00")).getSeconds());
+            }
+            int secondsInt = (int)seconds;
+            int hours = secondsInt / 3600;
+            secondsInt = secondsInt % 3600;
+            int minutes = secondsInt/60;
+            System.out.println("--------------");
+            System.out.println("time: " + time.toString());
+            System.out.println("hours: " + hours);
+            System.out.println("minuets: " + minutes);
+            System.out.println("--------------");
+            System.out.println();
+
+
+        }
+
+
+        System.out.println(seconds);
+
+
+        int secondsInt = (int)seconds;
+        int hours = secondsInt / 3600;
+        secondsInt = secondsInt % 3600;
+        int minutes = secondsInt/60;
+
+        System.out.println("hours: " + hours);
+        System.out.println("minuets: " + minutes);
+
+
 
     }
 
@@ -311,8 +378,8 @@ public class ControllerTest {
      * @author Matthew Wehman
      */
     @Test
-    public void testRoutesContainingStop(){
-        String[] stops = new String[]{"1801","5006"};
+    public void testRoutesContainingStop() {
+        String[] stops = new String[]{"1801", "5006"};
         ArrayList<String> firstRoutes = new ArrayList<String>(
                 List.of("67")
         );
@@ -334,14 +401,14 @@ public class ControllerTest {
         System.out.println("start");
         String[] types = {"stops", "trips", "routes", "stop_times"};
         boolean correctExportFiles = true;
-        for (String type: types){
+        for (String type : types) {
             File firstFile = new File("./GTFSFiles/" + type + ".txt");
             File checkFile = new File("./export/" + type + ".txt");
             List<String> checkLines = Files.lines(checkFile.toPath()).toList();
             List<String> firstLines = Files.lines(firstFile.toPath()).toList();
             HashSet<String> set = new HashSet<>(checkLines);
-            for (String line: firstLines){
-                if (!set.contains(line)){
+            for (String line : firstLines) {
+                if (!set.contains(line)) {
                     System.out.println("Expected: " + line + ", Not found");
                     correctExportFiles = false;
                 }
