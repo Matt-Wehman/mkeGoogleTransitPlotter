@@ -45,7 +45,7 @@ import javafx.stage.Stage;
  */
 public class Controller {
 
-    private final URL url = this.getClass().getResource("mapmarkerflat_106000.png");
+    private final URL url = this.getClass().getResource("mapmarkerhd_106079 (1).png");
 
     @FXML
     Button importButton;
@@ -901,11 +901,10 @@ public class Controller {
         for(Marker m : markers){
             m.setVisible(false);
         }
-        URL url2 = getClass().getResource("mapmarkerflat_106000.png");
         ArrayList<Stop> stop = allStopsList.get(stopID);
         Stop stop1 = stop.get(0);
         Coordinate coordinate = new Coordinate(stop1.getStopLat(), stop1.getStopLong());
-        Marker marker1 = new Marker(url2,-24,-40).setPosition(coordinate).setVisible(true);
+        Marker marker1 = new Marker(url,-24,-40).setPosition(coordinate).setVisible(true);
         markers.add(marker1);
         mapView.addMarker(marker1);
         mapView.setCenter(coordinate);
@@ -1083,9 +1082,9 @@ public class Controller {
         return alert;
     }
     /**
-     * Shows the route stage and sets all information inside it
-     *
+     * Gets route id from search bar and plots stops
      * @param actionevent when button is clicked
+     * @author wehman
      */
     @FXML
     public void plotStopsOnRoute(ActionEvent actionevent) {
@@ -1098,6 +1097,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Plots all stops on a given route and adds them to the mapview
+     * @param route
+     * @author Wehman, Bassoc
+     */
     private void getMapURL(Route route) {
         for(Marker m : markers){
             m.setVisible(false);
@@ -1118,6 +1122,11 @@ public class Controller {
         mapView.setExtent(extent);
     }
 
+    /**
+     * Adds all stops on a route to a route class
+     * @param route
+     * @author Bassoc
+     */
     public void addStopsToRoute(Route route){
         Set<Map.Entry<String, ArrayList<Trip>>> tripSet = tripsList.entrySet();
         Iterator<Map.Entry<String, ArrayList<Trip>>> it = tripSet.iterator();
@@ -1131,16 +1140,17 @@ public class Controller {
             route.addStop(allStopsList.get(dumbIt.next().getValue().get(0).getStopID()).get(0));
         }
     }
+
+    /**
+     * Adds stops to all routes
+     * @author Bassoc
+     */
     public void importAllStopsToAllRoutes() {
         Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
         Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
         for(int i = 0; i < routesList.size(); i++) {
             addStopsToRoute(it.next().getValue().get(0));
         }
-    }
-
-    private String makeMarker(double lat, double longi, String color, String letter) {
-        return "&markers=color:" + color + "%7Clabel:" + letter + "%7C" + lat + longi + "\n";
     }
 
     /**
