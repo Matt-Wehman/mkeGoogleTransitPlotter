@@ -877,17 +877,93 @@ public class Controller {
         }
         return ret;
     }
-
     /**
      * Plots the current trajectory of the bus
      * This method has not been implemented
      *
-     * @param tripID
+     * @param tripID1 the tripID to search
      * @return boolean
      */
-    public boolean plotBus(int tripID) {
-        return false;
+    public boolean plotBus(String tripID1) {
+        String tripID = "21736568_2543";
+        ArrayList<Trip> trips = tripsList.get(tripID);
+        Trip trip = null;
+        for (Trip t: trips){
+            if (Objects.equals(t.getTripID(), tripID)){
+                trip = t;
+            }
+        }
+        if (trip == null) {
+            return false;
+        }
+        HashMap<String, ArrayList<StopTime>> stopTimesHashMap = trip.getStopTimes();
+        Iterator<Map.Entry<String, ArrayList<StopTime>>> it = stopTimesHashMap.entrySet().iterator();
+        ArrayList<StopTime> stopTimes = new ArrayList<>();
+        while (it.hasNext()){
+            stopTimes.addAll(it.next().getValue());
+        }
+        if (stopTimes.size() == 0){
+            return false;
+        }
+        Time currentTime = java.sql.Time.valueOf(LocalTime.now());
+        StopTime lastStopTime = stopTimes.get(0);
+        StopTime nextStopTime = stopTimes.get(0);
+        for (StopTime stopTime: stopTimes){
+            //if the StopTime is before the current time
+            if (stopTime.getArrivalTime().compareTo(currentTime) < 0){
+                //if the StopTime is after the last time
+                if(stopTime.getArrivalTime().compareTo(lastStopTime.getArrivalTime()) > 0){
+                    lastStopTime = stopTime;
+                }
+                // if the StopTime is after the current time
+            } else if (stopTime.getArrivalTime().compareTo(currentTime) > 0){
+                // if the StopTime is before the next time
+                if(stopTime.getArrivalTime().compareTo(nextStopTime.getArrivalTime()) < 0){
+                    nextStopTime = stopTime;
+                }
+            }
+        }
+        ArrayList<Stop> allHashedStops = new ArrayList<>();
+        allHashedStops.addAll(allStopsList.get(lastStopTime.getStopID()));
+        allHashedStops.addAll(allStopsList.get(nextStopTime.getStopID()));
+        Stop lastStop = null;
+        Stop nextStop = null;
+        for (Stop stop: allHashedStops){
+            if (Objects.equals(stop.getStopID(), lastStopTime.getStopID())){
+                lastStop = stop;
+            } else if (Objects.equals(stop.getStopID(), nextStopTime.getStopID())){
+                nextStop = stop;
+            }
+        }
+        if (lastStop == null || nextStop == null){
+            return false;
+        }
+
+        double latitude = 0;
+        double longitude = 0;
+        if (!(currentTime.compareTo(lastStopTime.getArrivalTime()) > 0 && currentTime.compareTo(nextStopTime.getArrivalTime()) < 0)){
+            // Trip not currently in use, get first stop coordinates
+            // TODO
+            return false;
+        } else {
+            // get weighted average of coordinates
+            float percentComplete = (float) (currentTime.getTime()-lastStopTime.getArrivalTime().getTime())/(nextStopTime.getArrivalTime().getTime()-lastStopTime.getArrivalTime().getTime());
+            latitude = lastStop.getStopLat() + (percentComplete * (nextStop.getStopLat() - lastStop.getStopLat()));
+            longitude = lastStop.getStopLong() + (percentComplete * (nextStop.getStopLong() - lastStop.getStopLong()));
+        }
+        for(Marker m : markers){
+            m.setVisible(false);
+        }
+        Coordinate coordinate = new Coordinate(latitude, longitude);
+        Marker marker = new Marker(url,-24,-40).setPosition(coordinate).setVisible(true);
+        markers.add(marker);
+        mapView.addMarker(marker);
+        mapView.setCenter(coordinate);
+        mapView.setZoom(17);
+        //TODO
+        return true;
     }
+
 
     /**
      * Plots the stops on a given route
