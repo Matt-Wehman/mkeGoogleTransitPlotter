@@ -45,8 +45,7 @@ import javafx.stage.Stage;
  */
 public class Controller {
 
-    @FXML
-    Button butt;
+    private final URL url = this.getClass().getResource("mapmarkerflat_106000.png");
 
     @FXML
     Button importButton;
@@ -65,10 +64,6 @@ public class Controller {
 
     @FXML
     TextField searchBar;
-
-    @FXML
-    Label searchBarLabel;
-
     @FXML
     Stage tripDisplay;
 
@@ -81,32 +76,12 @@ public class Controller {
     StopController stopController;
 
     @FXML
-    Button webButton;
-
-    @FXML
-    WebView webView;
-
-    @FXML
     MapView mapView;
 
     Stage stage;
 
-    /** default zoom value. */
-    private static final int ZOOM_DEFAULT = 14;
-
     public List<Marker> markers;
 
-    /** params for the WMS server. */
-    private WMSParam wmsParam = new WMSParam()
-            .setUrl("http://ows.terrestris.de/osm/service?")
-            .addParam("layers", "OSM-WMS");
-
-    private XYZParam xyzParams = new XYZParam()
-            .withUrl("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x})")
-            .withAttributions(
-                    "'Tiles &copy; <a href=\"https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer\">ArcGIS</a>'");
-
-    //Will delete trips eventually, just need it so the program will run
 
     protected HashMap<String, ArrayList<Stop>> allStopsList = new HashMap<>();
     protected HashMap<String, ArrayList<Trip>> tripsList = new HashMap<>();
@@ -863,10 +838,6 @@ public class Controller {
 
     }
 
-
-    //epic
-
-
     /**
      * Finds the next trip at a certain stop given the time
      * This method has not been implemented
@@ -1120,9 +1091,13 @@ public class Controller {
     public void plotStopsOnRoute(ActionEvent actionevent) {
         String routeid = searchBar.getText();
         ArrayList<Route> route = routesList.get(routeid);
-        getMapURL(route.get(0));
+        if(route == null){
+            errorAlert("Null Route", "The route id entered in the search bar cannot be found. Please enter a valid route id");
+        } else {
+            getMapURL(route.get(0));
+        }
     }
-    URL url = this.getClass().getResource("mapmarkerflat_106000.png");
+
     private void getMapURL(Route route) {
         for(Marker m : markers){
             m.setVisible(false);
@@ -1192,10 +1167,6 @@ public class Controller {
                 .showZoomControls(false)
                 .build());
     }
-
-    /**
-     * initializes the event handlers.
-     */
 
 
 }
