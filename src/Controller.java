@@ -6,24 +6,14 @@
  * Created on: 09/10/22
  */
 
-import java.awt.*;
 import java.io.*;
 
 import com.sothawo.mapjfx.*;
-import com.sothawo.mapjfx.event.MapLabelEvent;
-import com.sothawo.mapjfx.event.MapViewEvent;
 import com.sothawo.mapjfx.event.MarkerEvent;
-import com.sothawo.mapjfx.offline.OfflineCache;
-import javafx.animation.AnimationTimer;
-import javafx.animation.Transition;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
-import java.lang.reflect.Array;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,7 +22,6 @@ import java.text.ParseException;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -43,15 +32,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class handles the methods from the GUI
@@ -106,133 +89,12 @@ public class Controller {
     @FXML
     MapView mapView;
 
-    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
-
-    /** some coordinates from around town. */
-    private static final Coordinate coordKarlsruheCastle = new Coordinate(49.013517, 8.404435);
-    private static final Coordinate coordKarlsruheHarbour = new Coordinate(49.015511, 8.323497);
-    private static final Coordinate coordKarlsruheStation = new Coordinate(48.993284, 8.402186);
-    private static final Coordinate coordKarlsruheSoccer = new Coordinate(49.020035, 8.412975);
-    private static final Coordinate coordKarlsruheUniversity = new Coordinate(49.011809, 8.413639);
-    private static final Extent extentAllLocations = Extent.forCoordinates(coordKarlsruheCastle, coordKarlsruheHarbour, coordKarlsruheStation, coordKarlsruheSoccer);
-
-    private static final Coordinate coordGermanyNorth = new Coordinate(55.05863889, 8.417527778);
-    private static final Coordinate coordGermanySouth = new Coordinate(47.27166667, 10.17405556);
-    private static final Coordinate coordGermanyWest = new Coordinate(51.0525, 5.866944444);
-    private static final Coordinate coordGermanyEast = new Coordinate(51.27277778, 15.04361111);
-    private static final Extent extentGermany = Extent.forCoordinates(coordGermanyNorth, coordGermanySouth, coordGermanyWest, coordGermanyEast);
+    Stage stage;
 
     /** default zoom value. */
     private static final int ZOOM_DEFAULT = 14;
 
-    /** the markers. */
-    public Marker markerKaHarbour;
-    public Marker markerKaCastle;
-    private Marker markerKaStation;
-    private Marker markerKaSoccer;
-    private Marker markerClick;
-
-    /** the labels. */
-    private MapLabel labelKaUniversity;
-    private MapLabel labelKaCastle;
-    private MapLabel labelKaStation;
-    private MapLabel labelClick;
-
-    // a circle around the castle
-    private MapCircle circleCastle;
-
-    @FXML
-    /** button to set the map's zoom. */
-    private Button buttonZoom;
-
     public List<Marker> markers;
-
-
-    /** the box containing the top controls, must be enabled when mapView is initialized */
-    @FXML
-    private HBox topControls;
-
-    /** Slider to change the zoom value */
-    @FXML
-    private Slider sliderZoom;
-
-    /** Accordion for all the different options */
-    @FXML
-    private Accordion leftControls;
-
-    /** section containing the location button */
-    @FXML
-    private TitledPane optionsLocations;
-
-    /** button to set the map's center */
-    @FXML
-    private Button buttonKaHarbour;
-
-    /** button to set the map's center */
-    @FXML
-    private Button buttonKaCastle;
-
-    /** button to set the map's center */
-    @FXML
-    private Button buttonKaStation;
-
-    /** button to set the map's center */
-    @FXML
-    private Button buttonKaSoccer;
-
-    /** button to set the map's extent. */
-    @FXML
-    private Button buttonAllLocations;
-
-    /** for editing the animation duration */
-    @FXML
-    private TextField animationDuration;
-
-    /** the BIng Maps API Key. */
-    @FXML
-    private TextField bingMapsApiKey;
-
-    /** Label to display the current center */
-    @FXML
-    private Label labelCenter;
-
-    /** Label to display the current extent */
-    @FXML
-    private Label labelExtent;
-
-    /** Label to display the current zoom */
-    @FXML
-    private Label labelZoom;
-
-    /** label to display the last event. */
-    @FXML
-    private Label labelEvent;
-
-    /** RadioButton for MapStyle OSM */
-    @FXML
-    private RadioButton radioMsOSM;
-
-    /** the first CoordinateLine */
-    private CoordinateLine trackMagenta;
-    /** Check button for first track */
-    @FXML
-    private CheckBox checkTrackMagenta;
-
-    /** the second CoordinateLine */
-    private CoordinateLine trackCyan;
-    /** Check button for first track */
-    @FXML
-    private CheckBox checkTrackCyan;
-
-    /** Coordinateline for polygon drawing. */
-    private CoordinateLine polygonLine;
-    /** Check Button for polygon drawing mode. */
-    @FXML
-    private CheckBox checkDrawPolygon;
-
-    /** Check Button for constraining th extent. */
-    @FXML
-    private CheckBox checkConstrainGermany;
 
     /** params for the WMS server. */
     private WMSParam wmsParam = new WMSParam()
@@ -245,32 +107,16 @@ public class Controller {
                     "'Tiles &copy; <a href=\"https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer\">ArcGIS</a>'");
 
     //Will delete trips eventually, just need it so the program will run
-    protected HashMap<String, Trip> trips = new HashMap<>();
 
     protected HashMap<String, ArrayList<Stop>> allStopsList = new HashMap<>();
     protected HashMap<String, ArrayList<Trip>> tripsList = new HashMap<>();
     protected HashMap<String, ArrayList<Route>> routesList = new HashMap<>();
-
-
     /**
      * Creates Controller instance
      */
     public Controller() {
 
     }
-
-//    public void testTripsInRoutes() {
-//        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
-//
-//        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
-//
-//        while (it.hasNext()) {
-//            Map.Entry<String, ArrayList<Route>> routess = it.next();
-//            for (Route r : routess.getValue()) {
-//                System.out.println(r.getStopsList());
-//            }
-//        }
-//    }
 
     /**
      * This adds Trips to an arrayList. This method will handle the chaining for the
@@ -334,6 +180,10 @@ public class Controller {
         stopController = stop;
     }
 
+    public void setStage(Stage primary){
+        this.stage = primary;
+    }
+
     /**
      * Show the stop stage and sets all information inside it
      *
@@ -362,26 +212,20 @@ public class Controller {
                 routesString = "No routes service this stop";
             }
             stopController.setRoutesText(routesString);
+            stopDisplay.setX(stage.getX() + stopDisplay.getWidth());
+            stopDisplay.setY(stage.getY());
             stopDisplay.show();
             stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
             stopController.setStopID(stopId);
+            plotStop(stopId);
             Time currentTime = java.sql.Time.valueOf(LocalTime.now());
             stopController.setNextTrip(nextTripAtStop(stopId, currentTime));
         } else {
             errorAlert("Stop Not Found", "Ensure the GTFS files have been imported");
         }
-
     }
 
-    /**
-     * Shows the route stage and sets all information inside it
-     *
-     * @param actionevent when button is clicked
-     */
-    @FXML
-    public void generateRouteIdInterface(ActionEvent actionevent) {
-        routeDisplay.show();
-    }
+
 
     /**
      * Shows the trip stage and sets all information inside it
@@ -532,11 +376,6 @@ public class Controller {
         return routeFile;
 
     }
-
-
-
-
-
 
 
     /**
@@ -1038,8 +877,8 @@ public class Controller {
         String ret = "";
         SortedMap<Time, StopTime> map = new TreeMap<>();
         TreeMap<Time, StopTime> nextDayTimes = new TreeMap<>();
-        for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
-            Trip trip = mapEntry.getValue();
+        for (Map.Entry<String, ArrayList<Trip>> mapEntry : tripsList.entrySet()) {
+            Trip trip = mapEntry.getValue().get(0);
             if (trip.getStopTimes().containsKey(stopID)) {
                 ArrayList<StopTime> stopTimes = trip.getStopTimes().get(stopID);
                 for (StopTime stopTime : stopTimes) {
@@ -1058,6 +897,8 @@ public class Controller {
                     ret = map.get(map.firstKey()).getTripID();
                 } else if (!nextDayTimes.isEmpty()){
                     ret = nextDayTimes.get(nextDayTimes.firstKey()).getTripID();
+                } else{
+                    ret = "No more trips today";
                 }
 
             }
@@ -1080,10 +921,23 @@ public class Controller {
      * Plots the stops on a given route
      * This method has not been implemented
      *
-     * @param routeID
+     * @param stopID
      * @return boolean
+     * @author wehman
      */
-    public boolean plotStops(int routeID) {
+    public boolean plotStop(String stopID) {
+        for(Marker m : markers){
+            m.setVisible(false);
+        }
+        URL url2 = getClass().getResource("mapmarkerflat_106000.png");
+        ArrayList<Stop> stop = allStopsList.get(stopID);
+        Stop stop1 = stop.get(0);
+        Coordinate coordinate = new Coordinate(stop1.getStopLat(), stop1.getStopLong());
+        Marker marker1 = new Marker(url2,-24,-40).setPosition(coordinate).setVisible(true);
+        markers.add(marker1);
+        mapView.addMarker(marker1);
+        mapView.setCenter(coordinate);
+        mapView.setZoom(17);
         return false;
     }
 
@@ -1095,11 +949,13 @@ public class Controller {
      */
     public ArrayList<String> routesContainingStop(String stopID) {
         ArrayList<String> routesContaining = new ArrayList<>();
-        for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
-            Trip trip = mapEntry.getValue();
-            if (trip.getStopTimes().containsKey(stopID)) {
-                if (!routesContaining.contains(trip.getRouteID())) {
-                    routesContaining.add(trip.getRouteID());
+        for (Map.Entry<String, ArrayList<Trip>> mapEntry : tripsList.entrySet()) {
+            ArrayList<Trip> trip = mapEntry.getValue();
+            for (Trip t : trip) {
+                if (t.getStopTimes().containsKey(stopID)) {
+                    if (!routesContaining.contains(t.getRouteID())) {
+                        routesContaining.add(t.getRouteID());
+                    }
                 }
             }
         }
@@ -1125,10 +981,12 @@ public class Controller {
      */
     public int tripsPerStop(String stopID) {
         int counter = 0;
-        for (Map.Entry<String, Trip> mapEntry : trips.entrySet()) {
-            Trip trip = mapEntry.getValue();
-            if (trip.getStopTimes().containsKey(stopID)) {
-                counter++;
+        for (Map.Entry<String, ArrayList<Trip>> mapEntry : tripsList.entrySet()) {
+            ArrayList<Trip> trip = mapEntry.getValue();
+            for (Trip t:trip) {
+                if (t.getStopTimes().containsKey(stopID)) {
+                    counter++;
+                }
             }
         }
         return counter;
@@ -1252,31 +1110,53 @@ public class Controller {
         alert.showAndWait();
         return alert;
     }
-
-
+    /**
+     * Shows the route stage and sets all information inside it
+     *
+     * @param actionevent when button is clicked
+     */
     @FXML
-    public void setWebView(ActionEvent actionEvent) {
-        URL url = this.getClass().getResource("googlemap.html");
-        WebEngine engine = webView.getEngine();
-////        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
-////        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
-//        engine.load(getMapURL(it.next().getValue().get(0)));
-        engine.load(url.toString());
-        //Routes file not filled with stops
-    }
+    public void plotStopsOnRoute(ActionEvent actionevent) {
+        String routeid = searchBar.getText();
+        ArrayList<Route> route = routesList.get(routeid);
+        getMapURL(route.get(0));
 
-    private String getMapURL(Route route) {
-        String url = "https://maps.googleapis.com/maps/api/staticmap?center=Milwaukee,wi&zoom=13&size=600x300&maptype=roadmap\n";
+    }
+    URL url = this.getClass().getResource("mapmarkerflat_106000.png");
+    private void getMapURL(Route route) {
+        for(Marker m : markers){
+            m.setVisible(false);
+        }
         HashMap<String, ArrayList<Stop>> stops = route.getStopsList();
         Set<Map.Entry<String, ArrayList<Stop>>> stopSet = stops.entrySet();
         Iterator<Map.Entry<String, ArrayList<Stop>>> it = stopSet.iterator();
-
+        List<Coordinate> coordinates = new ArrayList<>();
         while(it.hasNext()) {
             Stop cur = it.next().getValue().get(0);
-            url += makeMarker(cur.getStopLat(), cur.getStopLong(), "red", "A");
+            Coordinate coordinate = new Coordinate(cur.getStopLat(), cur.getStopLong());
+            coordinates.add(coordinate);
+            Marker marker = new Marker(this.url, -10, 10).setPosition(coordinate).setVisible(true);
+            markers.add(marker);
+            mapView.addMarker(marker);
         }
-        url +="&key=AIzaSyAvMUBHz0Ny9mZ9gzSrexxQuvyBF7e3mk4";
-        return url;
+        Extent extent = Extent.forCoordinates(coordinates);
+        mapView.setExtent(extent);
+    }
+
+    @FXML
+    public void setMarker(ActionEvent event){
+        URL url = getClass().getResource("ksc.png");
+        assert url != null;
+        Coordinate coord = new Coordinate(43.0453675,-87.9109152);
+        Coordinate coord2 = new Coordinate(43.1045379,-87.9397422);
+        List<Coordinate> coords = List.of(coord, coord2);
+
+        Marker marker = new Marker(url).setPosition(coord).setVisible(true);
+        markers.add(marker);
+        Extent extent = Extent.forCoordinates(coords);
+        mapView.setExtent(extent);
+        mapView.setCenter(coord);
+        mapView.addMarker(marker);
     }
 
     private String makeMarker(double lat, double longi, String color, String letter) {
@@ -1291,212 +1171,26 @@ public class Controller {
      *     the projection to use in the map.
      */
     public void initMapAndControls(Projection projection) {
-        logger.trace("begin initialize");
-        mapView.setMapType(MapType.OSM);
+        mapView.setBingMapsApiKey("w1oz2x0G8Gn2cpDoyMKM~7z_7StT4ZgJ6x4zLE9oH2w~AnwrC5ThdXoU2STqcTWH_eVRdKc-ezqaFZYB41JUq4fknKQzslqc0_LJ9j0mbv0V");
+        mapView.setMapType(MapType.BINGMAPS_ROAD);
         mapView.setCenter(new Coordinate(43.0453675,-87.9109152));
-        mapView.setZoom(15);
+        mapView.setZoom(10);
         markers = new ArrayList<>();
-        mapView.initializedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                afterMapIsInitialized();
-            }
+        mapView.addEventHandler(MarkerEvent.MARKER_CLICKED, event -> {
+            event.consume();
+            Marker marker = event.getMarker();
+            mapView.setCenter(marker.getPosition());
+            mapView.setZoom(17);
         });
-
-        logger.trace("start map initialization");
         mapView.initialize(Configuration.builder()
                 .projection(projection)
                 .showZoomControls(false)
                 .build());
-        logger.debug("initialization finished");
     }
 
     /**
      * initializes the event handlers.
      */
-    @FXML
-    public void setMarker(ActionEvent event){
-        URL url = this.getClass().getResource("check.png");
-        assert url != null;
-        Coordinate coord = new Coordinate(43.0453675,-87.9109152);
-        Coordinate coord2 = new Coordinate(43.1045379,-87.9397422);
-        List<Coordinate> coords = List.of(coord, coord2);
 
-        Marker marker = Marker.createProvided(Marker.Provided.ORANGE).setPosition(coord).setVisible(true);
-        markers.add(marker);
-        Extent extent = Extent.forCoordinates(coords);
-        mapView.setExtent(extent);
-        mapView.setCenter(coord);
-        mapView.addMarker(marker);
-    }
-    private void setupEventHandlers() {
-        // add an event handler for singleclicks, set the click marker to the new position when it's visible
-        mapView.addEventHandler(MapViewEvent.MAP_CLICKED, event -> {
-            event.consume();
-            final Coordinate newPosition = event.getCoordinate().normalize();
-            labelEvent.setText("Event: map clicked at: " + newPosition);
-            if (checkDrawPolygon.isSelected()) {
-                handlePolygonClick(event);
-            }
-            if (markerClick.getVisible()) {
-                final Coordinate oldPosition = markerClick.getPosition();
-                if (oldPosition != null) {
-                    animateClickMarker(oldPosition, newPosition);
-                } else {
-                    markerClick.setPosition(newPosition);
-                    // adding can only be done after coordinate is set
-                    mapView.addMarker(markerClick);
-                }
-            }
-        });
 
-        // add an event handler for MapViewEvent#MAP_EXTENT and set the extent in the map
-        mapView.addEventHandler(MapViewEvent.MAP_EXTENT, event -> {
-            event.consume();
-            mapView.setExtent(event.getExtent());
-        });
-
-        // add an event handler for extent changes and display them in the status label
-        mapView.addEventHandler(MapViewEvent.MAP_BOUNDING_EXTENT, event -> {
-            event.consume();
-            labelExtent.setText(event.getExtent().toString());
-        });
-
-        mapView.addEventHandler(MapViewEvent.MAP_RIGHTCLICKED, event -> {
-            event.consume();
-            labelEvent.setText("Event: map right clicked at: " + event.getCoordinate());
-        });
-        mapView.addEventHandler(MarkerEvent.MARKER_CLICKED, event -> {
-            event.consume();
-            labelEvent.setText("Event: marker clicked: " + event.getMarker().getId());
-        });
-        mapView.addEventHandler(MarkerEvent.MARKER_RIGHTCLICKED, event -> {
-            event.consume();
-            labelEvent.setText("Event: marker right clicked: " + event.getMarker().getId());
-        });
-        mapView.addEventHandler(MapLabelEvent.MAPLABEL_CLICKED, event -> {
-            event.consume();
-            labelEvent.setText("Event: label clicked: " + event.getMapLabel().getText());
-        });
-        mapView.addEventHandler(MapLabelEvent.MAPLABEL_RIGHTCLICKED, event -> {
-            event.consume();
-            labelEvent.setText("Event: label right clicked: " + event.getMapLabel().getText());
-        });
-
-        mapView.addEventHandler(MapViewEvent.MAP_POINTER_MOVED, event -> {
-            logger.debug("pointer moved to " + event.getCoordinate());
-        });
-
-        logger.trace("map handlers initialized");
-    }
-
-    private void animateClickMarker(Coordinate oldPosition, Coordinate newPosition) {
-        // animate the marker to the new position
-        final Transition transition = new Transition() {
-            private final Double oldPositionLongitude = oldPosition.getLongitude();
-            private final Double oldPositionLatitude = oldPosition.getLatitude();
-            private final double deltaLatitude = newPosition.getLatitude() - oldPositionLatitude;
-            private final double deltaLongitude = newPosition.getLongitude() - oldPositionLongitude;
-
-            {
-                setCycleDuration(Duration.seconds(1.0));
-                setOnFinished(evt -> markerClick.setPosition(newPosition));
-            }
-
-            @Override
-            protected void interpolate(double v) {
-                final double latitude = oldPosition.getLatitude() + v * deltaLatitude;
-                final double longitude = oldPosition.getLongitude() + v * deltaLongitude;
-                markerClick.setPosition(new Coordinate(latitude, longitude));
-            }
-        };
-        transition.play();
-    }
-
-    /**
-     * shows a new polygon with the coordinate from the added.
-     *
-     * @param event
-     *     event with coordinates
-     */
-    private void handlePolygonClick(MapViewEvent event) {
-        final List<Coordinate> coordinates = new ArrayList<>();
-        if (polygonLine != null) {
-            polygonLine.getCoordinateStream().forEach(coordinates::add);
-            mapView.removeCoordinateLine(polygonLine);
-            polygonLine = null;
-        }
-        coordinates.add(event.getCoordinate());
-        polygonLine = new CoordinateLine(coordinates)
-                .setColor(javafx.scene.paint.Color.DODGERBLUE)
-                .setFillColor(Color.web("lawngreen", 0.4))
-                .setClosed(true);
-        mapView.addCoordinateLine(polygonLine);
-        polygonLine.setVisible(true);
-    }
-
-    /**
-     * enables / disables the different controls
-     *
-     * @param flag
-     *     if true the controls are disabled
-     */
-//    private void setControlsDisable(boolean flag) {
-//        topControls.setDisable(flag);
-//        leftControls.setDisable(flag);
-//    }
-
-    /**
-     * finishes setup after the mpa is initialzed
-     */
-    private void afterMapIsInitialized() {
-
-//        logger.trace("map intialized");
-//        logger.debug("setting center and enabling controls...");
-//        // start at the harbour with default zoom
-//        mapView.setZoom(ZOOM_DEFAULT);
-//        mapView.setCenter(coordKarlsruheHarbour);
-//        // add the markers to the map - they are still invisible
-//        mapView.addMarker(markerKaHarbour);
-//        mapView.addMarker(markerKaCastle);
-//        mapView.addMarker(markerKaStation);
-//        mapView.addMarker(markerKaSoccer);
-//        // can't add the markerClick at this moment, it has no position, so it would not be added to the map
-//
-//        // add the fix label, the other's are attached to markers.
-//        mapView.addLabel(labelKaUniversity);
-//
-//        // add the tracks
-//        mapView.addCoordinateLine(trackMagenta);
-//        mapView.addCoordinateLine(trackCyan);
-//
-//        // add the circle
-//        mapView.addMapCircle(circleCastle);
-
-        // now enable the controls
-//        setControlsDisable(false);
-    }
-
-    /**
-     * load a coordinateLine from the given uri in lat;lon csv format
-     *
-     * @param url
-     *     url where to load from
-     * @return optional CoordinateLine object
-     * @throws java.lang.NullPointerException
-     *     if uri is null
-     */
-    private Optional<CoordinateLine> loadCoordinateLine(URL url) {
-        try (
-                Stream<String> lines = new BufferedReader(
-                        new InputStreamReader(url.openStream(), StandardCharsets.UTF_8)).lines()
-        ) {
-            return Optional.of(new CoordinateLine(
-                    lines.map(line -> line.split(";")).filter(array -> array.length == 2)
-                            .map(values -> new Coordinate(Double.valueOf(values[0]), Double.valueOf(values[1])))
-                            .collect(Collectors.toList())));
-        } catch (IOException | NumberFormatException e) {
-            logger.error("load {}", url, e);
-        }
-        return Optional.empty();
-    }
 }

@@ -50,19 +50,6 @@ public class Main extends Application {
         final Controller controller = primaryLoader.getController();
         controller.initMapAndControls(projection);
 
-        FXMLLoader routeLoader = new FXMLLoader();
-
-        Parent routeRoot = routeLoader.load(getClass()
-                .getResource("routeDisplay.fxml").openStream());
-
-        //Create route stage (Instantiation)
-        Stage routeStage = new Stage();
-
-        //Route Stage/Window
-        routeStage.setTitle("Route info");
-        routeStage.setScene(new Scene(routeRoot));
-        routeStage.hide();
-
 
         FXMLLoader tripLoader = new FXMLLoader();
 
@@ -95,7 +82,7 @@ public class Main extends Application {
 
         StopController stopController = stopLoader.getController();
 
-        primaryController.setRouteStage(routeStage);
+        primaryController.setStage(stage);
 
         primaryController.setTripStage(tripStage);
 
