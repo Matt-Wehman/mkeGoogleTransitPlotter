@@ -209,6 +209,7 @@ public class Controller {
      */
     @FXML
     public void generateTripIdInterface(ActionEvent actionevent) {
+        plotBus("21737058_1084");
         tripDisplay.show();
     }
 
@@ -884,8 +885,7 @@ public class Controller {
      * @param tripID1 the tripID to search
      * @return boolean
      */
-    public boolean plotBus(String tripID1) {
-        String tripID = "21736568_2543";
+    public boolean plotBus(String tripID) {
         ArrayList<Trip> trips = tripsList.get(tripID);
         Trip trip = null;
         for (Trip t: trips){
