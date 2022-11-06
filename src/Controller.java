@@ -295,16 +295,6 @@ public class Controller {
         return null;
     }
 
-    /**
-     * Finds the average speed of a trip if given the tripID
-     * This method has not been implemented
-     *
-     * @param tripID
-     * @return int
-     */
-    public static int avgSpeed(String tripID) {
-        return 0;
-    }
 
     /**
      * Changes the time of a Stop's Arrival/Departure time

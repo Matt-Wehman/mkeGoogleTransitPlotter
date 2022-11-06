@@ -123,39 +123,44 @@ public class ControllerTest {
         tripIds.add("21736580_581");
         tripIds.add("21736590_553");
         final double potError = 0.027;
+        try {
 
-        for(String trip: tripIds){
-            if(trip.equals("21801111_2331")){
-                int correctTime = 21;
-                double maxSpeed = (8.8284+(12*potError))/correctTime;
-                double minSpeed = (8.8284-(12*potError))/correctTime;
-                Assertions.assertTrue(Double.parseDouble(
-                        controller.displayCumulativeDistance(trip))/correctTime < maxSpeed && Double.parseDouble(
-                        controller.displayCumulativeDistance(trip))/correctTime > minSpeed);
-            } else if(trip.equals("21738595_2458")){
-                int correctTime = 58;
-                double maxSpeed = (13.5681+(100*potError))/correctTime;
-                double minSpeed = (13.5681-(100*potError))/correctTime;
-                Assertions.assertTrue(Double.parseDouble(
-                        controller.displayCumulativeDistance(trip))/correctTime < maxSpeed && Double.parseDouble(
-                        controller.displayCumulativeDistance(trip))/correctTime > minSpeed);
+            for (String trip : tripIds) {
+                if (trip.equals("21801111_2331")) {
+                    int correctTime = 21;
+                    double maxSpeed = (8.8284 + (12 * potError)) / correctTime;
+                    double minSpeed = (8.8284 - (12 * potError)) / correctTime;
+                    Assertions.assertTrue(Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime < maxSpeed && Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime > minSpeed);
+                } else if (trip.equals("21738595_2458")) {
+                    int correctTime = 58;
+                    double maxSpeed = (13.5681 + (100 * potError)) / correctTime;
+                    double minSpeed = (13.5681 - (100 * potError)) / correctTime;
+                    Assertions.assertTrue(Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime < maxSpeed && Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime > minSpeed);
 
-            } else if(trip.equals("21736580_581")){
-                int correctTime = 33;
-                double maxSpeed = (10.0106+(55*potError))/correctTime;
-                double minSpeed = (10.0106-(55*potError))/correctTime;
-                Assertions.assertTrue(Double.parseDouble(
-                        controller.displayCumulativeDistance(trip))/correctTime < maxSpeed && Double.parseDouble(
-                        controller.displayCumulativeDistance(trip))/correctTime > minSpeed);
-            } else {
-                int correctTime = 33;
-                double maxSpeed = (10.0106+(55*potError))/correctTime;
-                double minSpeed = (10.0106-(55*potError))/correctTime;
-                Assertions.assertTrue(Double.parseDouble(
-                        controller.displayCumulativeDistance(trip))/correctTime < maxSpeed && Double.parseDouble(
-                        controller.displayCumulativeDistance(trip))/correctTime > minSpeed);
+                } else if (trip.equals("21736580_581")) {
+                    int correctTime = 33;
+                    double maxSpeed = (10.0106 + (55 * potError)) / correctTime;
+                    double minSpeed = (10.0106 - (55 * potError)) / correctTime;
+                    Assertions.assertTrue(Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime < maxSpeed && Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime > minSpeed);
+                } else {
+                    int correctTime = 33;
+                    double maxSpeed = (10.0106 + (55 * potError)) / correctTime;
+                    double minSpeed = (10.0106 - (55 * potError)) / correctTime;
+                    Assertions.assertTrue(Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime < maxSpeed && Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime > minSpeed);
+                }
+
             }
-
+        } catch(NumberFormatException e){
+            System.out.println("The method displayCumulativeDistance in Controller returned a " +
+                    "value that could not be parsed into a double");
         }
 
 
