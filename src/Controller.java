@@ -46,6 +46,8 @@ import javafx.stage.Stage;
 public class Controller {
 
     private final URL url = this.getClass().getResource("mapmarkerhd_106079 (1).png");
+    private final URL busURL = this.getClass().getResource("ic_directions_bus_128_28256.png");
+
 
     @FXML
     Button importButton;
@@ -209,7 +211,7 @@ public class Controller {
      */
     @FXML
     public void generateTripIdInterface(ActionEvent actionevent) {
-        plotBus("21736718_231");
+        plotBus("21736759_143");
         tripDisplay.show();
     }
 
@@ -882,7 +884,7 @@ public class Controller {
      * Plots the current trajectory of the bus
      * This method has not been implemented
      *
-     * @param tripID1 the tripID to search
+     * @param tripID the tripID to search
      * @return boolean
      */
     public boolean plotBus(String tripID) {
@@ -907,22 +909,25 @@ public class Controller {
             return false;
         }
         Time currentTime = java.sql.Time.valueOf(LocalTime.now());
-        StopTime lastStopTime = stopTimes.get(0);
-        StopTime nextStopTime = stopTimes.get(0);
+        StopTime lastStopTime = null;
+        StopTime nextStopTime = null;
         for (StopTime stopTime: stopTimes){
             //if the StopTime is before the current time
             if (stopTime.getArrivalTime().compareTo(currentTime) < 0){
                 //if the StopTime is after the last time
-                if(stopTime.getArrivalTime().compareTo(lastStopTime.getArrivalTime()) > 0){
+                if(lastStopTime == null || stopTime.getArrivalTime().compareTo(lastStopTime.getArrivalTime()) > 0){
                     lastStopTime = stopTime;
                 }
                 // if the StopTime is after the current time
             } else if (stopTime.getArrivalTime().compareTo(currentTime) > 0){
                 // if the StopTime is before the next time
-                if(stopTime.getArrivalTime().compareTo(nextStopTime.getArrivalTime()) < 0){
+                if(nextStopTime == null || stopTime.getArrivalTime().compareTo(nextStopTime.getArrivalTime()) < 0){
                     nextStopTime = stopTime;
                 }
             }
+        }
+        if (lastStopTime == null || nextStopTime == null){
+            return false;
         }
         ArrayList<Stop> allHashedStops = new ArrayList<>();
         allHashedStops.addAll(allStopsList.get(lastStopTime.getStopID()));
@@ -936,35 +941,28 @@ public class Controller {
                 nextStop = stop;
             }
         }
-        System.out.println("next last");
-        if (lastStop == null || nextStop == null){
-            return false;
-        }
-
         double latitude = 0;
         double longitude = 0;
-        if (!(currentTime.compareTo(lastStopTime.getArrivalTime()) > 0 && currentTime.compareTo(nextStopTime.getArrivalTime()) < 0)){
-            // Trip not currently in use, get first stop coordinates
-            // TODO
-            return false;
-        } else {
+        // if the stop is currently in use
+        if (currentTime.compareTo(lastStopTime.getArrivalTime()) > 0 && currentTime.compareTo(nextStopTime.getArrivalTime()) < 0){
             // get weighted average of coordinates
             float percentComplete = (float) (currentTime.getTime()-lastStopTime.getArrivalTime().getTime())/(nextStopTime.getArrivalTime().getTime()-lastStopTime.getArrivalTime().getTime());
             latitude = lastStop.getStopLat() + (percentComplete * (nextStop.getStopLat() - lastStop.getStopLat()));
             longitude = lastStop.getStopLong() + (percentComplete * (nextStop.getStopLong() - lastStop.getStopLong()));
+            for(Marker m : markers){
+                m.setVisible(false);
+            }
+            Coordinate coordinate = new Coordinate(latitude, longitude);
+            Marker marker = new Marker(busURL, -24,-40).setPosition(coordinate).setVisible(true);
+            markers.add(marker);
+            mapView.addMarker(marker);
+            System.out.println("added");
+            mapView.setCenter(coordinate);
+            mapView.setZoom(17);
+            return true;
+        } else {
+            return false;
         }
-        for(Marker m : markers){
-            m.setVisible(false);
-        }
-        Coordinate coordinate = new Coordinate(latitude, longitude);
-        Marker marker = new Marker(url,-24,-40).setPosition(coordinate).setVisible(true);
-        markers.add(marker);
-        mapView.addMarker(marker);
-        System.out.println("added");
-        mapView.setCenter(coordinate);
-        mapView.setZoom(17);
-        //TODO
-        return true;
     }
 
 
