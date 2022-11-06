@@ -27,11 +27,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 /**
@@ -56,28 +57,6 @@ public class ControllerTest {
         controller.importFilesNoStage(listOfFiles);
     }
 
-
-
-    /**
-     * Tests distance calculations for a trip (Feature 2)
-     *
-     * @author Christian B
-     */
-
-    @Test
-    public void testDistance() {
-        int correctDistance1 = 100;
-        int correctDistance2 = 100;
-        int incorrectDistance1 = 99;
-
-        Trip testTrip1 = Controller.validateTripLines("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23");
-        Trip testTrip2 = Controller.validateTripLines("64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19");
-
-        Assertions.assertEquals(correctDistance1, testTrip1.distance());
-        Assertions.assertEquals(correctDistance2, testTrip2.distance());
-        Assertions.assertNotEquals(incorrectDistance1, testTrip1.distance());
-
-    }
 
     /**
      * feature 8 tests
@@ -107,25 +86,105 @@ public class ControllerTest {
         Assertions.assertNotEquals("21794234_1712", nextTripAtStop);
     }
 
+    /**
+     * Tests distance calculations for a trip (Feature 2)
+     *
+     * @author Christian B
+     */
+
+    @Test
+    public void testDistance() {
+        ArrayList<String> tripIds = new ArrayList<>();
+        tripIds.add("21801111_2331");
+        tripIds.add("21738595_2458");
+        tripIds.add("21736580_581");
+        tripIds.add("21736590_553");
+        final double potError = 0.027;
+
+        for(String trip: tripIds){
+            if(trip.equals("21801111_2331")){
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip)) < 8.8284+(12*potError) &&
+                        Double.parseDouble(controller.displayCumulativeDistance(trip)) >
+                                8.8284-(12*potError));
+
+            } else if(trip.equals("21738595_2458")){
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip)) < 13.5681+(100*potError) &&
+                        Double.parseDouble(controller.displayCumulativeDistance(trip)) >
+                                13.5681-(100*potError));
+            } else if(trip.equals("21736580_581")){
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip)) < 10.0106+(55*potError) &&
+                        Double.parseDouble(controller.displayCumulativeDistance(trip)) >
+                                10.0106-(55*potError));
+            } else {
+                Assertions.assertTrue(Double.parseDouble(
+                        controller.displayCumulativeDistance(trip)) < 10.0106+(55*potError) &&
+                        Double.parseDouble(controller.displayCumulativeDistance(trip)) >
+                                10.0106-(55*potError));
+            }
+
+        }
+
+
+    }
 
     /**
-     * This method tests the speed of a trip give the distance and time of a trip
+     * This method tests the speed of a trip given a tripId
      *
      * @author Patrick
      */
     @Test
     public void testSpeed() {
-        //Time for trips1 is 32, and for trip2 33 mins
-        int correctSpeed1 = 100 / 32;
-        int correctSpeed2 = 100 / 33;
-        int incorrectSpeed1 = 100 / 50;
+        ArrayList<String> tripIds = new ArrayList<>();
+        tripIds.add("21801111_2331");
+        tripIds.add("21738595_2458");
+        tripIds.add("21736580_581");
+        tripIds.add("21736590_553");
+        final double potError = 0.027;
+        try {
 
-        Trip testTrip1 = Controller.validateTripLines("64,17-SEP_SUN,21736567_2541,60TH-VLIET,0,64102,17-SEP_64_0_23");
-        Trip testTrip2 = Controller.validateTripLines("64,17-SEP_SUN,21736573_551,SOUTHRIDGE,1,64102,17-SEP_64_1_19");
+            for (String trip : tripIds) {
+                if (trip.equals("21801111_2331")) {
+                    int correctTime = 21;
+                    double maxSpeed = (8.8284 + (12 * potError)) / correctTime;
+                    double minSpeed = (8.8284 - (12 * potError)) / correctTime;
+                    Assertions.assertTrue(Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime < maxSpeed && Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime > minSpeed);
+                } else if (trip.equals("21738595_2458")) {
+                    int correctTime = 58;
+                    double maxSpeed = (13.5681 + (100 * potError)) / correctTime;
+                    double minSpeed = (13.5681 - (100 * potError)) / correctTime;
+                    Assertions.assertTrue(Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime < maxSpeed && Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime > minSpeed);
 
-        Assertions.assertEquals(correctSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
-        Assertions.assertEquals(correctSpeed2, Controller.avgSpeed(testTrip2.getTripID()));
-        Assertions.assertNotEquals(incorrectSpeed1, Controller.avgSpeed(testTrip1.getTripID()));
+                } else if (trip.equals("21736580_581")) {
+                    int correctTime = 33;
+                    double maxSpeed = (10.0106 + (55 * potError)) / correctTime;
+                    double minSpeed = (10.0106 - (55 * potError)) / correctTime;
+                    Assertions.assertTrue(Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime < maxSpeed && Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime > minSpeed);
+                } else {
+                    int correctTime = 33;
+                    double maxSpeed = (10.0106 + (55 * potError)) / correctTime;
+                    double minSpeed = (10.0106 - (55 * potError)) / correctTime;
+                    Assertions.assertTrue(Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime < maxSpeed && Double.parseDouble(
+                            controller.displayCumulativeDistance(trip)) / correctTime > minSpeed);
+                }
+
+            }
+        } catch(NumberFormatException e){
+            System.out.println("The method displayCumulativeDistance in Controller returned a " +
+                    "value that could not be parsed into a double");
+        }
+
+
+
 
     }
 
@@ -331,8 +390,8 @@ public class ControllerTest {
      * @author Matthew Wehman
      */
     @Test
-    public void testRoutesContainingStop(){
-        String[] stops = new String[]{"1801","5006"};
+    public void testRoutesContainingStop() {
+        String[] stops = new String[]{"1801", "5006"};
         ArrayList<String> firstRoutes = new ArrayList<String>(
                 List.of("67")
         );
@@ -354,14 +413,14 @@ public class ControllerTest {
         System.out.println("start");
         String[] types = {"stops", "trips", "routes", "stop_times"};
         boolean correctExportFiles = true;
-        for (String type: types){
+        for (String type : types) {
             File firstFile = new File("./GTFSFiles/" + type + ".txt");
             File checkFile = new File("./export/" + type + ".txt");
             List<String> checkLines = Files.lines(checkFile.toPath()).toList();
             List<String> firstLines = Files.lines(firstFile.toPath()).toList();
             HashSet<String> set = new HashSet<>(checkLines);
-            for (String line: firstLines){
-                if (!set.contains(line)){
+            for (String line : firstLines) {
+                if (!set.contains(line)) {
                     System.out.println("Expected: " + line + ", Not found");
                     correctExportFiles = false;
                 }

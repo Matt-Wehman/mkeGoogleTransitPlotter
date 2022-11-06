@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.time.LocalTime;
 import java.util.*;
@@ -48,6 +49,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  * This class handles the methods from the GUI
@@ -59,6 +62,8 @@ import javafx.stage.Stage;
 public class Controller {
 
     private final URL url = this.getClass().getResource("mapmarkerhd_106079 (1).png");
+    private final URL busURL = this.getClass().getResource("ic_directions_bus_128_28256.png");
+
 
     @FXML
     Button importButton;
@@ -87,6 +92,7 @@ public class Controller {
     Stage stopDisplay;
 
     StopController stopController;
+    TripController tripController;
 
     @FXML
     MapView mapView;
@@ -109,6 +115,7 @@ public class Controller {
     /**
      * This adds Trips to an arrayList. This method will handle the chaining for the
      * Trips in tripList
+     *
      * @param key
      * @param val
      * @author Patrick
@@ -125,6 +132,7 @@ public class Controller {
     /**
      * This adds Routes to an arrayList. This method will handle the chaining for the
      * Routes in RouteList
+     *
      * @param key
      * @param val
      * @author Patrick
@@ -141,6 +149,7 @@ public class Controller {
     /**
      * This adds Stops to an arrayList. This method will handle the chaining for the
      * stops in allStopsList
+     *
      * @param key
      * @param val
      * @author Patrick
@@ -168,6 +177,10 @@ public class Controller {
         stopController = stop;
     }
 
+    public void setTripController(TripController trip) {
+        tripController = trip;
+    }
+
     public void setStage(Stage primary){
         this.stage = primary;
     }
@@ -184,8 +197,8 @@ public class Controller {
         if (allStopsList.containsKey(stopId)) {
             stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
             ArrayList<Stop> selectedStopId = allStopsList.get(stopId);
-            for(Stop s: selectedStopId){
-                if(s.getStopID().equals(stopId)){
+            for (Stop s : selectedStopId) {
+                if (s.getStopID().equals(stopId)) {
                     stopController.setStopID(s.getStopName());
                 }
             }
@@ -214,17 +227,44 @@ public class Controller {
     }
 
 
+    /**
+     * Show the trip stage and show all information inside of it
+     *
+     * @param actionevent when button is clicked
+     * @author Patrick
+     */
+    @FXML
+    public void generateTripIdInterface(ActionEvent actionevent) {
+        String tripId = getId();
+        if (tripsList.containsKey(tripId)) {
+            stopController.setTripsText(String.valueOf(tripsPerStop(tripId)));
+            ArrayList<Trip> selectedTripId = tripsList.get(tripId);
+            for (Trip t : selectedTripId) {
+                if (t.getTripID().equals(tripId)) {
+                    tripController.setTripId(t.getTripID());
+                }
+            }
+            tripDisplay.show();
+            tripController.setTripDistance(displayCumulativeDistance(tripId) + " mile");
+            tripController.setTripSpeed(speedOfTrip(tripId) + " mile/min");
+        } else {
+            errorAlert("Stop Not Found", "Ensure the GTFS files have been imported");
+        }
+        plotBus(tripId);
+    }
 
     /**
-     * Shows the trip stage and sets all information inside it
+     * Shows the route stage and sets all information inside it
      *
      * @param actionevent when button is clicked
      */
     @FXML
-    public void generateTripIdInterface(ActionEvent actionevent) {
-        plotBus("21736652_874");
-        tripDisplay.show();
+    public void generateRouteIdInterface(ActionEvent actionevent) {
+        routeDisplay.show();
     }
+
+
+
 
     /**
      * Sets the route stage
@@ -266,16 +306,6 @@ public class Controller {
 
     }
 
-    /**
-     * Finds the average speed of a trip if given the tripID
-     * This method has not been implemented
-     *
-     * @param tripID
-     * @return int
-     */
-    public static int avgSpeed(String tripID) {
-        return 0;
-    }
 
     /**
      * Changes the time of a Stop's Arrival/Departure time
@@ -302,13 +332,140 @@ public class Controller {
 
     /**
      * Displays the total distance of a route
-     * This method has not been implemented
      *
-     * @param routeID
      * @return double
+     * @author Patrick
      */
-    public double displayDistance(int routeID) {
-        return 0;
+    public String displayCumulativeDistance(String tripId) {
+        ArrayList<Trip> trips = tripsList.get(tripId);
+        double cuDist = 0;
+        for (Trip trip : trips) {
+            if (trip.getTripID().equals(tripId)) {
+                int startSeq = 1;
+                String startStopId = "";
+                String endStopId = "";
+                boolean startChanged = false;
+                boolean endChanged = false;
+                double distance = 0;
+                HashSet<String> lat1Set = new HashSet<>();
+                HashSet<String> lat2Set = new HashSet<>();
+
+                for(int i = 0; i < trip.getStopTimes().size(); i++) {
+                    for (Map.Entry<String, ArrayList<StopTime>> stopTimesMap : trip.getStopTimes().entrySet()) {
+                        ArrayList<StopTime> stopTimesList = stopTimesMap.getValue();
+                        for (StopTime stopTime : stopTimesList) {
+                            if (stopTime.getStopSequence().equals("" + startSeq)) {
+                                startStopId = stopTime.getStopID();
+                            } else if (stopTime.getStopSequence().equals("" + (startSeq + 1))) {
+                                endStopId = stopTime.getStopID();
+                            }
+                        }
+                    }
+                    startSeq++;
+                    double lat1 = 0;
+                    double lon1 = 0;
+                    double lat2 = 0;
+                    double lon2 = 0;
+
+                    Set<Map.Entry<String, ArrayList<Stop>>> stopSet = allStopsList.entrySet();
+                    for (Map.Entry<String, ArrayList<Stop>> stops : stopSet) {
+                        for (Stop s : stops.getValue()) {
+                            if (s.getStopID().equals(startStopId)) {
+                                lat1 = s.getStopLat();
+                                lon1 = s.getStopLong();
+                                startChanged = true;
+                            } else if (s.getStopID().equals(endStopId)) {
+                                lat2 = s.getStopLat();
+                                lon2 = s.getStopLong();
+                                endChanged = true;
+                            }
+                        }
+                    }
+                    if (!startChanged || !endChanged) {
+                        System.out.println("throw exception");
+                    } else if(!startStopId.equals(endStopId)) {
+                        double latDistance = Math.toRadians(lat2 - lat1);
+                        double lonDistance = Math.toRadians(lon2 - lon1);
+                        lat1 = Math.toRadians(lat1);
+                        lat2 = Math.toRadians(lat2);
+                        double a = Math.pow(Math.sin(latDistance / 2), 2) +
+                                Math.pow(Math.sin(lonDistance / 2), 2) *
+                                        Math.cos(lat1) *
+                                        Math.cos(lat2);
+                        double rad = 6371;
+                        double c = 2 * Math.asin(Math.sqrt(a));
+                        distance = rad * c;
+                        cuDist += distance;
+
+                    }
+                }
+            }
+        }
+
+        DecimalFormat df = new DecimalFormat("#.###");
+        double distMile = cuDist * 0.621;
+        return "" + df.format(distMile);
+    }
+
+    /**
+     * Displays the average speed of a route
+     *
+     * @return double
+     * @author Patrick
+     */
+    public String speedOfTrip(String tripId) {
+        ArrayList<Trip> trips = tripsList.get(tripId);
+        String distance = displayCumulativeDistance(tripId);
+        int totalMin = 0;
+        double dist = 0;
+        try{
+            dist = Double.parseDouble(distance);
+        } catch(NumberFormatException e){
+            System.out.println("Tried to parse something that can't be turned into a double");
+        }
+        for (Trip trip : trips) {
+            if (trip.getTripID().equals(tripId)) {
+                int startSeq = 1;
+                StopTime time1 = null;
+                StopTime time2 = null;
+                for(int i = 0; i < trip.getStopTimes().size(); i++) {
+                    for (Map.Entry<String, ArrayList<StopTime>> stopTimesMap : trip.getStopTimes().entrySet()) {
+                        ArrayList<StopTime> stopTimesList = stopTimesMap.getValue();
+                        for (StopTime stopTime : stopTimesList) {
+                            if (stopTime.getStopSequence().equals("" + startSeq)) {
+                                time1 = stopTime;
+                            } else if (stopTime.getStopSequence().equals("" + (startSeq + 1))) {
+                                time2 = stopTime;
+                            }
+                        }
+                    }
+                    startSeq++;
+                    long seconds = 0;
+                    if((!time2.getIsNextDay() && !time1.getIsNextDay()) ||
+                            (time1.getIsNextDay() && time2.getIsNextDay())){
+                        seconds = Math.abs(Duration.between(LocalTime.parse(time2.getArrivalTime().toString()),
+                                LocalTime.parse(time1.getArrivalTime().toString())).getSeconds());
+                    } else if(!time2.getIsNextDay() && time1.getIsNextDay()){
+                        seconds = Math.abs(Duration.between(LocalTime.parse(time2.getArrivalTime().toString()),
+                                LocalTime.parse("23:59:59")).getSeconds()) + 1;
+                        seconds = seconds + Math.abs(Duration.between(LocalTime.parse(time1.getArrivalTime().toString()),
+                                LocalTime.parse("00:00:00")).getSeconds());
+                    } else if(time2.getIsNextDay() && !time1.getIsNextDay()){
+                        seconds = Math.abs(Duration.between(LocalTime.parse(time1.getArrivalTime().toString()),
+                                LocalTime.parse("23:59:59")).getSeconds()) + 1;
+                        seconds = seconds + Math.abs(Duration.between(LocalTime.parse(time2.getArrivalTime().toString()),
+                                LocalTime.parse("00:00:00")).getSeconds());
+                    }
+                    int secondsInt = (int)seconds;
+                    int minutes = secondsInt/60;
+                    totalMin = totalMin + minutes;
+                }
+            }
+        }
+        double spd = dist/totalMin;
+        DecimalFormat df = new DecimalFormat("#.###");
+        String ret = "" + df.format(spd);
+        return ret;
     }
 
 
@@ -568,7 +725,7 @@ public class Controller {
             reader.checkEndOfLine();
             stopTime.checkRequired();
         } catch (CSVReader.EndOfStringException | CSVReader.MissingRequiredFieldException
-                 | NumberFormatException | ParseException e) {
+                | NumberFormatException | ParseException e) {
             return null;
         }
         return stopTime;
@@ -856,7 +1013,7 @@ public class Controller {
      * Finds the next trip at a certain stop given the time
      * This method has not been implemented
      *
-     * @param stopID the stop being parsed
+     * @param stopID      the stop being parsed
      * @param currentTime the current time
      */
     public String nextTripAtStop(String stopID, Time currentTime) {
@@ -864,20 +1021,21 @@ public class Controller {
         SortedMap<Time, StopTime> map = new TreeMap<>();
         TreeMap<Time, StopTime> nextDayTimes = new TreeMap<>();
         for (Map.Entry<String, ArrayList<Trip>> mapEntry : tripsList.entrySet()) {
-            Trip trip = mapEntry.getValue().get(0);
-            if (trip.getStopTimes().containsKey(stopID)) {
-                ArrayList<StopTime> stopTimes = trip.getStopTimes().get(stopID);
-                for (StopTime stopTime : stopTimes) {
-                    Time stopTimeArr = null;
-                    if (!stopTime.getIsNextDay()) {
-                        stopTimeArr = stopTime.getArrivalTime();
-                        if (currentTime.compareTo(stopTimeArr) < 0) {
-                            map.put(stopTimeArr, stopTime);
+            ArrayList<Trip> trips = mapEntry.getValue();
+            for (Trip trip : trips) {
+                if (trip.getStopTimes().containsKey(stopID)) {
+                    ArrayList<StopTime> stopTimes = trip.getStopTimes().get(stopID);
+                    for (StopTime stopTime : stopTimes) {
+                        Time stopTimeArr = null;
+                        if (!stopTime.getIsNextDay()) {
+                            stopTimeArr = stopTime.getArrivalTime();
+                            if (currentTime.compareTo(stopTimeArr) < 0) {
+                                map.put(stopTimeArr, stopTime);
+                            }
+                        } else {
+                            nextDayTimes.put(stopTime.getArrivalTime(), stopTime);
                         }
-                    } else{
-                        nextDayTimes.put(stopTime.getArrivalTime(), stopTime);
                     }
-                }
 
                 if (!map.isEmpty()) {
                     ret = map.get(map.firstKey()).getTripID();
@@ -887,8 +1045,10 @@ public class Controller {
                     ret = "No more trips today";
                 }
 
+                }
             }
         }
+        System.out.println("--" + ret + "--");
         return ret;
     }
     /**
@@ -899,6 +1059,7 @@ public class Controller {
      * @return boolean
      */
     public boolean plotBus(String tripID) {
+        System.out.println("print");
         ArrayList<Trip> trips = tripsList.get(tripID);
         Trip trip = null;
         for (Trip t: trips){
@@ -919,28 +1080,31 @@ public class Controller {
             return false;
         }
         Time currentTime = java.sql.Time.valueOf(LocalTime.now());
-        StopTime lastStopTime = stopTimes.get(0);
-        StopTime nextStopTime = stopTimes.get(0);
+        StopTime lastStopTime = null;
+        StopTime nextStopTime = null;
         for (StopTime stopTime: stopTimes){
             //if the StopTime is before the current time
             if (stopTime.getArrivalTime().compareTo(currentTime) < 0){
                 //if the StopTime is after the last time
-                if(stopTime.getArrivalTime().compareTo(lastStopTime.getArrivalTime()) > 0){
+                if(lastStopTime == null || stopTime.getArrivalTime().compareTo(lastStopTime.getArrivalTime()) > 0){
                     lastStopTime = stopTime;
                 }
                 // if the StopTime is after the current time
             } else if (stopTime.getArrivalTime().compareTo(currentTime) > 0){
                 // if the StopTime is before the next time
-                if(stopTime.getArrivalTime().compareTo(nextStopTime.getArrivalTime()) < 0){
+                if(nextStopTime == null || stopTime.getArrivalTime().compareTo(nextStopTime.getArrivalTime()) < 0){
                     nextStopTime = stopTime;
                 }
             }
         }
+        if (lastStopTime == null || nextStopTime == null){
+            return false;
+        }
         ArrayList<Stop> allHashedStops = new ArrayList<>();
         allHashedStops.addAll(allStopsList.get(lastStopTime.getStopID()));
         allHashedStops.addAll(allStopsList.get(nextStopTime.getStopID()));
-        Stop lastStop = null;
-        Stop nextStop = null;
+        Stop lastStop = allHashedStops.get(0);
+        Stop nextStop = allHashedStops.get(0);
         for (Stop stop: allHashedStops){
             if (Objects.equals(stop.getStopID(), lastStopTime.getStopID())){
                 lastStop = stop;
@@ -948,33 +1112,28 @@ public class Controller {
                 nextStop = stop;
             }
         }
-        if (lastStop == null || nextStop == null){
-            return false;
-        }
-
         double latitude = 0;
         double longitude = 0;
-        if (!(currentTime.compareTo(lastStopTime.getArrivalTime()) > 0 && currentTime.compareTo(nextStopTime.getArrivalTime()) < 0)){
-            // Trip not currently in use, get first stop coordinates
-            // TODO
-            return false;
-        } else {
+        // if the stop is currently in use
+        if (currentTime.compareTo(lastStopTime.getArrivalTime()) > 0 && currentTime.compareTo(nextStopTime.getArrivalTime()) < 0){
             // get weighted average of coordinates
             float percentComplete = (float) (currentTime.getTime()-lastStopTime.getArrivalTime().getTime())/(nextStopTime.getArrivalTime().getTime()-lastStopTime.getArrivalTime().getTime());
             latitude = lastStop.getStopLat() + (percentComplete * (nextStop.getStopLat() - lastStop.getStopLat()));
             longitude = lastStop.getStopLong() + (percentComplete * (nextStop.getStopLong() - lastStop.getStopLong()));
+            for(Marker m : markers){
+                m.setVisible(false);
+            }
+            Coordinate coordinate = new Coordinate(latitude, longitude);
+            Marker marker = new Marker(busURL, -24,-40).setPosition(coordinate).setVisible(true);
+            markers.add(marker);
+            mapView.addMarker(marker);
+            System.out.println("added");
+            mapView.setCenter(coordinate);
+            mapView.setZoom(17);
+            return true;
+        } else {
+            return false;
         }
-        for(Marker m : markers){
-            m.setVisible(false);
-        }
-        Coordinate coordinate = new Coordinate(latitude, longitude);
-        Marker marker = new Marker(url,-24,-40).setPosition(coordinate).setVisible(true);
-        markers.add(marker);
-        mapView.addMarker(marker);
-        mapView.setCenter(coordinate);
-        mapView.setZoom(17);
-        //TODO
-        return true;
     }
 
 
@@ -1010,11 +1169,11 @@ public class Controller {
     public ArrayList<String> routesContainingStop(String stopID) {
         ArrayList<String> routesContaining = new ArrayList<>();
         for (Map.Entry<String, ArrayList<Trip>> mapEntry : tripsList.entrySet()) {
-            ArrayList<Trip> trip = mapEntry.getValue();
-            for (Trip t : trip) {
-                if (t.getStopTimes().containsKey(stopID)) {
-                    if (!routesContaining.contains(t.getRouteID())) {
-                        routesContaining.add(t.getRouteID());
+            ArrayList<Trip> trips = mapEntry.getValue();
+            for (Trip trip : trips) {
+                if (trip.getStopTimes().containsKey(stopID)) {
+                    if (!routesContaining.contains(trip.getRouteID())) {
+                        routesContaining.add(trip.getRouteID());
                     }
                 }
             }
@@ -1042,9 +1201,9 @@ public class Controller {
     public int tripsPerStop(String stopID) {
         int counter = 0;
         for (Map.Entry<String, ArrayList<Trip>> mapEntry : tripsList.entrySet()) {
-            ArrayList<Trip> trip = mapEntry.getValue();
-            for (Trip t:trip) {
-                if (t.getStopTimes().containsKey(stopID)) {
+            ArrayList<Trip> trips = mapEntry.getValue();
+            for (Trip trip : trips) {
+                if (trip.getStopTimes().containsKey(stopID)) {
                     counter++;
                 }
             }
@@ -1152,6 +1311,7 @@ public class Controller {
         public String getFilename() {
             return filename;
         }
+
     }
 
     private Alert errorAlert(String header, String context) {
