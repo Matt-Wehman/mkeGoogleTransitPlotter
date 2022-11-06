@@ -886,6 +886,7 @@ public class Controller {
      * @return boolean
      */
     public boolean plotBus(String tripID) {
+        System.out.println("print");
         ArrayList<Trip> trips = tripsList.get(tripID);
         Trip trip = null;
         for (Trip t: trips){
@@ -926,8 +927,8 @@ public class Controller {
         ArrayList<Stop> allHashedStops = new ArrayList<>();
         allHashedStops.addAll(allStopsList.get(lastStopTime.getStopID()));
         allHashedStops.addAll(allStopsList.get(nextStopTime.getStopID()));
-        Stop lastStop = null;
-        Stop nextStop = null;
+        Stop lastStop = allHashedStops.get(0);
+        Stop nextStop = allHashedStops.get(0);
         for (Stop stop: allHashedStops){
             if (Objects.equals(stop.getStopID(), lastStopTime.getStopID())){
                 lastStop = stop;
@@ -935,6 +936,7 @@ public class Controller {
                 nextStop = stop;
             }
         }
+        System.out.println("next last");
         if (lastStop == null || nextStop == null){
             return false;
         }
@@ -958,6 +960,7 @@ public class Controller {
         Marker marker = new Marker(url,-24,-40).setPosition(coordinate).setVisible(true);
         markers.add(marker);
         mapView.addMarker(marker);
+        System.out.println("added");
         mapView.setCenter(coordinate);
         mapView.setZoom(17);
         //TODO
