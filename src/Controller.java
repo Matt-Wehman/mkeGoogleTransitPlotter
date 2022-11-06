@@ -222,7 +222,7 @@ public class Controller {
      */
     @FXML
     public void generateTripIdInterface(ActionEvent actionevent) {
-        plotBus("21737058_1084");
+        plotBus("21736652_874");
         tripDisplay.show();
     }
 
