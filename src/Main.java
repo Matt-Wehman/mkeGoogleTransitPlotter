@@ -84,7 +84,6 @@ public class Main extends Application {
 
         TripController tripController = tripLoader.getController();
 
-        primaryController.setRouteStage(routeStage);
         primaryController.setStage(stage);
 
         primaryController.setTripStage(tripStage);
