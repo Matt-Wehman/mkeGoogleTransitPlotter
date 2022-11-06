@@ -6,15 +6,14 @@
  * Created on: 09/10/22
  */
 
-import java.awt.*;
-import java.io.File;
+import java.io.*;
 
+import com.sothawo.mapjfx.*;
+import com.sothawo.mapjfx.event.MarkerEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Array;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,16 +24,16 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.time.Duration;
@@ -49,8 +48,9 @@ import java.time.Instant;
  */
 public class Controller {
 
-    @FXML
-    Button butt;
+    private final URL url = this.getClass().getResource("mapmarkerhd_106079 (1).png");
+    private final URL busURL = this.getClass().getResource("ic_directions_bus_128_28256.png");
+
 
     @FXML
     Button importButton;
@@ -69,10 +69,6 @@ public class Controller {
 
     @FXML
     TextField searchBar;
-
-    @FXML
-    Label searchBarLabel;
-
     @FXML
     Stage tripDisplay;
 
@@ -85,30 +81,23 @@ public class Controller {
     StopController stopController;
     TripController tripController;
 
+    @FXML
+    MapView mapView;
+
+    Stage stage;
+
+    public List<Marker> markers;
+
+
     protected HashMap<String, ArrayList<Stop>> allStopsList = new HashMap<>();
     protected HashMap<String, ArrayList<Trip>> tripsList = new HashMap<>();
     protected HashMap<String, ArrayList<Route>> routesList = new HashMap<>();
-
-
     /**
      * Creates Controller instance
      */
     public Controller() {
 
     }
-
-//    public void testTripsInRoutes() {
-//        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
-//
-//        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
-//
-//        while (it.hasNext()) {
-//            Map.Entry<String, ArrayList<Route>> routess = it.next();
-//            for (Route r : routess.getValue()) {
-//                System.out.println(r.getStopsList());
-//            }
-//        }
-//    }
 
     /**
      * This adds Trips to an arrayList. This method will handle the chaining for the
@@ -179,6 +168,10 @@ public class Controller {
         tripController = trip;
     }
 
+    public void setStage(Stage primary){
+        this.stage = primary;
+    }
+
     /**
      * Show the stop stage and sets all information inside it
      *
@@ -207,15 +200,17 @@ public class Controller {
                 routesString = "No routes service this stop";
             }
             stopController.setRoutesText(routesString);
+            stopDisplay.setX(stage.getX() + stopDisplay.getWidth());
+            stopDisplay.setY(stage.getY());
             stopDisplay.show();
             stopController.setTripsText(String.valueOf(tripsPerStop(stopId)));
             stopController.setStopID(stopId);
+            plotStop(stopId);
             Time currentTime = java.sql.Time.valueOf(LocalTime.now());
             stopController.setNextTrip(nextTripAtStop(stopId, currentTime));
         } else {
             errorAlert("Stop Not Found", "Ensure the GTFS files have been imported");
         }
-
     }
 
 
@@ -242,7 +237,7 @@ public class Controller {
         } else {
             errorAlert("Stop Not Found", "Ensure the GTFS files have been imported");
         }
-
+        plotBus(tripId);
     }
 
     /**
@@ -254,6 +249,8 @@ public class Controller {
     public void generateRouteIdInterface(ActionEvent actionevent) {
         routeDisplay.show();
     }
+
+
 
 
     /**
@@ -293,6 +290,7 @@ public class Controller {
      */
     public ArrayList<Integer> allStopsInRoute(int routeID) {
         return null;
+
     }
 
 
@@ -643,6 +641,7 @@ public class Controller {
                     alert.setContentText("All files were imported successfully");
                     alert.showAndWait();
                 }
+                importAllStopsToAllRoutes();
                 return true;
             } catch (InvalidHeaderException e) {
                 errorAlert("Invalid Header", "The header for " + e.filename +
@@ -924,6 +923,7 @@ public class Controller {
                 throw new InvalidHeaderException("Invalid header encountered", "routes.txt");
             }
         }
+
         return incorrectLines;
     }
 
@@ -990,16 +990,11 @@ public class Controller {
                 files.add(file);
                 System.out.println(files);
             }
-
             importFiles(files);
         }
 
 
     }
-
-
-    //epic
-
 
     /**
      * Finds the next trip at a certain stop given the time
@@ -1029,11 +1024,13 @@ public class Controller {
                         }
                     }
 
-                    if (!map.isEmpty()) {
-                        ret = map.get(map.firstKey()).getTripID();
-                    } else if (!nextDayTimes.isEmpty()) {
-                        ret = nextDayTimes.get(nextDayTimes.firstKey()).getTripID();
-                    }
+                if (!map.isEmpty()) {
+                    ret = map.get(map.firstKey()).getTripID();
+                } else if (!nextDayTimes.isEmpty()){
+                    ret = nextDayTimes.get(nextDayTimes.firstKey()).getTripID();
+                } else{
+                    ret = "No more trips today";
+                }
 
                 }
             }
@@ -1041,26 +1038,112 @@ public class Controller {
         System.out.println("--" + ret + "--");
         return ret;
     }
-
     /**
      * Plots the current trajectory of the bus
      * This method has not been implemented
      *
-     * @param tripID
+     * @param tripID the tripID to search
      * @return boolean
      */
-    public boolean plotBus(int tripID) {
-        return false;
+    public boolean plotBus(String tripID) {
+        System.out.println("print");
+        ArrayList<Trip> trips = tripsList.get(tripID);
+        Trip trip = null;
+        for (Trip t: trips){
+            if (Objects.equals(t.getTripID(), tripID)){
+                trip = t;
+            }
+        }
+        if (trip == null) {
+            return false;
+        }
+        HashMap<String, ArrayList<StopTime>> stopTimesHashMap = trip.getStopTimes();
+        Iterator<Map.Entry<String, ArrayList<StopTime>>> it = stopTimesHashMap.entrySet().iterator();
+        ArrayList<StopTime> stopTimes = new ArrayList<>();
+        while (it.hasNext()){
+            stopTimes.addAll(it.next().getValue());
+        }
+        if (stopTimes.size() == 0){
+            return false;
+        }
+        Time currentTime = java.sql.Time.valueOf(LocalTime.now());
+        StopTime lastStopTime = null;
+        StopTime nextStopTime = null;
+        for (StopTime stopTime: stopTimes){
+            //if the StopTime is before the current time
+            if (stopTime.getArrivalTime().compareTo(currentTime) < 0){
+                //if the StopTime is after the last time
+                if(lastStopTime == null || stopTime.getArrivalTime().compareTo(lastStopTime.getArrivalTime()) > 0){
+                    lastStopTime = stopTime;
+                }
+                // if the StopTime is after the current time
+            } else if (stopTime.getArrivalTime().compareTo(currentTime) > 0){
+                // if the StopTime is before the next time
+                if(nextStopTime == null || stopTime.getArrivalTime().compareTo(nextStopTime.getArrivalTime()) < 0){
+                    nextStopTime = stopTime;
+                }
+            }
+        }
+        if (lastStopTime == null || nextStopTime == null){
+            return false;
+        }
+        ArrayList<Stop> allHashedStops = new ArrayList<>();
+        allHashedStops.addAll(allStopsList.get(lastStopTime.getStopID()));
+        allHashedStops.addAll(allStopsList.get(nextStopTime.getStopID()));
+        Stop lastStop = allHashedStops.get(0);
+        Stop nextStop = allHashedStops.get(0);
+        for (Stop stop: allHashedStops){
+            if (Objects.equals(stop.getStopID(), lastStopTime.getStopID())){
+                lastStop = stop;
+            } else if (Objects.equals(stop.getStopID(), nextStopTime.getStopID())){
+                nextStop = stop;
+            }
+        }
+        double latitude = 0;
+        double longitude = 0;
+        // if the stop is currently in use
+        if (currentTime.compareTo(lastStopTime.getArrivalTime()) > 0 && currentTime.compareTo(nextStopTime.getArrivalTime()) < 0){
+            // get weighted average of coordinates
+            float percentComplete = (float) (currentTime.getTime()-lastStopTime.getArrivalTime().getTime())/(nextStopTime.getArrivalTime().getTime()-lastStopTime.getArrivalTime().getTime());
+            latitude = lastStop.getStopLat() + (percentComplete * (nextStop.getStopLat() - lastStop.getStopLat()));
+            longitude = lastStop.getStopLong() + (percentComplete * (nextStop.getStopLong() - lastStop.getStopLong()));
+            for(Marker m : markers){
+                m.setVisible(false);
+            }
+            Coordinate coordinate = new Coordinate(latitude, longitude);
+            Marker marker = new Marker(busURL, -24,-40).setPosition(coordinate).setVisible(true);
+            markers.add(marker);
+            mapView.addMarker(marker);
+            System.out.println("added");
+            mapView.setCenter(coordinate);
+            mapView.setZoom(17);
+            return true;
+        } else {
+            return false;
+        }
     }
+
 
     /**
      * Plots the stops on a given route
      * This method has not been implemented
      *
-     * @param routeID
+     * @param stopID
      * @return boolean
+     * @author wehman
      */
-    public boolean plotStops(int routeID) {
+    public boolean plotStop(String stopID) {
+        for(Marker m : markers){
+            m.setVisible(false);
+        }
+        ArrayList<Stop> stop = allStopsList.get(stopID);
+        Stop stop1 = stop.get(0);
+        Coordinate coordinate = new Coordinate(stop1.getStopLat(), stop1.getStopLong());
+        Marker marker1 = new Marker(url,-24,-40).setPosition(coordinate).setVisible(true);
+        markers.add(marker1);
+        mapView.addMarker(marker1);
+        mapView.setCenter(coordinate);
+        mapView.setZoom(17);
         return false;
     }
 
@@ -1233,6 +1316,102 @@ public class Controller {
         alert.setContentText(context);
         alert.showAndWait();
         return alert;
+    }
+    /**
+     * Gets route id from search bar and plots stops
+     * @param actionevent when button is clicked
+     * @author wehman
+     */
+    @FXML
+    public void plotStopsOnRoute(ActionEvent actionevent) {
+        String routeid = searchBar.getText();
+        ArrayList<Route> route = routesList.get(routeid);
+        if(route == null){
+            errorAlert("Null Route", "The route id entered in the search bar cannot be found. Please enter a valid route id");
+        } else {
+            getMapURL(route.get(0));
+        }
+    }
+
+    /**
+     * Plots all stops on a given route and adds them to the mapview
+     * @param route
+     * @author Wehman, Bassoc
+     */
+    private void getMapURL(Route route) {
+        for(Marker m : markers){
+            m.setVisible(false);
+        }
+        HashMap<String, ArrayList<Stop>> stops = route.getStopsList();
+        Set<Map.Entry<String, ArrayList<Stop>>> stopSet = stops.entrySet();
+        Iterator<Map.Entry<String, ArrayList<Stop>>> it = stopSet.iterator();
+        List<Coordinate> coordinates = new ArrayList<>();
+        while(it.hasNext()) {
+            Stop cur = it.next().getValue().get(0);
+            Coordinate coordinate = new Coordinate(cur.getStopLat(), cur.getStopLong());
+            coordinates.add(coordinate);
+            Marker marker = new Marker(this.url, -24, -40).setPosition(coordinate).setVisible(true);
+            markers.add(marker);
+            mapView.addMarker(marker);
+        }
+        Extent extent = Extent.forCoordinates(coordinates);
+        mapView.setExtent(extent);
+    }
+
+    /**
+     * Adds all stops on a route to a route class
+     * @param route
+     * @author Bassoc
+     */
+    public void addStopsToRoute(Route route){
+        Set<Map.Entry<String, ArrayList<Trip>>> tripSet = tripsList.entrySet();
+        Iterator<Map.Entry<String, ArrayList<Trip>>> it = tripSet.iterator();
+        Trip currentTrip = it.next().getValue().get(0);
+        while(it.hasNext() && !Objects.equals(currentTrip.getRouteID(), route.getRouteID())) {
+            currentTrip = it.next().getValue().get(0);
+        }
+        Set<Map.Entry<String, ArrayList<StopTime>>> stopSet = currentTrip.getStopTimes().entrySet();
+        Iterator<Map.Entry<String, ArrayList<StopTime>>> dumbIt = stopSet.iterator();
+        for(int i = 0; i < currentTrip.getStopTimes().size(); i++) {
+            route.addStop(allStopsList.get(dumbIt.next().getValue().get(0).getStopID()).get(0));
+        }
+    }
+
+    /**
+     * Adds stops to all routes
+     * @author Bassoc
+     */
+    public void importAllStopsToAllRoutes() {
+        Set<Map.Entry<String, ArrayList<Route>>> routeSet = routesList.entrySet();
+        Iterator<Map.Entry<String, ArrayList<Route>>> it = routeSet.iterator();
+        for(int i = 0; i < routesList.size(); i++) {
+            addStopsToRoute(it.next().getValue().get(0));
+        }
+    }
+
+    /**
+     * called after the fxml is loaded and all objects are created. This is not called initialize any more,
+     * because we need to pass in the projection before initializing.
+     *
+     * @param projection
+     *     the projection to use in the map.
+     */
+    public void initMapAndControls(Projection projection) {
+        mapView.setBingMapsApiKey("w1oz2x0G8Gn2cpDoyMKM~7z_7StT4ZgJ6x4zLE9oH2w~AnwrC5ThdXoU2STqcTWH_eVRdKc-ezqaFZYB41JUq4fknKQzslqc0_LJ9j0mbv0V");
+        mapView.setMapType(MapType.BINGMAPS_ROAD);
+        mapView.setCenter(new Coordinate(43.0453675,-87.9109152));
+        mapView.setZoom(10);
+        markers = new ArrayList<>();
+        mapView.addEventHandler(MarkerEvent.MARKER_CLICKED, event -> {
+            event.consume();
+            Marker marker = event.getMarker();
+            mapView.setCenter(marker.getPosition());
+            mapView.setZoom(17);
+        });
+        mapView.initialize(Configuration.builder()
+                .projection(projection)
+                .showZoomControls(false)
+                .build());
     }
 
 
