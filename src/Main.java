@@ -60,7 +60,8 @@ public class Main extends Application {
         Stage tripStage = new Stage();
 
         //Trip Stage/Window
-        tripStage.setTitle("Route info");
+
+        tripStage.setTitle("Trip info");
         tripStage.setScene(new Scene(tripRoot));
         tripStage.hide();
 
@@ -84,7 +85,6 @@ public class Main extends Application {
 
         TripController tripController = tripLoader.getController();
 
-        primaryController.setRouteStage(routeStage);
         primaryController.setStage(stage);
 
         primaryController.setTripStage(tripStage);

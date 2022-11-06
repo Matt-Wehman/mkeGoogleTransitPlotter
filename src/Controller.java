@@ -231,13 +231,22 @@ public class Controller {
                     tripController.setTripId(t.getTripID());
                 }
             }
+            if(stopDisplay.isShowing()){
+                stopDisplay.hide();
+            }
+            tripDisplay.setX(0);
             tripDisplay.show();
             tripController.setTripDistance(displayCumulativeDistance(tripId) + " mile");
-            tripController.setTripSpeed(speedOfTrip(tripId) + " mile/min");
+            tripController.setTripSpeed(speedOfTrip(tripId) + " mph");
+            if (plotBus(tripId)){
+                tripController.setTripStatus("Active");
+            } else {
+                tripController.setTripStatus("Inactive");
+            }
         } else {
-            errorAlert("Stop Not Found", "Ensure the GTFS files have been imported");
+            errorAlert("Trip Not Found", "Ensure the GTFS files have been imported");
         }
-        plotBus(tripId);
+
     }
 
     /**
@@ -397,7 +406,7 @@ public class Controller {
     /**
      * Displays the average speed of a route
      *
-     * @return double
+     * @return double speed the speed of the trip in mph
      * @author Patrick
      */
     public String speedOfTrip(String tripId) {
@@ -450,6 +459,7 @@ public class Controller {
             }
         }
         double spd = dist/totalMin;
+        spd *= 60; // change to mph
         DecimalFormat df = new DecimalFormat("#.###");
         String ret = "" + df.format(spd);
         return ret;
@@ -1038,6 +1048,14 @@ public class Controller {
         System.out.println("--" + ret + "--");
         return ret;
     }
+
+    private void centerMap(){
+        for(Marker m : markers){
+            m.setVisible(false);
+            mapView.setCenter(new Coordinate(43.0453675,-87.9109152));
+            mapView.setZoom(10);
+        }
+    }
     /**
      * Plots the current trajectory of the bus
      * This method has not been implemented
@@ -1046,7 +1064,7 @@ public class Controller {
      * @return boolean
      */
     public boolean plotBus(String tripID) {
-        System.out.println("print");
+
         ArrayList<Trip> trips = tripsList.get(tripID);
         Trip trip = null;
         for (Trip t: trips){
@@ -1055,6 +1073,7 @@ public class Controller {
             }
         }
         if (trip == null) {
+            centerMap();
             return false;
         }
         HashMap<String, ArrayList<StopTime>> stopTimesHashMap = trip.getStopTimes();
@@ -1064,6 +1083,7 @@ public class Controller {
             stopTimes.addAll(it.next().getValue());
         }
         if (stopTimes.size() == 0){
+            centerMap();
             return false;
         }
         Time currentTime = java.sql.Time.valueOf(LocalTime.now());
@@ -1085,6 +1105,7 @@ public class Controller {
             }
         }
         if (lastStopTime == null || nextStopTime == null){
+            centerMap();
             return false;
         }
         ArrayList<Stop> allHashedStops = new ArrayList<>();
@@ -1107,18 +1128,18 @@ public class Controller {
             float percentComplete = (float) (currentTime.getTime()-lastStopTime.getArrivalTime().getTime())/(nextStopTime.getArrivalTime().getTime()-lastStopTime.getArrivalTime().getTime());
             latitude = lastStop.getStopLat() + (percentComplete * (nextStop.getStopLat() - lastStop.getStopLat()));
             longitude = lastStop.getStopLong() + (percentComplete * (nextStop.getStopLong() - lastStop.getStopLong()));
-            for(Marker m : markers){
+            for(Marker m: markers){
                 m.setVisible(false);
             }
             Coordinate coordinate = new Coordinate(latitude, longitude);
             Marker marker = new Marker(busURL, -24,-40).setPosition(coordinate).setVisible(true);
             markers.add(marker);
             mapView.addMarker(marker);
-            System.out.println("added");
             mapView.setCenter(coordinate);
             mapView.setZoom(17);
             return true;
         } else {
+            centerMap();
             return false;
         }
     }
