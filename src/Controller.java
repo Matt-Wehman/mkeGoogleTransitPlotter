@@ -1408,24 +1408,24 @@ public class Controller {
             }
         }
 
-
-        for (Map.Entry<String, ArrayList<StopTime>> stops : actualTrip.getStopTimes().entrySet()) {
-            ArrayList<StopTime> stopList = stops.getValue();
-            for (StopTime stoptime : stopList) {
-                String stopTimeId = stoptime.getStopID();
-                for(Map.Entry<String, ArrayList<Stop>> stopsMap : allStopsList.entrySet()){
-                    ArrayList<Stop> s = stopsMap.getValue();
-                    for(Stop sto: s){
-                        if(sto.getStopID().equals(stopTimeId)){
-                            route.addStop(sto);
+        if(actualTrip != null) {
+            for (Map.Entry<String, ArrayList<StopTime>> stops : actualTrip.getStopTimes().entrySet()) {
+                ArrayList<StopTime> stopList = stops.getValue();
+                for (StopTime stoptime : stopList) {
+                    String stopTimeId = stoptime.getStopID();
+                    for (Map.Entry<String, ArrayList<Stop>> stopsMap : allStopsList.entrySet()) {
+                        ArrayList<Stop> s = stopsMap.getValue();
+                        for (Stop sto : s) {
+                            if (sto.getStopID().equals(stopTimeId)) {
+                                route.addStop(sto);
+                            }
                         }
                     }
+
+
                 }
 
-
-
             }
-
         }
     }
 
