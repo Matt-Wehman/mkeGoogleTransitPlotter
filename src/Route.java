@@ -1,3 +1,26 @@
+/*
+ * Course: SE 2030 - 041
+ * Fall 22-23
+ * GTFS Project
+ * Created by: Christian Basso, Ian Czerkis, Matt Wehman, Patrick McDonald.
+ * Created on: 09/10/22
+ * Copyright 2022 Ian Czerkis, Matthew Wehman, Patrick McDonald, Christian Basso
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -17,8 +40,11 @@ public class Route {
     private String routeTextColor;
     private String routeType;
     private String routeURL;
-    private HashMap<Integer, Stop> stops = new HashMap<>();
+    private HashMap<String, Stop> stops = new HashMap<>();
     private HashMap<String, Trip> trips = new HashMap<>();
+    //Testing
+    private HashMap<String, ArrayList<Stop>> allStopsList = new HashMap<>();
+    private HashMap<String, ArrayList<Trip>> tripsList = new HashMap<>();
 
     /**
      * Creates an instance of a Route
@@ -120,7 +146,7 @@ public class Route {
         return routeURL;
     }
 
-    public HashMap<Integer, Stop> getStops() {
+    public HashMap<String, Stop> getStops() {
         return stops;
     }
 
@@ -128,8 +154,22 @@ public class Route {
         return trips;
     }
 
+    public HashMap<String, ArrayList<Stop>> getStopsList() {
+        return allStopsList;
+    }
+
+    public HashMap<String, ArrayList<Trip>> getTripsList() {
+        return tripsList;
+    }
+
     private int displayDist() {
         return 0;
+    }
+
+    public void addStop(Stop stop){
+        ArrayList<Stop> stops1 = new ArrayList<>();
+        stops1.add(stop);
+        allStopsList.put(stop.getStopID(), stops1);
     }
 
     /**
@@ -140,6 +180,38 @@ public class Route {
      */
     public boolean update(Route newRoute) {
         return false;
+    }
+
+    /**
+     * This adds Trips to an arrayList. This method will handle the chaining for the
+     * Trips in tripList
+     * @param key
+     * @param val
+     * @author Patrick
+     */
+    public void addTrip(String key, Trip val){
+        if (tripsList.containsKey(key)){
+            tripsList.get(key).add(val);
+        } else {
+            tripsList.put(key, new ArrayList<>());
+            tripsList.get(key).add(val);
+        }
+    }
+
+    /**
+     * This adds Stops to an arrayList. This method will handle the chaining for the
+     * stops in allStopsList
+     * @param key
+     * @param val
+     * @author Patrick
+     */
+    public void addStops(String key, Stop val){
+        if (allStopsList.containsKey(key)){
+            allStopsList.get(key).add(val);
+        } else {
+            allStopsList.put(key, new ArrayList<>());
+            allStopsList.get(key).add(val);
+        }
     }
 
     /**

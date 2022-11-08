@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StopController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="201.0" prefWidth="453.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StopController">
    <children>
       <HBox prefHeight="61.0" prefWidth="570.0">
          <children>
@@ -25,7 +25,7 @@
             </Text>
          </children>
       </HBox>
-      <HBox prefHeight="21.0" prefWidth="570.0">
+      <HBox prefHeight="21.0" prefWidth="345.0">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Trips Containing Stop:" />
             <Text fx:id="tripsText" strokeType="OUTSIDE" strokeWidth="0.0" text="Number">
@@ -38,7 +38,7 @@
       <HBox prefHeight="21.0" prefWidth="570.0">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Route IDs Containing This Stop:" />
-            <Text fx:id="routeList" strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
+            <Text fx:id="routeList" strokeType="OUTSIDE" strokeWidth="0.0" text="Description One" wrappingWidth="150.0">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
@@ -49,46 +49,6 @@
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Next Trip at Stop:" />
             <Text fx:id="nextTrip" strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Text>
-         </children>
-      </HBox>
-      <HBox prefHeight="21.0" prefWidth="570.0">
-         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Field One:" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Text>
-         </children>
-      </HBox>
-      <HBox prefHeight="21.0" prefWidth="570.0">
-         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Field One:" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Text>
-         </children>
-      </HBox>
-      <HBox prefHeight="21.0" prefWidth="570.0">
-         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Field One:" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Text>
-         </children>
-      </HBox>
-      <HBox prefHeight="21.0" prefWidth="570.0">
-         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Field One:" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description One">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
