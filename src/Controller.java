@@ -46,6 +46,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -272,17 +273,6 @@ public class Controller {
     }
 
 
-
-
-    /**
-     * Sets the route stage
-     *
-     * @param stage stage to be set
-     */
-    protected void setRouteStage(Stage stage) {
-        this.routeDisplay = stage;
-    }
-
     /**
      * Sets the trip stage
      *
@@ -314,29 +304,6 @@ public class Controller {
 
     }
 
-
-    /**
-     * Changes the time of a Stop's Arrival/Departure time
-     * This method has not been implemented
-     *
-     * @return boolean
-     */
-    public boolean changeStopArrivalDeparture() {
-        return false;
-    }
-
-    /**
-     * Changes the location of a stop given stopID
-     * This method has not been implemented
-     *
-     * @param latitude
-     * @param longitude
-     * @param stopID
-     * @return boolean
-     */
-    public boolean changeStopLocation(int latitude, int longitude, int stopID) {
-        return false;
-    }
 
     /**
      * Displays the total distance of a route
@@ -1382,6 +1349,7 @@ public class Controller {
      * @param route
      * @author Wehman, Bassoc
      */
+
     private void getMapURL(Route route) {
         for (Marker m : markers) {
             m.setVisible(false);
@@ -1399,7 +1367,6 @@ public class Controller {
                 markers.add(marker);
                 mapView.addMarker(marker);
             }
-
         }
         Extent extent = Extent.forCoordinates(coordinates);
         mapView.setExtent(extent);

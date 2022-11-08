@@ -50,10 +50,10 @@ public class ControllerTest {
     private void setUp() throws IOException, Controller.InvalidHeaderException {
         controller = new Controller();
         ArrayList<File> listOfFiles = new ArrayList<>();
-        listOfFiles.add(new File("./GTFSFiles/routes.txt"));
-        listOfFiles.add(new File("./GTFSFiles/stop_times.txt"));
-        listOfFiles.add(new File("./GTFSFiles/stops.txt"));
-        listOfFiles.add(new File("./GTFSFiles/trips.txt"));
+        listOfFiles.add(new File("se-lab2030/GTFSFiles/routes.txt"));
+        listOfFiles.add(new File("se-lab2030/GTFSFiles/stop_times.txt"));
+        listOfFiles.add(new File("se-lab2030/GTFSFiles/stops.txt"));
+        listOfFiles.add(new File("se-lab2030/GTFSFiles/trips.txt"));
         controller.importFilesNoStage(listOfFiles);
     }
 
@@ -66,8 +66,6 @@ public class ControllerTest {
     @Test
     public void testNextTripAtStop() {
         String stopID = "1661";
-
-
         Time currentTime = new Time(8, 37, 0);
         String nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
         Assertions.assertEquals("21794626_1570", nextTripAtStop);
