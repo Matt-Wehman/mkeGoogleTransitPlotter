@@ -50,10 +50,10 @@ public class ControllerTest {
     private void setUp() throws IOException, Controller.InvalidHeaderException {
         controller = new Controller();
         ArrayList<File> listOfFiles = new ArrayList<>();
-        listOfFiles.add(new File("se-lab2030/GTFSFiles/routes.txt"));
-        listOfFiles.add(new File("se-lab2030/GTFSFiles/stop_times.txt"));
-        listOfFiles.add(new File("se-lab2030/GTFSFiles/stops.txt"));
-        listOfFiles.add(new File("se-lab2030/GTFSFiles/trips.txt"));
+        listOfFiles.add(new File("./GTFSFiles/Milwaukee/routes.txt"));
+        listOfFiles.add(new File("./GTFSFiles/Milwaukee/stop_times.txt"));
+        listOfFiles.add(new File("./GTFSFiles/Milwaukee/stops.txt"));
+        listOfFiles.add(new File("./GTFSFiles/Milwaukee/trips.txt"));
         controller.importFilesNoStage(listOfFiles);
     }
 
@@ -66,6 +66,8 @@ public class ControllerTest {
     @Test
     public void testNextTripAtStop() {
         String stopID = "1661";
+
+
         Time currentTime = new Time(8, 37, 0);
         String nextTripAtStop = controller.nextTripAtStop(stopID, currentTime);
         Assertions.assertEquals("21794626_1570", nextTripAtStop);
@@ -426,6 +428,17 @@ public class ControllerTest {
             System.out.println("Type: " + type + " tested");
         }
         Assertions.assertTrue(correctExportFiles);
+
+    }
+
+    @Test
+    public void testCSVReaderWithQuotations() throws CSVReader.EndOfStringException {
+        String line = "\"Line1, testing1234\",test,test1,\"tes,t2\",";
+        CSVReader reader = new CSVReader(line);
+        Assertions.assertEquals("Line1, testing1234", reader.next());
+        Assertions.assertEquals("test", reader.next());
+        Assertions.assertEquals("test1", reader.next());
+        Assertions.assertEquals("tes,t2", reader.next());
 
     }
 
