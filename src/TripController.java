@@ -18,6 +18,9 @@ public class TripController {
     @FXML
     Text tripSpeed;
 
+    @FXML
+    Text tripStatus;
+
     public void setController(Controller controller){
         this.controller = controller;
     }
@@ -33,4 +36,6 @@ public class TripController {
     public void setTripSpeed(String tripSpd){
         tripSpeed.setText(tripSpd);
     }
+
+    public void setTripStatus(String tripStatus){this.tripStatus.setText(tripStatus);}
 }
