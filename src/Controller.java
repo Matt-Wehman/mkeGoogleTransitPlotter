@@ -825,7 +825,7 @@ public class Controller {
             CSVReader reader = new CSVReader(tripLine);
             Trip trip = new Trip(
                     reader.next(), reader.next(), reader.next(),
-                    reader.next(), Integer.parseInt(reader.next()), Long.parseLong(reader.next()),
+                    reader.next(), reader.next(), reader.next(),
                     reader.next());
             reader.checkEndOfLine();
             trip.checkRequired();

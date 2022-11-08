@@ -32,8 +32,8 @@ import java.util.List;
  */
 public class Trip {
 
-    private long blockID;
-    private int directionID;
+    private String blockID;
+    private String directionID;
     private String routeID;
     private String serviceID;
     private String shapeID;
@@ -42,11 +42,11 @@ public class Trip {
     private final HashMap<String, ArrayList<StopTime>> stopTimes = new HashMap<>();
 
 
-    public void setBlockID(int blockID) {
+    public void setBlockID(String blockID) {
         this.blockID = blockID;
     }
 
-    public void setDirectionID(int directionID) {
+    public void setDirectionID(String directionID) {
         this.directionID = directionID;
     }
 
@@ -70,11 +70,11 @@ public class Trip {
         this.tripID = tripID;
     }
 
-    public long getBlockID() {
+    public String getBlockID() {
         return blockID;
     }
 
-    public int getDirectionID() {
+    public String getDirectionID() {
         return directionID;
     }
 
@@ -134,7 +134,7 @@ public class Trip {
      * @param blockID
      * @param shapeID
      */
-    public Trip(String routeID, String serviceID, String tripID, String tripHeadSign, int directionID, long blockID, String shapeID) {
+    public Trip(String routeID, String serviceID, String tripID, String tripHeadSign, String directionID, String blockID, String shapeID) {
         this.blockID = blockID;
         this.directionID = directionID;
         this.routeID = routeID;
