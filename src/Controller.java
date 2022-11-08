@@ -977,7 +977,6 @@ public class Controller {
             ArrayList<File> files = new ArrayList<>();
             for (File file : f) {
                 files.add(file);
-                System.out.println(files);
             }
             importFiles(files);
         }
