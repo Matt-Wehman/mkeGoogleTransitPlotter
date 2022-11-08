@@ -23,6 +23,14 @@ public class CSVReader {
      * @throws EndOfStringException
      */
     public String next() throws EndOfStringException {
+        // if the line is in quotation marks
+        if (line.length() > 0 && line.charAt(0) == '"'){
+            line = line.substring(1);
+            int index = line.indexOf('"');
+            String ret = line.substring(0, index);
+            line = line.substring(index + 2);
+            return ret;
+        }
         String ret;
         if (line.contains(",")){
             ret = line.substring(0, line.indexOf(','));
