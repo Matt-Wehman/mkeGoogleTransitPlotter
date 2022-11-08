@@ -29,7 +29,7 @@ public class CSVReader {
             int index = line.indexOf('"');
             String ret = line.substring(0, index);
             line = line.substring(index + 2);
-            return ret;
+            return "\"" + ret + "\"";
         }
         String ret;
         if (line.contains(",")){
