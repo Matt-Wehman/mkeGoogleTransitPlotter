@@ -12,7 +12,7 @@
      -fx-border-color: linear-gradient(#d4d2d2 20%, gray 80%);
      -fx-border-width: 5 0 5 0;
      -fx-width: 100%
-
+     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 40, 1, 10, 10);
 }
 
 .button{
