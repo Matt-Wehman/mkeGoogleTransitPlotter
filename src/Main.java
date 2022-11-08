@@ -60,7 +60,6 @@ public class Main extends Application {
         Stage tripStage = new Stage();
 
         //Trip Stage/Window
-
         tripStage.setTitle("Trip info");
         tripStage.setScene(new Scene(tripRoot));
         tripStage.hide();
@@ -75,7 +74,7 @@ public class Main extends Application {
         Stage stopStage = new Stage();
 
         // Stop Stage/Window
-        stopStage.setTitle("Route info");
+        stopStage.setTitle("Stop info");
         stopStage.setScene(new Scene(stopRoot));
         stopStage.hide();
 

@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class Trip {
 
-    private int blockID;
+    private long blockID;
     private int directionID;
     private String routeID;
     private String serviceID;
@@ -70,7 +70,7 @@ public class Trip {
         this.tripID = tripID;
     }
 
-    public int getBlockID() {
+    public long getBlockID() {
         return blockID;
     }
 
@@ -134,7 +134,7 @@ public class Trip {
      * @param blockID
      * @param shapeID
      */
-    public Trip(String routeID, String serviceID, String tripID, String tripHeadSign, int directionID, int blockID, String shapeID) {
+    public Trip(String routeID, String serviceID, String tripID, String tripHeadSign, int directionID, long blockID, String shapeID) {
         this.blockID = blockID;
         this.directionID = directionID;
         this.routeID = routeID;
