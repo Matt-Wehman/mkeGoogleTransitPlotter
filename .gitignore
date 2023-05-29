@@ -1,7 +1,2 @@
-target/
-out/
-.mvn/
-.idea/
-*.iml
-*.class
+
 
