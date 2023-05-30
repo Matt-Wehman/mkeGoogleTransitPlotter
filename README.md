@@ -4,6 +4,8 @@ GTFS Project
 Created by: Christian Basso, Ian Czerkis, Matt Wehman, Patrick McDonald
 Created on: 09/10/22
 
+### Enter your BING API key into the controller class to use
+
 This project is a Java/JavaFX application that interacts with standardized public transportation schedules and associated geographic information.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
