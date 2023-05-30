@@ -64,6 +64,8 @@ public class Controller {
 
     private final URL url = this.getClass().getResource("mapmarkerhd_106079 (1).png");
     private final URL busURL = this.getClass().getResource("ic_directions_bus_128_28256.png");
+   
+    private final string BINGAPI = "Enter a key"; 
 
 
     @FXML
@@ -1437,7 +1439,7 @@ public class Controller {
      *     the projection to use in the map.
      */
     public void initMapAndControls(Projection projection) {
-        mapView.setBingMapsApiKey("w1oz2x0G8Gn2cpDoyMKM~7z_7StT4ZgJ6x4zLE9oH2w~AnwrC5ThdXoU2STqcTWH_eVRdKc-ezqaFZYB41JUq4fknKQzslqc0_LJ9j0mbv0V");
+        mapView.setBingMapsApiKey(BINGAPI);
         mapView.setMapType(MapType.BINGMAPS_ROAD);
         mapView.setCenter(new Coordinate(43.0453675,-87.9109152));
         mapView.setZoom(10);
